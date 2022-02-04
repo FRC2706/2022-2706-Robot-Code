@@ -28,10 +28,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.logging.Logger;
 
+import frc.robot.commands.ramseteAuto.SimpleCsvLogger;
+
 public class DriveBase2020 extends DriveBase {
     WPI_TalonSRX leftMaster, rightMaster, climberTalon;    
     BaseMotorController leftSlave, rightSlave;
-
+    
     private DifferentialDriveOdometry odometry;    
 
     public double motorCurrent; //variable to display motor current levels
@@ -40,8 +42,12 @@ public class DriveBase2020 extends DriveBase {
     // Logging
     private Logger logger = Logger.getLogger("DriveBase2020");
 
-    private NetworkTableEntry leftEncoder, rightEncoder, currentX, currentY, currentAngle, currentPose;
+    // USB Logger
+    private boolean bUsbLogger = false;
+    private SimpleCsvLogger usbLogger;
+    private String loggingDataIdentifier = "DriveBase2020";
 
+    private NetworkTableEntry leftEncoder, rightEncoder, currentX, currentY, currentAngle, currentPose, leftVelocityMetersPerSecond, rightVelocityMetersPerSecond;
     public DriveBase2020() {
         leftMaster = new WPI_TalonSRX(Config.LEFT_MASTER);
         rightMaster = new WPI_TalonSRX(Config.RIGHT_MASTER);
@@ -76,8 +82,6 @@ public class DriveBase2020 extends DriveBase {
         differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
         //differentialDrive.setRightSideInverted(Config.DRIVETRAIN_INVERT_DIFFERENTIALDRIVE);
         rightMaster.setInverted(true);
-
-
         resetMotors();
         setTalonConfigurations();
   
@@ -104,9 +108,18 @@ public class DriveBase2020 extends DriveBase {
         currentY = table.getEntry("currentY");
         currentAngle = table.getEntry("currentAngle");
         currentPose = table.getEntry("currentPose");
-        
-
-    }
+        leftVelocityMetersPerSecond = table.getEntry("leftVelocityMetersPerSecond");
+        rightVelocityMetersPerSecond = table.getEntry("rightVelocityMetersPerSecond");
+    
+        if ( bUsbLogger == true )
+        {
+          usbLogger = new SimpleCsvLogger();
+        }
+        else
+        {
+          usbLogger = null;
+        }
+    }    
 
     @Override
     public double getMotorCurrent() {
@@ -163,7 +176,6 @@ public class DriveBase2020 extends DriveBase {
         rightMaster.configPeakCurrentDuration(0);
         rightMaster.configContinuousCurrentLimit(0);
 
-
         this.followMotors();
     }
 
@@ -182,6 +194,18 @@ public class DriveBase2020 extends DriveBase {
 
         talonConfig.voltageCompSaturation = Config.RAMSETE_VOLTAGE_COMPENSATION;
 
+        // Slot 2 belongs to drive train alignment
+        talonConfig.slot2.kF = Config.ALIGNMENT_KF;
+        talonConfig.slot2.kP = Config.ALIGNMENT_KP;
+        talonConfig.slot2.kI = Config.ALIGNMENT_KI;
+        talonConfig.slot2.kD = Config.ALIGNMENT_KD;
+        talonConfig.slot2.allowableClosedloopError = Config.ALIGNMENT_ALLOWABLE_PID_ERROR;
+        //Motion Magic Closed-Loop Configs
+        talonConfig.motionAcceleration = metersToTalonPosistion(0.6); //6m/s2
+        talonConfig.motionCruiseVelocity = metersToTalonPosistion(0.2); //2 metter/sec
+        talonConfig.motionCurveStrength = 3;
+        
+        
         
         //Current limiting for drivetrain master motors.
         if (Config.MOTOR_CURRENT_LIMIT == true) {
@@ -339,20 +363,35 @@ public class DriveBase2020 extends DriveBase {
 
             odometry.update(Rotation2d.fromDegrees(getCurrentAngle()), getLeftPosition(), getRightPosition());
         
+            //@todo: try
+            //odometry.update(Rotation2d.fromDegrees(-getCurrentAngle()), getLeftPosition(), getRightPosition());
+   
+            //from encoders' positions
             leftEncoder.setNumber(getLeftPosition());
             rightEncoder.setNumber(getRightPosition());
 
+            //pose from odometry
             Pose2d pose = getPose();
             currentX.setNumber(pose.getX());
             currentY.setNumber(pose.getY());
             currentAngle.setNumber(pose.getRotation().getDegrees());
 
             currentPose.setString(String.format("new PoseScaled(%.3f, %.3f, %.3f)", pose.getX(), pose.getY(), pose.getRotation().getDegrees()));
+            double measuredVelocities[] = getMeasuredMetersPerSecond();
+
+            leftVelocityMetersPerSecond.setNumber(measuredVelocities[0]);
+            rightVelocityMetersPerSecond.setNumber(measuredVelocities[1]);
+
+            logData(getLeftPosition(),
+                    getRightPosition(),
+                    pose.getX(),
+                    pose.getY(),
+                    pose.getRotation().getDegrees(),
+                    measuredVelocities[0],
+                    measuredVelocities[1]);  
         }
 
         // System.out.println("VISION TARGET: " + VisionPose.getInstance().getTargetTranslation(VisionType.TPracticeTarget)); 
-
-
     }
 
     /**
@@ -429,6 +468,21 @@ public class DriveBase2020 extends DriveBase {
     }
 
     @Override
+    public void tankDrivePosition( double leftPos, double rightPos)
+    {
+        //Note: encoder position: postive (forward) or negative (backward)? <--- looks like correct
+        //position close-loop control
+        // leftMaster.set(ControlMode.Position, metersToTalonPosistion(leftPos));
+        // rightMaster.set(ControlMode.Position, metersToTalonPosistion(rightPos)); 
+
+        //motion magic position close-loop control
+        leftMaster.set(ControlMode.MotionMagic, metersToTalonPosistion(leftPos));
+        rightMaster.set(ControlMode.MotionMagic, metersToTalonPosistion(rightPos));
+
+        differentialDrive.feed();
+    }
+
+    @Override
     public double[] getMeasuredVelocities() {
         double leftVel = leftMaster.getSelectedSensorVelocity();
         double rightVel = rightMaster.getSelectedSensorVelocity();
@@ -443,13 +497,27 @@ public class DriveBase2020 extends DriveBase {
         return new double[]{leftVel, rightVel};
     }
 
-    private double getLeftPosition() {
+    @Override
+    public double getLeftPosition() {
         return talonPosistionToMeters(leftMaster.getSelectedSensorPosition());
     }
 
-    private double getRightPosition() {
+    @Override
+    public double getRightPosition() {
         return talonPosistionToMeters(rightMaster.getSelectedSensorPosition());
     }
+
+    @Override
+    public double getLeftEncoderPosition() {
+        return leftMaster.getSelectedSensorPosition();
+    }
+
+    @Override
+    public double getRightEncoderPosition() {
+        return rightMaster.getSelectedSensorPosition();
+    }
+
+
 
 
     /**
@@ -509,4 +577,47 @@ public class DriveBase2020 extends DriveBase {
     private double talonVelocityToMetersPerSecond(double talonVelocity) {
         return talonPosistionToMeters(talonVelocity * 10); // Convert ticks/100ms to ticks/sec
     }
+
+    /**
+     * All Methods used for USB logging startLogging() logData(data) stopLogging()
+     */
+    @Override
+    public void startLogging() {
+        if ( usbLogger != null )
+        {
+        // See Spreadsheet link at top
+            usbLogger.init(loggingDataIdentifier, 
+                    new String[] { "LPos",
+                                "RPos",
+                                "currentX",
+                                "currentY",
+                                "currentAngle",
+                                "LVel",
+                                "RVel"},
+                    new String[] { "m", 
+                                "m",
+                                "m",
+                                "m",
+                                "deg",
+                                "m/s",
+                                "m/s"});
+        }
+    }
+
+
+    public void logData(double... data) {
+        if ( usbLogger != null )
+        {
+            usbLogger.writeData(data);
+        }
+    }
+
+    @Override
+    public void stopLogging() {
+        if ( usbLogger != null )
+        {
+            usbLogger.close();
+        }
+    }
 }
+

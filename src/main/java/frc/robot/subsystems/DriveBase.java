@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
-
 import java.util.function.Consumer;
 
 public abstract class DriveBase extends SubsystemBase {
@@ -194,12 +193,32 @@ public abstract class DriveBase extends SubsystemBase {
 
     }
 
+    public void tankDrivePosition( double leftPos, double rightPos)
+    {
+
+    }
     public double[] getMeasuredVelocities() {
         return new double[1];
     }
 
     public double[] getMeasuredMetersPerSecond() {
         return new double[1];
+    }
+
+    public double getLeftEncoderPosition() {
+        return 0.0;
+    }
+
+    public double getRightEncoderPosition() {
+        return 0.0;
+    }
+
+    public double getLeftPosition() {
+        return 0.0;
+    }
+
+    public double getRightPosition() {
+        return 0.0;
     }
 
     public void setActivePIDSlot(int slotId) {
@@ -209,5 +228,10 @@ public abstract class DriveBase extends SubsystemBase {
 
     public abstract boolean isMotorLimitActive();
 
-    
+    public void startLogging(){
+    }
+
+    public void stopLogging(){     
+    }
+
 }
