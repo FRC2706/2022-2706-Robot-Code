@@ -24,7 +24,6 @@ import java.util.Date;
 import java.util.logging.FileHandler;
 import java.util.logging.SimpleFormatter;
 
-
 import com.ctre.phoenix.ErrorCode;
 
 /**
@@ -75,7 +74,7 @@ public class Config {
      **/
     //ID 0 is comp 2020 bot
     //ID 1 is practice 2020 comp bot
-    //ID 2 is mini-bot
+    //ID 2 is mini-robot (Beetle)
     //ID 3 is Mergonaut (Deep Space Chassis)
     //
     
@@ -155,7 +154,7 @@ public class Config {
     public static int RIGHT_CONTROL_STICK_Y = 5;
     public static int RIGHT_CONTROL_STICK_X = 4;
     
-    public static boolean INVERT_FIRST_AXIS = robotSpecific(true, true, false);
+    public static boolean INVERT_FIRST_AXIS = robotSpecific(true, true, true);
     public static boolean INVERT_SECOND_AXIS = robotSpecific(false, false, false);
     
     public static boolean HAS_FOLLOWERS = robotSpecific(true, true, false, true, true);
@@ -168,8 +167,7 @@ public class Config {
     
     public static boolean INVERT_ARM_TALON = robotSpecific(true, true, false);
     
-
-    public static int ARM_ALLOWABLE_CLOSED_LOOP_ERROR_TICKS = 0;
+    public static int ARM_ALLOWABLE_CLOSED_LOOP_ERROR_TICKS = 30;
     
     // Timeouts for sending CAN bus commands
     public static final int CAN_TIMEOUT_SHORT = 10;
@@ -190,14 +188,14 @@ public class Config {
     public static double ARM_PID_D = 1.0;
     public static double ARM_PID_F = 2.5;//robotSpecific(6); // 0.05  2.0  7
     public static double ARM_PID_IZONE = 20;
-
+ 
     public static int ARM_PID_CRUISE_VELOCITY = robotSpecific(50); //30
     public static int ARM_PID_ACCELERATION = robotSpecific(17); //15
     public static int ARM_PID_SCURVE = robotSpecific(5);
-
+ 
     public static double ARM_PERCENT_AT_HORIZONTAL = robotSpecific(0.0, 0.13);//0.22/1.5);
     public static double ARM_COS_VERT_STRETCH = robotSpecific(0.0, 1.0);//0.6);
-
+ 
     // Define a global constants table for subsystems to use
     public static NetworkTable constantsTable = NetworkTableInstance.getDefault().getTable("constants");
 
@@ -211,8 +209,8 @@ public class Config {
     public static String YAW_TO_DIAMOND      = "YawToDiamond";
 
     // Drivetrain PID values
-    public static double DRIVETRAIN_P_SPECIFIC = robotSpecific(0.037, 0.037, 0.0, 0.018d, 0.0, 0.25);
-    public static double DRIVETRAIN_D_SPECIFIC = robotSpecific(0.0023, 0.0023, 0.0, 0.0016d, 0.0, 0.03);
+    public static double DRIVETRAIN_P_SPECIFIC = robotSpecific(0.037, 0.037, 0.018, 0.018d, 0.0, 0.25);
+    public static double DRIVETRAIN_D_SPECIFIC = robotSpecific(0.0023, 0.0023, 0.0016, 0.0016d, 0.0, 0.03);
 
     // Drivetain data
     public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1524, 0.1524); // Diameter of wheel is 0.1524
@@ -225,7 +223,7 @@ public class Config {
     // Frc-characterization data
     // id0: CompBot 
     // id1: PracBot - Previous: 3.24, 0.343 Parking Lot: 1.33, 2.89, 0.164 LargerSpace: 1.15, 2.84, 2
-    // id2: Minibot - 
+    // id2: Minibot - church parking lot 1.32, 4.65, 0.5
     // id3: DS Robot - Church Parking Lot 1.28, 3.13, 0.463
     public static double ksVolts = robotSpecific(1.1, 1.15, 1.32, 1.28);
     public static double kvVoltSecondsPerMeter = robotSpecific(3.03, 2.84, 4.65, 3.13);
@@ -236,8 +234,9 @@ public class Config {
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     // Ramsete Max Velocity and max acceleration
-    public static double kMaxSpeedMetersPerSecond = 2.4; // DS Video -> 3.0
-    public static double kMaxAccelerationMetersPerSecondSquared = 2.4; // DS Video -> 2.0 
+    //Beetle: old value = 1.5; new value = 1.838
+    public static double kMaxSpeedMetersPerSecond = robotSpecific(2.4,2.4,1.838,2.4);//2.4; // DS Video -> 3.0
+    public static double kMaxAccelerationMetersPerSecondSquared =  robotSpecific(2.4,2.4,1.838,2.4);//2.4; // DS Video -> 2.0 
 
     public static double kRamseteTransferSpeed = kMaxSpeedMetersPerSecond;
     public static double kRamseteTurnAroundSpeed = kMaxSpeedMetersPerSecond; 
@@ -248,7 +247,7 @@ public class Config {
     public static double METERS_IN_ONE_FOOT = 0.3048;
     // Scale the field
     private static double defaultScale = 1.0;
-    public static double scaleField = robotSpecific(defaultScale, defaultScale, 1.0, defaultScale);
+    public static double scaleField = robotSpecific(defaultScale, defaultScale, 0.5, defaultScale);
 
     // VISION STUFF BELOW
     // Allowable vision error in meters
@@ -302,15 +301,24 @@ public class Config {
     // P Values from characterization:
     // id0: 
     // id1:
-    // id2:
+    // id2: church parking lot: 0.0434
     // id3: 0.0888 from church parking lot, 0.0105 from basement -> averaged to 0.05 (idk but it worked)
+    // kF:
+    // id2: (Beetle) based on 75% output
     public static int DRIVETRAIN_SLOTID_RAMSETE = 1;
-    public static double RAMSETE_KF = 0;
+    public static double RAMSETE_KF = robotSpecific(0.0, 0.0, 0.38, 0.0);
     public static double RAMSETE_KP = robotSpecific(0.03, 0.0207, 0.0434, 0.05); //0.0884//0.0105
     public static double RAMSETE_KI = 0;
-    public static double RAMSETE_KD = 0;
+    public static double RAMSETE_KD = 0; //maybe set to some value
     public static double RAMSETE_ALLOWABLE_PID_ERROR = 0; // <- never stop the P loop from running
     public static double RAMSETE_VOLTAGE_COMPENSATION = 12;
+
+    public static int DRIVETRAIN_SLOTID_ALIGNMENT = 2;
+    public static double ALIGNMENT_KF = 0.42;//0.38;
+    public static double ALIGNMENT_KP = 0.0434;//0.05;//0.0434; 
+    public static double ALIGNMENT_KI = 0;
+    public static double ALIGNMENT_KD = 0.03; //maybe set to some value
+    public static double ALIGNMENT_ALLOWABLE_PID_ERROR = 0; // <- never stop the P loop from running
 
     public static boolean hasSelectorSwitches = robotSpecific(true, false, false, false);
 
@@ -360,6 +368,23 @@ public class Config {
     public static FluidConstant<Integer> FEEDERSUBSYSTEM_IZONE = new FluidConstant<>("FeederSubsystemIZONE", 120)
                 .registerToTable(Config.constantsTable);
     
+
+    //Sensor ports of analog inputs on Mini-Robot
+    public static final int MINIROBOT_MB1043_ANALOG_PORT = 4;
+    public static final int MINIROBOT_MB1013_ANALOG_PORT = 5;
+    public static final int MINIROBOT_2Y0A02_ANALOG_PORT = 6;
+    public static final int MINIROBOT_0A41SK_ANALOG_PORT = 7;
+
+    //ultrasound MB1043/MB1013: 30cm - 500cm
+    public static double MINIROBOT_MBUltraSound_RANGE_CM    = 500;
+    public static double MINIROBOT_MBUltraSound_MIN_CM      = 30;
+    public static double MINIROBOT_MBUltraSound_CONVERT2CM  = 0.125;
+    public static double MINIROBOT_INFRARED2Y_RANGE_CM      = 150;
+    public static double MINIROBOT_INFRARED2Y_MIN_CM        = 20;
+    public static double MINIROBOT_INFRARED0A_RANGE_CM      = 30;
+    public static double MINIROBOT_INFRARED0A_MIN_CM        = 4;
+
+
     /**
      * Returns one of the values passed based on the robot ID
      *

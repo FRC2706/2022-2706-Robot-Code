@@ -51,6 +51,7 @@ public class DrivetrainPIDTurnDelta extends CommandBase {
 
     // A timer to ensure the command doesn't get stuck and the robot cannot drive
     private Timer timer;
+    boolean bTimeout;
 
 
     /**
@@ -76,13 +77,14 @@ public class DrivetrainPIDTurnDelta extends CommandBase {
         if(this.maxTime != null) {
             timer = new Timer();
         }
-
-
-
     }
 
     @Override
     public boolean isFinished() {
+        if (timer.get() >= maxTime)
+        {
+            bTimeout = true;
+        }
         return pigeonIMU == null || isDone || (maxTime != null && timer.get() >= maxTime);
     }
 
@@ -98,6 +100,8 @@ public class DrivetrainPIDTurnDelta extends CommandBase {
             timer.start();
         }
 
+        bTimeout = false;
+
     }
 
     @Override
@@ -112,6 +116,7 @@ public class DrivetrainPIDTurnDelta extends CommandBase {
             //Get z axis angular rate
             double currentAngularRate = xyz_dps[2];
 
+            //@todo:keep angle in the range of [-180, 180]
             //Get current angle
             currentAngle = drivebase.getOdometryHeading().getDegrees();
 
@@ -123,9 +128,17 @@ public class DrivetrainPIDTurnDelta extends CommandBase {
             turnThrottle = (targetAngle - currentAngle) * pGain.get() - (currentAngularRate) * dGain.get();
 
             //Run motors according to the output of PD
+            //@todo: add a max limitation on trunTrottle
             drivebase.tankDrive(-turnThrottle + forwardSpeed, turnThrottle + forwardSpeed, false);
         } else {
             DriverStation.reportError("Pigeon IMU is null", false);
         }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        System.out.println("PIDturn targetAngle currAngle "+ targetAngle + " "+drivebase.getOdometryHeading().getDegrees() );
+        System.out.println("Timeout: " + bTimeout);
+        timer.stop();
     }
 }
