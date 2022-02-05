@@ -121,8 +121,10 @@ public class Config {
     public static int TALON_5_PLYBOY = robotSpecific(-1, -1, -1, -1, -1, 5);
     public static int PIGEON_ID = robotSpecific(CLIMBER_TALON, CLIMBER_TALON, 27, LEFT_REAR_MOTOR, LEFT_REAR_MOTOR, TALON_5_PLYBOY);
     
-    public static int ANALOG_SELECTOR_ONE = robotSpecific(0, 0, 0, -1, -1, 0);
-    
+    public static int ANALOG_SELECTOR_ONE = robotSpecific(0, 0, -1, -1, -1, 0);
+    public static int ANALOG_SELECTOR_TWO = robotSpecific(0, 0, -1, -1, -1, 0);
+    public static boolean hasSelectorSwitches = robotSpecific(false, false, false, false);
+
     public static int ARM_TALON = robotSpecific(7, 7, -1, -1);
 
     public static int FEEDER_SUBSYSTEM_TALON = robotSpecific(8, 8, -1, -1);
@@ -320,7 +322,6 @@ public class Config {
     public static double ALIGNMENT_KD = 0.03; //maybe set to some value
     public static double ALIGNMENT_ALLOWABLE_PID_ERROR = 0; // <- never stop the P loop from running
 
-    public static boolean hasSelectorSwitches = robotSpecific(true, false, false, false);
 
     public static final FluidConstant<Integer> RPM = new FluidConstant<>("Shooter RPM", 1700)
             .registerToTable(Config.constantsTable);

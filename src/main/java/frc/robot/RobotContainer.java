@@ -172,7 +172,7 @@ public class RobotContainer {
             new JoystickButton(driverStick, XboxController.Button.kY.value).whenPressed(controlRearLargeRinglight);
                     
             //Read a trajectory
-            // Command readTrajectory = new ReadPath( Robot.trajectorySlalom, "Slalom path");
+            // Command readTrajectory = new ReadPath( Robot.trajectoryRead, "Slalom path");
             // new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readTrajectory);
 
             //Turn a specific angle
@@ -218,51 +218,40 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        // Testing forced numbers
-        int selectFolder = 7;
+        
 
         //Note: if there is not selector,
-        //      selectorOne will be forced to selectPath
-        int selectPath = 4;
+        //      selectorOne will be forced to selectHardCodedPath
+        int selectHardCodedPath = 0;
         int selectorOne = 0;
 
         if (analogSelectorOne != null){
             selectorOne = analogSelectorOne.getIndex();
             System.out.println("SELECTOR SWITCH NOT NULL AND ID " + selectorOne);
         }
+        else
+        {
+            selectorOne = selectHardCodedPath;
+        }
         logger.info("Selectors: " + selectorOne);
 
-        if (Config.hasSelectorSwitches == false) {
-            selectorOne = selectPath;
-            logger.info("No Selector Switches - Forced Id: " + selectorOne);
-        }
-        
+        // Testing forced numbers
+        int selectFolder = 3;
         switch (selectFolder) {
             case 1:
-                return AutoRoutines.getAutoCommandTest(selectorOne); 
+                return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
 
             case 2:
-                return AutoRoutines.getAutoCommandIRAH(selectorOne);
-
-            case 3:
-                return AutoRoutines.getAutoCommandIRAHDeepSpaceRobot(selectorOne);
-
-            case 4:
-                return AutoRoutines.getAutoCommandIRAHPracBot(selectorOne);
-
-            case 5:
-                return AutoRoutines.getAutoCommandIRAHMiniBot(selectorOne);
-
-            case 6:
-                return AutoRoutines.getAutoCommandIRAHCompetitionBot(selectorOne);
+                return AutoRoutines.getAutoCommandTest(selectorOne);
                 
-            case 7:
-                return AutoRoutines.getAutoCommandIRAHCompetitionBotGalacticPigeon(selectorOne);
+            case 3:
+                return AutoRoutines.getAutoCommandIRAHBeetle(selectorOne);
+                
+            default: 
+                return null;
         }
-
-        return null;
     }
-
+    
     public void joystickRumble(double leftValue, double rightValue) {
         //Joystick rumble (driver feedback). leftValue/rightValue sets vibration force.
         driverStick.setRumble(RumbleType.kLeftRumble, leftValue);
