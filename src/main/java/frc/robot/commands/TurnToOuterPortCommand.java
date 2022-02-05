@@ -42,7 +42,9 @@ public class TurnToOuterPortCommand extends CommandBase {
         VisionCtrlNetTable.setTapeMode();
 
         // Get the target angle from NetworkTables
-        currentTarget = VisionCtrlNetTable.yawToOuterPort.get();
+        //currentTarget = VisionCtrlNetTable.yawToOuterPort.get();
+        //hard coded for unit-test
+        currentTarget = 29.0;
     }
 
     /**

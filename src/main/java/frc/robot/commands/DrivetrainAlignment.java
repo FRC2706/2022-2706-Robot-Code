@@ -136,17 +136,19 @@ public class DrivetrainAlignment extends CommandBase {
 
     //logging the final current heading and error angle
     double finalDegree = m_drivebase.getOdometryHeading().getDegrees();
-    double errDegree = finalDegree - m_targetDegree;
+    //double errDegree = finalDegree - m_targetDegree;
+    double errDegree = finalDegree - m_initDegree;
     // System.out.println("current odometry angle (degrees): "+ finalDegree);
     // System.out.println("target odometry angle (degrees): " + m_targetDegree);
-    System.out.println("error angle (degrees): "+ errDegree);
+    System.out.println("turned angle (degrees): "+ errDegree);
     double errLeftPos = -m_targetLeftPositionMeter + m_currLeftPosMeter;
     double errRightPos = m_targetRightPositionMeter - m_currRightPosMeter;
     //note: error > 0 means underrun
     System.out.println("pos errs: " + errLeftPos + " " + errRightPos);
     System.out.println("time: " + m_timer.get());
-    System.out.println("theta: "+m_theta+" distance: "+m_distance);
+    System.out.println("theta: "+ m_theta+" distance: "+m_distance);
     System.out.println("m_DeltaTheta: "+m_deltaTheta);
+    System.out.println(" ");
     //@todo: after target position is reached, stop the cmd.
     //@max velocity, trapezoid control
     //System.out.println("curr left pos: "+ m_currLeftPosMeter+" target pos: "+ m_targetLeftPositionMeter);
