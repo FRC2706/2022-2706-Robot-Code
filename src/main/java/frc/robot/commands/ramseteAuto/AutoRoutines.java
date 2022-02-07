@@ -43,6 +43,7 @@ public class AutoRoutines {
         switch(selectorOne)
         {
             case 0:
+                // This is our 'do nothing' selector
                 return null;
             case 1:
                 //Placeholder
@@ -52,14 +53,15 @@ public class AutoRoutines {
         }
     }
 
-    public static Command getAutoCommandIRAHBeetle(int selectorOne)
+    public static Command getAutoCommandBeetle(int selectorOne)
     {
         switch(selectorOne)
         {
             case 0:
+                // This is our 'do nothing' selector
                 return null;
             case 1:
-                //Example: Use the imported trajectory: trajectorySlalom
+                //Example: Use the imported trajectory: trajectoryRead
                 RamseteCommandMerge ramsete1 = new RamseteCommandMerge(Robot.trajectoryRead, "Trajectory-Read");
                 return new SequentialCommandGroup (
                         new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRead.getInitialPose())),

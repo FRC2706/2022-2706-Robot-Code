@@ -217,6 +217,7 @@ public class Config {
     // Drivetain data
     public static double drivetrainWheelDiameter = robotSpecific(0.1524, 0.1524, 0.1016, 0.1524, 0.1524, 0.1524); // Diameter of wheel is 0.1524
     public static int ticksPerRevolution = 4096;
+    
 
     // Ramsete Default values
     public static double kRamseteB = 2.3;
