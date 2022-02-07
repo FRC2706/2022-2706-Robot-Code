@@ -17,7 +17,6 @@ import frc.robot.commands.ramseteAuto.SimpleCsvLogger;
 
 import edu.wpi.first.math.geometry.Pose2d;
 
-
 public class DrivetrainAlignment extends CommandBase {
   /** Creates a new DrivetrainAlignment. */
   double m_deltaDegree;
@@ -30,11 +29,14 @@ public class DrivetrainAlignment extends CommandBase {
   double m_currLeftPosMeter;
   double m_currRightPosMeter;
 
+  //@todo: move to Config
+  //Hub center coordinates
   double m_hubX = 1.8;
   double m_hubY = 2.5;
+
   double m_theta;
-  double m_distance;
   double m_deltaTheta;
+  double m_distance;
 
   // Get the drivebase and pigeon
   private final DriveBase m_drivebase;
@@ -52,18 +54,15 @@ public class DrivetrainAlignment extends CommandBase {
   private SimpleCsvLogger usbLogger;
   private String loggingDataIdentifier = "DrivetrainAlignment";
 
-  public DrivetrainAlignment(double deltaDegree) {
+  public DrivetrainAlignment() {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_deltaDegree = deltaDegree;
 
     m_drivebase = DriveBaseHolder.getInstance();
     addRequirements(m_drivebase);
 
     m_timer = new Timer();
-    m_timeout = 2.0;//1.0;//0.5;//0.25;        //seconds //@todo: from config
+    m_timeout = 2.0;  //seconds //@todo: from config
     
-    System.out.println("DrivertrainAlignemnt construct");
-
     if ( bUsbLogger == true )
     {
       usbLogger = new SimpleCsvLogger();
@@ -82,10 +81,11 @@ public class DrivetrainAlignment extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //Calculate the degree that the robot needs to turn
     calcDeltaDegree();
+    //Map the degree to distance in meters
     covertDegreeToPositionMeter();
 
-    //Note: always counter-clockwise rotation. Keep this in mind when calcualte target angle
     m_targetLeftPositionMeter  = m_drivebase.getLeftPosition() - m_targetDeltaPositionMeter;
     m_targetRightPositionMeter = m_drivebase.getRightPosition() + m_targetDeltaPositionMeter;
 
@@ -97,13 +97,10 @@ public class DrivetrainAlignment extends CommandBase {
     m_drivebase.setCoastMode();
 
     m_timer.start();
-    //todo: this reset has to be added.
     m_timer.reset();
+
     bDone = false;
     bTimeouted = false;
-
-//    System.out.println("DrivertrainAlignemnt initialize " + m_targetLeftPositionMeter  +" "+ m_targetRightPositionMeter );
- 
 
   }
 
@@ -135,27 +132,25 @@ public class DrivetrainAlignment extends CommandBase {
     m_drivebase.setActivePIDSlot(Config.DRIVETRAIN_SLOTID_DRIVER);
 
     //logging the final current heading and error angle
-    double finalDegree = m_drivebase.getOdometryHeading().getDegrees();
-    //double errDegree = finalDegree - m_targetDegree;
-    double errDegree = finalDegree - m_initDegree;
+    double finalDegree =  m_drivebase.getPose().getRotation().getDegrees();
+    double turnedDegree = finalDegree - m_initDegree;
+    double errDegree = m_targetDegree - finalDegree;
     // System.out.println("current odometry angle (degrees): "+ finalDegree);
     // System.out.println("target odometry angle (degrees): " + m_targetDegree);
-    System.out.println("turned angle (degrees): "+ errDegree);
+    System.out.println("turned angle (degrees): "+ turnedDegree);
+    System.out.println("init: " + m_initDegree+" final: "+ finalDegree );
     double errLeftPos = -m_targetLeftPositionMeter + m_currLeftPosMeter;
     double errRightPos = m_targetRightPositionMeter - m_currRightPosMeter;
     //note: error > 0 means underrun
     System.out.println("pos errs: " + errLeftPos + " " + errRightPos);
     System.out.println("time: " + m_timer.get());
-    System.out.println("theta: "+ m_theta+" distance: "+m_distance);
-    System.out.println("m_DeltaTheta: "+m_deltaTheta);
+    System.out.println("desired theta: "+ m_theta);
+    System.out.println("m_DeltaTheta: "+m_deltaTheta + " distance: "+ m_distance);
     System.out.println(" ");
-    //@todo: after target position is reached, stop the cmd.
-    //@max velocity, trapezoid control
     //System.out.println("curr left pos: "+ m_currLeftPosMeter+" target pos: "+ m_targetLeftPositionMeter);
     // System.out.println("curr right pos: "+ m_currRightPosMeter+" target pos: "+ m_targetRightPositionMeter);
     // System.out.println("timeout: " + bTimeouted + " current time " + m_timer.get());
     // System.out.println("bDone: " + bDone);
-
     
     double timeouted = 0.;
     double done = 0.;
@@ -164,7 +159,6 @@ public class DrivetrainAlignment extends CommandBase {
 
     if ( bDone == true )
        done = 1.0;
-
 
     if( bUsbLogger == true)
     {
@@ -205,28 +199,79 @@ public class DrivetrainAlignment extends CommandBase {
 
   public void covertDegreeToPositionMeter()
   {
-    //@todo: convert m_deltaDegree to m_targetPositionMeter based on radius.
-    m_targetDeltaPositionMeter = m_distance;//0.246;//0.45;//0.246;//0.246;  //mapped to 90 degrees
+    //convert m_deltaDegree to m_targetPositionMeter based on radius.
+    
+    //for test only, m_distance(m)
+    //m_distance = 0.10;
+
+    //use the arc formula to calcuate
+    //note: m_distance could be negative.
+    // m_distance = m_deltaTheta*3.14*Config.drivetrainRotateDiameter/360.0;
+   
+    //use the trend line: deltaTheta --> distance
+    m_distance = sign(m_deltaTheta)*(0.00205*Math.abs(m_deltaTheta)+0.0601);
+
+    //use the trend polynomial
+    //m_distance = sign(m_deltaTheta)*(0.0592 + 0.00209*Math.abs(m_deltaTheta) - 0.000000171*m_deltaTheta*m_deltaTheta);
+
+    m_targetDeltaPositionMeter = m_distance;
   }
 
+  /*
+   * This method maps deltaTheta to distance
+   */
   public void calcDeltaDegree()
   {
     //get current coordinate
     Pose2d currPose = m_drivebase.getPose();
-    double x = currPose.getX();// m_drivebase.getLeftPosition();
+    double x = currPose.getX();
     double y = currPose.getY();
+       
+    if ( x >= m_hubX )
+    {
+      if ( y >= m_hubY )
+      {
+        //quadrant III
+        double thetaPrime = Math.atan((x-m_hubX)/(y-m_hubY));
+        m_theta = -(180/3.14)*thetaPrime - 90;
+      }
+      else
+      {
+        //quadrant II
+        double thetaPrime = Math.atan((x-m_hubX)/(m_hubY-y));
+        m_theta = 90 + (180/3.14)*thetaPrime;
+      }
 
-    double thetaPrime = Math.atan((x-m_hubX)/(m_hubY-y));
-
-    m_theta = (180/3.14)*thetaPrime+90;
-
-    m_deltaTheta = m_theta-currPose.getRotation().getDegrees();
-
-    if(Math.abs(m_deltaTheta) < 90){
-      m_distance = sign(m_deltaTheta) * (0.00246*Math.abs(m_deltaTheta)+0.0526);
     }
-    else{
-      m_distance = sign(m_deltaTheta)*(-0.161 + 0.00624*Math.abs(m_deltaTheta) -0.0000147*m_deltaTheta*m_deltaTheta);
+    else //x <= m_hubX
+    {
+      if ( y >= m_hubY )
+      {
+        //quadrant IV
+        double thetaPrime = Math.atan((m_hubX-x)/(y-m_hubY));
+        m_theta = (180/3.14)*thetaPrime - 90;
+      }
+      else
+      {
+        //quadrant I
+        double thetaPrime = Math.atan((m_hubX-x)/(m_hubY-y));
+        m_theta = 90 - (180/3.14)*thetaPrime;
+      }
+
+    }
+    
+    //note:: m_deltaTheta > 0 --> counter clockwise rotation
+    //       m_deltaTheta < 0 --> clockwise rotation
+    m_deltaTheta = m_theta - currPose.getRotation().getDegrees();
+    
+    //make sure m_deltaTheta is [-180, +180]
+    if ( m_deltaTheta > 180 )
+    {
+      m_deltaTheta -= 360;
+    }
+    else if ( m_deltaTheta < -180 )
+    {
+      m_deltaTheta += 360;
     }
   }
 
@@ -236,7 +281,8 @@ public class DrivetrainAlignment extends CommandBase {
     {
       return 1.00;
     }
-    else{
+    else
+    {
       return -1.00;
     }
   }
@@ -255,7 +301,7 @@ public class DrivetrainAlignment extends CommandBase {
                              "currRightPos",
                              "targetRightPos",
                              "time",
-                             "bDOne",
+                             "bDone",
                              "bTimeouted"},
               new String[]{"deg",
                            "deg",

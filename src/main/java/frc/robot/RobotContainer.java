@@ -179,7 +179,7 @@ public class RobotContainer {
             moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 0.5);
             new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
 
-            Command alignment = new DrivetrainAlignment( 0 );
+            Command alignment = new DrivetrainAlignment();
             new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
         }
         
@@ -219,10 +219,9 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         
-
         //Note: if there is not selector,
         //      selectorOne will be forced to selectHardCodedPath
-        int selectHardCodedPath = 0;
+        int selectHardCodedPath = 1;
         int selectorOne = 0;
 
         if (analogSelectorOne != null){
@@ -245,7 +244,7 @@ public class RobotContainer {
                 return AutoRoutines.getAutoCommandTest(selectorOne);
                 
             case 3:
-                return AutoRoutines.getAutoCommandIRAHBeetle(selectorOne);
+                return AutoRoutines.getAutoCommandBeetle(selectorOne);
                 
             default: 
                 return null;

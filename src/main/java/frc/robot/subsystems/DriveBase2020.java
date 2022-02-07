@@ -203,9 +203,7 @@ public class DriveBase2020 extends DriveBase {
         //Motion Magic Closed-Loop Configs
         talonConfig.motionAcceleration = metersToTalonPosistion(0.6); //6m/s2
         talonConfig.motionCruiseVelocity = metersToTalonPosistion(0.2); //2 metter/sec
-        talonConfig.motionCurveStrength = 3;
-        
-        
+        talonConfig.motionCurveStrength = 3;    
         
         //Current limiting for drivetrain master motors.
         if (Config.MOTOR_CURRENT_LIMIT == true) {
