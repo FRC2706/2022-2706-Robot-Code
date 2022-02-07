@@ -27,6 +27,12 @@ import frc.robot.subsystems.DriveBaseHolder;
 import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.Filesystem;
+import java.nio.file.Path;
+import java.io.IOException;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.logging.Logger;
@@ -51,6 +57,11 @@ public class Robot extends TimedRobot {
     private Boolean bRealMatch;
 
     AnalogInput analogInput;
+
+    //imported trajectory
+    //on RoboRio at "/home/lvuser/deploy";
+    String trajectoryJSON = "./paths/scaled3.wpilib.json";
+    public static Trajectory trajectoryRead = new Trajectory();
 
     /**
      * Determines if the robot is in a real match.
@@ -119,6 +130,15 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
+
+        //read a trajectory 
+        try {
+            Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+            trajectoryRead = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+         } catch (IOException ex) {
+            DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+         }
+
         DriveBaseHolder.init();
         m_robotContainer = new RobotContainer();
         //create a vision control table
