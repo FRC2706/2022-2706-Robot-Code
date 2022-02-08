@@ -31,8 +31,8 @@ import java.util.logging.Logger;
 import frc.robot.commands.ramseteAuto.SimpleCsvLogger;
 
 public class DriveBase2020 extends DriveBase {
-    WPI_TalonSRX leftMaster, rightMaster, climberTalon;    
-    BaseMotorController leftSlave, rightSlave;
+    WPI_TalonSRX leftMaster, rightMaster;    
+    BaseMotorController leftFollower, rightFollower;
     
     private DifferentialDriveOdometry odometry;    
 
@@ -55,41 +55,33 @@ public class DriveBase2020 extends DriveBase {
         // Check whether to construct a victor or a talon or nothing
         if(Config.HAS_FOLLOWERS == true){
             if (Config.LEFT_SLAVE_ISVICTOR) {
-                leftSlave = new WPI_VictorSPX(Config.LEFT_REAR_MOTOR);
+                leftFollower = new WPI_VictorSPX(Config.LEFT_REAR_MOTOR);
             } else {
-                leftSlave = new WPI_TalonSRX(Config.LEFT_REAR_MOTOR);
+                leftFollower = new WPI_TalonSRX(Config.LEFT_REAR_MOTOR);
             }
             if (Config.RIGHT_SLAVE_ISVICTOR) {
-                rightSlave = new WPI_VictorSPX(Config.RIGHT_REAR_MOTOR);
+                rightFollower = new WPI_VictorSPX(Config.RIGHT_REAR_MOTOR);
             } else {
-                rightSlave = new WPI_TalonSRX(Config.RIGHT_REAR_MOTOR);
+                rightFollower = new WPI_TalonSRX(Config.RIGHT_REAR_MOTOR);
             }
         }
         else{
-            leftSlave = null;
-            rightSlave = null;
+            leftFollower = null;
+            rightFollower = null;
         }
 
-        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getCurrentAngle()));
-
-        // Check whether to construct a victor or a talon
-        
-
-        // Only construct the climber talon if its there
-        if (Config.CLIMBER_TALON != -1)
-            climberTalon = new WPI_TalonSRX(Config.CLIMBER_TALON);
+        odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getCurrentAngle()));        
 
         differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
-        //differentialDrive.setRightSideInverted(Config.DRIVETRAIN_INVERT_DIFFERENTIALDRIVE);
         rightMaster.setInverted(true);
+
         resetMotors();
         setTalonConfigurations();
-  
         setCoastMode();
 
         if (Config.PIGEON_ID != -1) {
-            if (Config.PIGEON_ID == Config.LEFT_REAR_MOTOR && leftSlave != null) 
-                pigeon = new PigeonIMU((WPI_TalonSRX) leftSlave);
+            if (Config.PIGEON_ID == Config.LEFT_REAR_MOTOR && leftFollower != null) 
+                pigeon = new PigeonIMU((WPI_TalonSRX) leftFollower);
             else if (Config.PIGEON_ID == 27){
                pigeon = new PigeonIMU(Config.PIGEON_ID);
             }
@@ -150,11 +142,11 @@ public class DriveBase2020 extends DriveBase {
         leftMaster.stopMotor();
         rightMaster.stopMotor();
 
-        if(leftSlave != null){
-            leftSlave.neutralOutput();
+        if(leftFollower != null){
+            leftFollower.neutralOutput();
         }
-        if(rightSlave != null){
-            rightSlave.neutralOutput();
+        if(rightFollower != null){
+            rightFollower.neutralOutput();
         }
     }
     
@@ -162,11 +154,11 @@ public class DriveBase2020 extends DriveBase {
     protected void resetMotors() {
         leftMaster.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
         rightMaster.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
-        if(leftSlave != null){
-            leftSlave.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
+        if(leftFollower != null){
+            leftFollower.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
         }
-        if(rightSlave != null){
-            rightSlave.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
+        if(rightFollower != null){
+            rightFollower.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
         }
 
         leftMaster.configPeakCurrentLimit(0);
@@ -201,7 +193,7 @@ public class DriveBase2020 extends DriveBase {
         talonConfig.slot2.kD = Config.ALIGNMENT_KD;
         talonConfig.slot2.allowableClosedloopError = Config.ALIGNMENT_ALLOWABLE_PID_ERROR;
         //Motion Magic Closed-Loop Configs
-        talonConfig.motionAcceleration = metersToTalonPosistion(0.6); //6m/s2
+        talonConfig.motionAcceleration = metersToTalonPosistion(0.6); //6m/s^2
         talonConfig.motionCruiseVelocity = metersToTalonPosistion(0.2); //2 metter/sec
         talonConfig.motionCurveStrength = 3;    
         
@@ -244,11 +236,11 @@ public class DriveBase2020 extends DriveBase {
         // Set the motor inversions
         leftMaster.setInverted(Config.LEFT_FRONT_INVERTED);
         rightMaster.setInverted(Config.RIGHT_FRONT_INVERTED);
-        if(leftSlave != null){
-            leftSlave.setInverted(Config.LEFT_REAR_INVERTED);
+        if(leftFollower != null){
+            leftFollower.setInverted(Config.LEFT_REAR_INVERTED);
         }
-        if(rightSlave != null){
-            rightSlave.setInverted(Config.RIGHT_REAR_INVERTED);
+        if(rightFollower != null){
+            rightFollower.setInverted(Config.RIGHT_REAR_INVERTED);
         }    
 
         // set the encoder inversions
@@ -314,11 +306,11 @@ public class DriveBase2020 extends DriveBase {
     public void setCoastMode() {
         leftMaster.setNeutralMode(NeutralMode.Coast);
         rightMaster.setNeutralMode(NeutralMode.Coast);
-        if(leftSlave != null){
-            leftSlave.setNeutralMode(NeutralMode.Coast);
+        if(leftFollower != null){
+            leftFollower.setNeutralMode(NeutralMode.Coast);
         }
-        if(rightSlave != null){
-            rightSlave.setNeutralMode(NeutralMode.Coast);
+        if(rightFollower != null){
+            rightFollower.setNeutralMode(NeutralMode.Coast);
         }
     }
 
@@ -326,21 +318,21 @@ public class DriveBase2020 extends DriveBase {
     public void setBrakeMode() {
         leftMaster.setNeutralMode(NeutralMode.Brake);
         rightMaster.setNeutralMode(NeutralMode.Brake);
-        if(leftSlave != null){
-            leftSlave.setNeutralMode(NeutralMode.Brake);
+        if(leftFollower != null){
+            leftFollower.setNeutralMode(NeutralMode.Brake);
         }
-        if(rightSlave != null){
-            rightSlave.setNeutralMode(NeutralMode.Brake); 
+        if(rightFollower != null){
+            rightFollower.setNeutralMode(NeutralMode.Brake); 
         }
     }
     
     @Override
     protected void followMotors() {
-        if(leftSlave != null){
-            leftSlave.follow(leftMaster);
+        if(leftFollower != null){
+            leftFollower.follow(leftMaster);
         }
-        if(rightSlave != null){
-            rightSlave.follow(rightMaster);
+        if(rightFollower != null){
+            rightFollower.follow(rightMaster);
         }
     }
     
@@ -465,14 +457,14 @@ public class DriveBase2020 extends DriveBase {
         differentialDrive.feed();
     }
 
+    /**
+     * Drive a specific distance using Motion magic position control
+     * @param leftPos target position on the left side
+     * @param rightPos target position on the right side
+     */
     @Override
     public void tankDrivePosition( double leftPos, double rightPos)
     {
-        //Note: encoder position: postive (forward) or negative (backward)? <--- looks like correct
-        //position close-loop control
-        // leftMaster.set(ControlMode.Position, metersToTalonPosistion(leftPos));
-        // rightMaster.set(ControlMode.Position, metersToTalonPosistion(rightPos)); 
-
         //motion magic position close-loop control
         leftMaster.set(ControlMode.MotionMagic, metersToTalonPosistion(leftPos));
         rightMaster.set(ControlMode.MotionMagic, metersToTalonPosistion(rightPos));
@@ -480,6 +472,10 @@ public class DriveBase2020 extends DriveBase {
         differentialDrive.feed();
     }
 
+    /**
+     * Obtain the measured raw velocities on both sides
+     * @return double array
+     */
     @Override
     public double[] getMeasuredVelocities() {
         double leftVel = leftMaster.getSelectedSensorVelocity();
@@ -487,6 +483,10 @@ public class DriveBase2020 extends DriveBase {
         return new double[]{leftVel, rightVel};
     }
 
+    /**
+     * Obtain the measured velocity in m/s on both sides
+     * @return double array
+     */
     @Override
     public double[] getMeasuredMetersPerSecond() {
         double[] velTalonUnits = getMeasuredVelocities();
@@ -495,28 +495,41 @@ public class DriveBase2020 extends DriveBase {
         return new double[]{leftVel, rightVel};
     }
 
+    /**
+     * Obtain left encoder position in meters
+     * @return double
+     */
     @Override
     public double getLeftPosition() {
         return talonPosistionToMeters(leftMaster.getSelectedSensorPosition());
     }
 
+    /**
+     * Obtain right encoder position in meters
+     * @return double
+     */
     @Override
     public double getRightPosition() {
         return talonPosistionToMeters(rightMaster.getSelectedSensorPosition());
     }
 
+    /**
+     * Obtain left encoder position in raw unit
+     * @return double
+     */
     @Override
     public double getLeftEncoderPosition() {
         return leftMaster.getSelectedSensorPosition();
     }
 
+    /**
+     * Obtain right encoder position in raw unit
+     * @return double
+     */
     @Override
     public double getRightEncoderPosition() {
         return rightMaster.getSelectedSensorPosition();
     }
-
-
-
 
     /**
      * Converting Talon ticks to meters
