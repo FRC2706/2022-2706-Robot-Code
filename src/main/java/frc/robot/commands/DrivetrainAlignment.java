@@ -209,7 +209,7 @@ public class DrivetrainAlignment extends CommandBase {
     // m_distance = m_deltaTheta*3.14*Config.drivetrainRotateDiameter/360.0;
    
     //use the trend line: deltaTheta --> distance
-    m_distance = sign(m_deltaTheta)*(0.00205*Math.abs(m_deltaTheta)+0.0601);
+    m_distance = Math.signum(m_deltaTheta)*(0.00205*Math.abs(m_deltaTheta)+0.0601);
 
     //use the trend polynomial
     //m_distance = sign(m_deltaTheta)*(0.0592 + 0.00209*Math.abs(m_deltaTheta) - 0.000000171*m_deltaTheta*m_deltaTheta);
@@ -272,18 +272,6 @@ public class DrivetrainAlignment extends CommandBase {
     else if ( m_deltaTheta < -180 )
     {
       m_deltaTheta += 360;
-    }
-  }
-
-  public double sign(double input)
-  {
-    if(input > 0)
-    {
-      return 1.00;
-    }
-    else
-    {
-      return -1.00;
     }
   }
 
