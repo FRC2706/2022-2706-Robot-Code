@@ -72,9 +72,9 @@ public class Config {
     /**
      * PLACE IDS OF ROBOTS HERE
      **/
-    //ID 0 is comp 2020 bot
-    //ID 1 is practice 2020 comp bot
-    //ID 2 is mini-robot (Beetle)
+    //ID 0 is Rapid React competition bot
+    //ID 1 is Rapid React practice bot
+    //ID 2 is Beetle
     //ID 3 is Mergonaut (Deep Space Chassis)
     //
     
