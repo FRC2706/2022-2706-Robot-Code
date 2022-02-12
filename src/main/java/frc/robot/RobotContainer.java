@@ -235,7 +235,7 @@ public class RobotContainer {
         logger.info("Selectors: " + selectorOne);
 
         // Testing forced numbers
-        int selectFolder = 5;//3;
+        int selectFolder = 3;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
