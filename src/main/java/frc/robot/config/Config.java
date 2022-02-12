@@ -226,14 +226,19 @@ public class Config {
     // Frc-characterization data
     // id0: CompBot 
     // id1: PracBot - Previous: 3.24, 0.343 Parking Lot: 1.33, 2.89, 0.164 LargerSpace: 1.15, 2.84, 2
-    // id2: Minibot - church parking lot 1.32, 4.65, 0.5
+    // id2: Beetle - church parking lot 1.32, 4.65, 0.5; 
+    //              - Turkish Center Carpet: 1.0251, 3.7758, 0.72224
+    //              - Competition Carpet: 1.1848, 4.766, 1.2249 (forward/backward)
+    //              - Competition Carpet: 2.5335, 3.0167, 1.2117 (rotation)
     // id3: DS Robot - Church Parking Lot 1.28, 3.13, 0.463
-    public static double ksVolts = robotSpecific(1.1, 1.15, 1.32, 1.28);
-    public static double kvVoltSecondsPerMeter = robotSpecific(3.03, 2.84, 4.65, 3.13);
-    public static double kaVoltSecondsSquaredPerMeter = robotSpecific(0.4, 0.4, 0.5, 0.463);
+    public static double ksVolts = robotSpecific(1.1, 1.15, 1.1848, 1.28);
+    public static double kvVoltSecondsPerMeter = robotSpecific(3.03, 2.84, 4.766, 3.13);
+    public static double kaVoltSecondsSquaredPerMeter = robotSpecific(0.4, 0.4, 1.2249, 0.463);
 
     // Track width and kinematics
-    public static double kTrackWidth = robotSpecific(0.6, 0.57, 0.3136, 0.569);
+    // id2: Beetle on competition carpet 0.34928
+    //                parking lot: 0.3136
+    public static double kTrackWidth = robotSpecific(0.6, 0.57, 0.34928, 0.569);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     // Ramsete Max Velocity and max acceleration
@@ -305,12 +310,14 @@ public class Config {
     // id0: 
     // id1:
     // id2: church parking lot: 0.0434
+    //      Turkish center carpet: forward/backward kp = 1.0805, rotation kp = 1.3199
+    //      Competition carpet: forward/backward kp = 2.2772, rotation kp = 2.2083
     // id3: 0.0888 from church parking lot, 0.0105 from basement -> averaged to 0.05 (idk but it worked)
     // kF:
     // id2: (Beetle) based on 75% output
     public static int DRIVETRAIN_SLOTID_RAMSETE = 1;
     public static double RAMSETE_KF = robotSpecific(0.0, 0.0, 0.38, 0.0);
-    public static double RAMSETE_KP = robotSpecific(0.03, 0.0207, 0.0434, 0.05); //0.0884//0.0105
+    public static double RAMSETE_KP = robotSpecific(0.03, 0.0207, 2.2772, 0.05); //0.0884//0.0105
     public static double RAMSETE_KI = 0;
     public static double RAMSETE_KD = 0; //maybe set to some value
     public static double RAMSETE_ALLOWABLE_PID_ERROR = 0; // <- never stop the P loop from running
@@ -318,9 +325,9 @@ public class Config {
 
     public static int DRIVETRAIN_SLOTID_ALIGNMENT = 2;
     public static double ALIGNMENT_KF = 0.42;//0.38;
-    public static double ALIGNMENT_KP = 0.0434;//0.05;//0.0434; 
+    public static double ALIGNMENT_KP = 2.2083;
     public static double ALIGNMENT_KI = 0;
-    public static double ALIGNMENT_KD = 0.03; //maybe set to some value
+    public static double ALIGNMENT_KD = 0.03; 
     public static double ALIGNMENT_ALLOWABLE_PID_ERROR = 0; // <- never stop the P loop from running
 
 

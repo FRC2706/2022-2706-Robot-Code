@@ -161,11 +161,11 @@ public class RobotContainer {
             new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(controlFrontRinglight);
             
             //Rear small ring light
-            //Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
-            //new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(controlRearSmallRinglight);
+            Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
+            new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(controlRearSmallRinglight);
             
-            Command printX = new PrintOdometry();
-            new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(printX);
+            //Command printX = new PrintOdometry();
+            //new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(printX);
 
             //Rear large ring light
             Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
@@ -235,7 +235,7 @@ public class RobotContainer {
         logger.info("Selectors: " + selectorOne);
 
         // Testing forced numbers
-        int selectFolder = 3;
+        int selectFolder = 5;//3;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
