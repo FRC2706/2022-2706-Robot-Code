@@ -209,10 +209,14 @@ public class DrivetrainAlignment extends CommandBase {
     // m_distance = m_deltaTheta*3.14*Config.drivetrainRotateDiameter/360.0;
    
     //use the trend line: deltaTheta --> distance
-    m_distance = Math.signum(m_deltaTheta)*(0.00205*Math.abs(m_deltaTheta)+0.0601);
+    //Beetle in basement
+    //m_distance = Math.signum(m_deltaTheta)*(0.00205*Math.abs(m_deltaTheta)+0.0601);
 
-    //use the trend polynomial
-    //m_distance = sign(m_deltaTheta)*(0.0592 + 0.00209*Math.abs(m_deltaTheta) - 0.000000171*m_deltaTheta*m_deltaTheta);
+    //use the trend polynomial (Beetle in basement)
+    //m_distance = Math.signum(m_deltaTheta)*(0.0592 + 0.00209*Math.abs(m_deltaTheta) - 0.000000171*m_deltaTheta*m_deltaTheta);
+
+    //Beetle on competition carpet
+    m_distance =  Math.signum(m_deltaTheta)*(0.00309*Math.abs(m_deltaTheta)+0.0068);
 
     m_targetDeltaPositionMeter = m_distance;
   }
