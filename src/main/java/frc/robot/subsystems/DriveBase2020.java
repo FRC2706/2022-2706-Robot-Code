@@ -193,9 +193,10 @@ public class DriveBase2020 extends DriveBase {
         talonConfig.slot2.kD = Config.ALIGNMENT_KD;
         talonConfig.slot2.allowableClosedloopError = Config.ALIGNMENT_ALLOWABLE_PID_ERROR;
         //Motion Magic Closed-Loop Configs
-        talonConfig.motionAcceleration = metersToTalonPosistion(0.6); //6m/s^2
-        talonConfig.motionCruiseVelocity = metersToTalonPosistion(0.2); //2 metter/sec
-        talonConfig.motionCurveStrength = 3;    
+        //tuned for Beetle on competition carpet: Acceleration=0.6, Velocity=0.15, Strength=6.
+        talonConfig.motionAcceleration   = metersToTalonPosistion(0.6); //6m/s^2
+        talonConfig.motionCruiseVelocity = metersToTalonPosistion(0.15); //1.5 m/sec
+        talonConfig.motionCurveStrength  = 6;    
         
         //Current limiting for drivetrain master motors.
         if (Config.MOTOR_CURRENT_LIMIT == true) {

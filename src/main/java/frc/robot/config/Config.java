@@ -309,9 +309,10 @@ public class Config {
     // P Values from characterization:
     // id0: 
     // id1:
-    // id2: church parking lot: 0.0434
+    // id2: church parking lot: kp = 0.0434
     //      Turkish center carpet: forward/backward kp = 1.0805, rotation kp = 1.3199
     //      Competition carpet: forward/backward kp = 2.2772, rotation kp = 2.2083
+    //      tuned for competition carpet: kF=0.38; kP=2.3; kI = 0; kD= 0.03. Works perfectly.
     // id3: 0.0888 from church parking lot, 0.0105 from basement -> averaged to 0.05 (idk but it worked)
     // kF:
     // id2: (Beetle) based on 75% output
@@ -324,8 +325,8 @@ public class Config {
     public static double RAMSETE_VOLTAGE_COMPENSATION = 12;
 
     public static int DRIVETRAIN_SLOTID_ALIGNMENT = 2;
-    public static double ALIGNMENT_KF = 0.42;//0.38;
-    public static double ALIGNMENT_KP = 2.2083;
+    public static double ALIGNMENT_KF = 0.38;
+    public static double ALIGNMENT_KP = 2.3;
     public static double ALIGNMENT_KI = 0;
     public static double ALIGNMENT_KD = 0.03; 
     public static double ALIGNMENT_ALLOWABLE_PID_ERROR = 0; // <- never stop the P loop from running
@@ -377,8 +378,10 @@ public class Config {
     public static FluidConstant<Integer> FEEDERSUBSYSTEM_IZONE = new FluidConstant<>("FeederSubsystemIZONE", 120)
                 .registerToTable(Config.constantsTable);
     
+    //CANdle CAN ID
+    public static final int CANDLE_ID = -1;
 
-    //Sensor ports of analog inputs on Mini-Robot
+    //Sensor ports of analog inputs on Beetle
     public static final int MINIROBOT_MB1043_ANALOG_PORT = 4;
     public static final int MINIROBOT_MB1013_ANALOG_PORT = 5;
     public static final int MINIROBOT_2Y0A02_ANALOG_PORT = 6;
