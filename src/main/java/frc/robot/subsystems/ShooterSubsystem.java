@@ -26,6 +26,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkMaxPIDController m_pidController;
     private RelativeEncoder m_encoder;
 
+    //@todo: put these values as constant configs for competition
+    //       or make them configurable from the network table (network listener for debug)
     // PID values (currently set for protobot's shooter)
     public static FluidConstant<Double> P_SHOOTERSUBSYSTEM = new FluidConstant<>
             ("P_ShooterSubsystem", 0.0025).registerToTable(Config.constantsTable);
@@ -39,19 +41,20 @@ public class ShooterSubsystem extends SubsystemBase {
     public static FluidConstant<Double> F_SHOOTERSUBSYSTEM = new FluidConstant<>
             ("F_ShooterSubsystem", 0.0002).registerToTable(Config.constantsTable);
 
-    public static FluidConstant<Integer> SETPOINT_RPM = new FluidConstant<>
-            ("setpointRPM", 0).registerToTable(Config.constantsTable);
+    int targetRPM = 0;
 
     double kMaxOutput = 1;
     double kMinOutput = -1;
-
-    private final int RPM_TOLERANCE = 75;
 
     private ShooterSubsystem() {
 
         // Initialize the subsystem if the shooter exists
         if (Config.SHOOTER_MOTOR != -1) {
             initializeSubsystem();
+        }
+        else
+        {
+            m_shooter = null;
         }
     }
 
@@ -72,7 +75,6 @@ public class ShooterSubsystem extends SubsystemBase {
         m_shooter.setInverted(true);
 
         m_pidController.setOutputRange(kMinOutput, kMaxOutput);
-
         m_pidController.setFF(F_SHOOTERSUBSYSTEM.get());
         m_pidController.setP(P_SHOOTERSUBSYSTEM.get());
         m_pidController.setI(I_SHOOTERSUBSYSTEM.get());
@@ -93,14 +95,18 @@ public class ShooterSubsystem extends SubsystemBase {
      * Returns the singleton instance for the ShooterSubsystem
      */
     public static ShooterSubsystem getInstance() {
-        return ShooterHolder.INSTANCE_SHOOTER;
+        if ( ShooterHolder.INSTANCE_SHOOTER.isActive())
+            return ShooterHolder.INSTANCE_SHOOTER;
+        else
+            return null;
     }
 
     /**
      * Set the target RPM to ramp up to.
      */
     public void setTargetRPM(int inputRPM) {
-        SETPOINT_RPM.setValue(inputRPM);
+        targetRPM = inputRPM;
+        m_pidController.setReference(targetRPM, ControlType.kVelocity);
     }
 
     /**
@@ -124,36 +130,8 @@ public class ShooterSubsystem extends SubsystemBase {
         return m_shooter.getOutputCurrent();
     }
 
-    /**
-     * Check the actual RPM and compare it with targetRPM to verify that the shooter
-     * is up to necessary speed to fire.
-     */
-    public boolean isAtTargetRPM() {
-        double encoderRPM = m_encoder.getVelocity();
-        return (Math.abs(Config.RPM.get() - encoderRPM) < RPM_TOLERANCE);
-    }
-
     @Override
     public void periodic() {
-        if (m_shooter == null) {
-            return;
-        }
-        if (SETPOINT_RPM.get() <= 0.0) {
-            m_shooter.set(0.0);
-        } else {
-            m_pidController.setReference(SETPOINT_RPM.get(), ControlType.kVelocity);
-        }
-
-        SmartDashboard.putNumber("shooter RPM", m_encoder.getVelocity());
-        SmartDashboard.putNumber("shooter RPM", m_encoder.getVelocity());
-        SmartDashboard.putNumber("shooter temp", getTemperature());
-        SmartDashboard.putNumber("shooter current", getCurrentDraw());
-        SmartDashboard.putBoolean("Is at target RPM", isAtTargetRPM());
+        
     }
-
-
-    /**
-     * Initialization process for the shooter to be run on robots with
-     * this mechanism.
-     */
 }

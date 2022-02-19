@@ -8,21 +8,27 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class SpinUpShooterWithTime extends CommandBase {
 
     private ShooterSubsystem shooterSubsystem;
+    private int targetRPM;
+    private int timeout;
 
-    private boolean doneRamping;
+    //@todo
+    private final int RPM_TOLERANCE = 75;
 
-    private int RPM;
-    private int time;
+    private Timer timer;
 
-    private Timer timer = new Timer();
-
+    //This command with input RPM and time. For debugging.
+    //make a new one AutomaticShooterWithTime cmd.
     public SpinUpShooterWithTime(int RPM, int time) {
+        targetRPM = RPM;
+        timeout   = time;
+
         shooterSubsystem = ShooterSubsystem.getInstance();
-        this.RPM = RPM;
-        this.time = time;
-        if (shooterSubsystem.isActive()) {
+        if (shooterSubsystem != null) 
+        {
             addRequirements(shooterSubsystem);
         }
+
+        timer = new Timer();
     }
 
     @Override
@@ -32,18 +38,39 @@ public class SpinUpShooterWithTime extends CommandBase {
 
     @Override
     public void execute() {
-        shooterSubsystem.setTargetRPM(RPM);
+        if( shooterSubsystem != null )
+        {
+            shooterSubsystem.setTargetRPM(targetRPM);
+        }
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        shooterSubsystem.setTargetRPM(0);
+        //print debug info here
+        SmartDashboard.putNumber("shooter measured RPM", shooterSubsystem.getRPM());
+        SmartDashboard.putNumber("shooter target RPM", targetRPM);
+        SmartDashboard.putNumber("shooter error RPM", targetRPM-shooterSubsystem.getRPM());
+        SmartDashboard.putNumber("shooter temp", shooterSubsystem.getTemperature());
+        SmartDashboard.putNumber("shooter current", shooterSubsystem.getCurrentDraw());
+        SmartDashboard.putBoolean("shooter isTargetRPM", isAtTargetRPM());
+        
+        //stop the shooter
+        shooterSubsystem.setTargetRPM(0);       
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return timer.get() > time;
+        return timer.get() > timeout;
+    }
+
+    /**
+     * Check the actual RPM and compare it with targetRPM to verify that the shooter
+     * is up to necessary speed to fire.
+     */
+    public boolean isAtTargetRPM() {
+        double errorRPM = targetRPM-shooterSubsystem.getRPM();
+        return (Math.abs(errorRPM) < RPM_TOLERANCE);
     }
 }
