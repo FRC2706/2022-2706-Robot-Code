@@ -26,13 +26,12 @@ import frc.robot.commands.DriveWithTime;
 import frc.robot.commands.IndexBall;
 import frc.robot.commands.LowerArm;
 import frc.robot.commands.OuterGoalErrorLoop;
-import frc.robot.commands.RunFeederCommandWithTime;
-import frc.robot.commands.SpinUpShooterWithTime;
 import frc.robot.commands.ramseteAuto.VisionPose.VisionType;
 import frc.robot.config.Config;
 import frc.robot.nettables.VisionCtrlNetTable;
 import frc.robot.subsystems.DriveBaseHolder;
 import frc.robot.subsystems.FeederSubsystem;
+import frc.robot.commands.SpinUpShooterWithTime;
 import frc.robot.Robot;
 
 
@@ -89,7 +88,7 @@ public class AutoRoutines {
             case 2:
             {
                 //Spin up the shooter
-                return new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.7, 7)); //.andThen(new DriveWithTime(0.5, 0.5, 0.5));
+                return new SpinUpShooterWithTime((int) Config.RPM.get(), 7); //.andThen(new DriveWithTime(0.5, 0.5, 0.5));
             }
             case 3: 
             {
@@ -128,11 +127,11 @@ public class AutoRoutines {
                 return new SequentialCommandGroup(
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(new Pose2d(2.8, 1.7, Rotation2d.fromDegrees(-24)))),
                     new InstantCommand(() -> FeederSubsystem.getInstance().setBallsAroundFeeder(0)),
-                    new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.5, 7)),
+                    //new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.5, 7)),
                     new ParallelRaceGroup(new AutoIntakeCommand(), new RamseteCommandMerge(trajectory1, "R5FullR-1")),
                     new RamseteCommandMerge(trajectory2, "R5FullR-2").alongWith(new IndexBall()),
-                    new OuterGoalErrorLoop(true, 3.0),
-                    new ParallelRaceGroup(new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.7, 8)), new AutoIntakeCommand())
+                    new OuterGoalErrorLoop(true, 3.0)
+                   // new ParallelRaceGroup(new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.7, 8)), new AutoIntakeCommand()
                 ); 
             } 
             default:

@@ -142,14 +142,8 @@ public class RobotContainer {
             reverseFeeder = new ReverseFeeder();
             new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(reverseFeeder);
 
-            runFeeder = new RunFeederCommand(-0.3);
-            new JoystickButton(controlStick, XboxController.Button.kY.value).whenHeld(runFeeder);
-
             incrementFeeder = new IncrementFeeder(-FeederSubsystem.FEEDERSUBSYSTEM_INCREMENT_TICKS.get());
             new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(incrementFeeder);
-
-            rampShooterCommand = new SpinUpShooter();
-            new JoystickButton(controlStick, XboxController.Button.kA.value).toggleWhenActive(rampShooterCommand);
 
             moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 2.0);
             new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
