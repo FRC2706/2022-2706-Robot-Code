@@ -26,6 +26,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkMaxPIDController m_pidController;
     private RelativeEncoder m_encoder;
 
+    //@todo: final tuning
+    private final int RPM_TOLERANCE = 75;
+
     //@todo: put these values as constant configs for competition
     //       or make them configurable from the network table (network listener for debug)
     // PID values (currently set for protobot's shooter)
@@ -133,5 +136,14 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         
+    }
+
+    /**
+     * Check the actual RPM and compare it with targetRPM to verify that the shooter
+     * is up to necessary speed to fire.
+     */
+    public boolean isAtTargetRPM() {
+        double errorRPM = targetRPM-getRPM();
+        return (Math.abs(errorRPM) < RPM_TOLERANCE);
     }
 }

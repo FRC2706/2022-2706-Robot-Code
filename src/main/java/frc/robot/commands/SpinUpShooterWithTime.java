@@ -11,16 +11,13 @@ public class SpinUpShooterWithTime extends CommandBase {
     private int targetRPM;
     private int timeout;
 
-    //@todo
-    private final int RPM_TOLERANCE = 75;
-
+    
     private Timer timer;
 
     //This command with input RPM and time. For debugging.
-    //make a new one AutomaticShooterWithTime cmd.
-    public SpinUpShooterWithTime(int RPM, int time) {
+    public SpinUpShooterWithTime(int RPM, int timeout) {
         targetRPM = RPM;
-        timeout   = time;
+        this.timeout   = timeout;
 
         shooterSubsystem = ShooterSubsystem.getInstance();
         if (shooterSubsystem != null) 
@@ -53,7 +50,7 @@ public class SpinUpShooterWithTime extends CommandBase {
         SmartDashboard.putNumber("shooter error RPM", targetRPM-shooterSubsystem.getRPM());
         SmartDashboard.putNumber("shooter temp", shooterSubsystem.getTemperature());
         SmartDashboard.putNumber("shooter current", shooterSubsystem.getCurrentDraw());
-        SmartDashboard.putBoolean("shooter isTargetRPM", isAtTargetRPM());
+        SmartDashboard.putBoolean("shooter isTargetRPM", shooterSubsystem.isAtTargetRPM());
         
         //stop the shooter
         shooterSubsystem.setTargetRPM(0);       
@@ -65,12 +62,5 @@ public class SpinUpShooterWithTime extends CommandBase {
         return timer.get() > timeout;
     }
 
-    /**
-     * Check the actual RPM and compare it with targetRPM to verify that the shooter
-     * is up to necessary speed to fire.
-     */
-    public boolean isAtTargetRPM() {
-        double errorRPM = targetRPM-shooterSubsystem.getRPM();
-        return (Math.abs(errorRPM) < RPM_TOLERANCE);
-    }
+
 }
