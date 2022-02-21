@@ -9,12 +9,11 @@ public class SpinUpShooterWithTime extends CommandBase {
 
     private ShooterSubsystem shooterSubsystem;
     private int targetRPM;
-    private int timeout;
-
+    private double timeout;
     
     private Timer timer;
 
-    //This command with input RPM and time. For debugging.
+    //This command with input RPM and timeout. For debugging.
     public SpinUpShooterWithTime(int RPM, int timeout) {
         targetRPM = RPM;
         this.timeout   = timeout;
@@ -45,9 +44,9 @@ public class SpinUpShooterWithTime extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         //print debug info here
-        SmartDashboard.putNumber("shooter measured RPM", shooterSubsystem.getRPM());
+        SmartDashboard.putNumber("shooter measured RPM", shooterSubsystem.getMeasuredRPM());
         SmartDashboard.putNumber("shooter target RPM", targetRPM);
-        SmartDashboard.putNumber("shooter error RPM", targetRPM-shooterSubsystem.getRPM());
+        SmartDashboard.putNumber("shooter error RPM", targetRPM-shooterSubsystem.getMeasuredRPM());
         SmartDashboard.putNumber("shooter temp", shooterSubsystem.getTemperature());
         SmartDashboard.putNumber("shooter current", shooterSubsystem.getCurrentDraw());
         SmartDashboard.putBoolean("shooter isTargetRPM", shooterSubsystem.isAtTargetRPM());
@@ -61,6 +60,5 @@ public class SpinUpShooterWithTime extends CommandBase {
     public boolean isFinished() {
         return timer.get() > timeout;
     }
-
 
 }
