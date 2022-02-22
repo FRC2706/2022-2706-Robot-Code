@@ -24,8 +24,14 @@ public class AutomaticShooter extends CommandBase {
 
   //todo: can be configured in config file as well
   //todo: measure the radius for the shooting wheel
-  private final double SHOOTER_ANGLE_IN_DEGREES  = 35.0;
-  private final double TARGET_HEIGHT_IN_METERS = 2.64;
+
+  //todo: another shooter angle: 70 with deflector on
+  private final double SHOOTER_ANGLE_DEG = 60.0;
+  private final double SHOOTER_ANGLE_DEG_DEFLECTOR = 70.0;
+  //high goal heigth = 2.64m, low goal heigth = 1.04m
+  private final double HIGH_GOAL_HEIGHT_IN_METERS = 2.64;
+  private final double LOW_GOAL_HEIGHT_IN_METERS = 1.04;
+
   private final double SHOOTER_WHEEL_RADIUS_IN_CM = 7.62; //6 inch diameter
   private final double HALF_OF_GRAVITY = 4.91;
   private final double CONVERSION_NUMBER = 3000;
@@ -35,10 +41,30 @@ public class AutomaticShooter extends CommandBase {
   private final double HUB_X = 1.0;
   private final double HUB_Y = 1.0;
 
+  private final double targetHeight;
+  private final double shooterAngle;
+
   private NetworkTableEntry currentX, currentY;
 
   /** Creates a new AutomaticShooter. */
-  public AutomaticShooter() {
+  public AutomaticShooter( boolean bHighGoal, boolean bDeflector) {
+    if(bHighGoal)
+    {
+      targetHeight = HIGH_GOAL_HEIGHT_IN_METERS;
+    }
+    else
+    {
+      targetHeight = LOW_GOAL_HEIGHT_IN_METERS;
+    }
+
+    if(bDeflector)
+    {
+      shooterAngle = SHOOTER_ANGLE_DEG_DEFLECTOR;
+    }
+    else
+    {
+      shooterAngle = SHOOTER_ANGLE_DEG;
+    }
     // Use addRequirements() here to declare subsystem dependencies.
     shooterSubsystem = ShooterSubsystem.getInstance();
     if (shooterSubsystem != null) 
@@ -100,11 +126,13 @@ public class AutomaticShooter extends CommandBase {
     getDistance();
 
     //option1: calculate the target RPM: formula
-    //option2: map the distance to the target RPM
     double targetV  = initVelocity();
     targetRPM       = (int) velocityToRPM (targetV);
 
-    SmartDashboard.putNumber("Target distance: ", targetDistance);
+    //option2: map the distance to the target RPM
+
+    SmartDashboard.putNumber("Target Velocity: (m/2)", targetV);
+    SmartDashboard.putNumber("Target distance: (m)", targetDistance);
     SmartDashboard.putNumber("Target RPM", targetRPM);
   }
 
@@ -127,7 +155,7 @@ public class AutomaticShooter extends CommandBase {
   }
 
   double initVelocity() {
-    double dCheck = Math.tan(SHOOTER_ANGLE_IN_DEGREES)*targetDistance - TARGET_HEIGHT_IN_METERS;
+    double dCheck = Math.tan(shooterAngle)*targetDistance - targetHeight;
     double dTemp;
 
     //unit: m/s
@@ -135,11 +163,12 @@ public class AutomaticShooter extends CommandBase {
     if (dCheck > 0)
     {
          dTemp = Math.sqrt(HALF_OF_GRAVITY/dCheck);
-         dInitVelocity = targetDistance/Math.cos(SHOOTER_ANGLE_IN_DEGREES) * dTemp;
+         dInitVelocity = targetDistance/Math.cos(shooterAngle) * dTemp;
 
-         if((dInitVelocity*Math.sin(SHOOTER_ANGLE_IN_DEGREES)) < Math.sqrt(4*4.91*TARGET_HEIGHT_IN_METERS))
+         if((dInitVelocity*Math.sin(shooterAngle)) < Math.sqrt(4*HALF_OF_GRAVITY*targetHeight))
          {
           dInitVelocity = 0.0;
+          System.out.println("WARNING! Not suitable for shooting!");  
          }
     }
     else

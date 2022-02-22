@@ -109,6 +109,7 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setTargetRPM(int inputRPM) {
         targetRPM = inputRPM;
         m_pidController.setReference(targetRPM, ControlType.kVelocity);
+
     }
 
     /**
