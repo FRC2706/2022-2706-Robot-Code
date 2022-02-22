@@ -26,6 +26,9 @@ public class ShooterSubsystem extends SubsystemBase {
     private SparkMaxPIDController m_pidController;
     private RelativeEncoder m_encoder;
 
+    //@todo: final tuning
+    private final int RPM_TOLERANCE = 75;
+
     //@todo: put these values as constant configs for competition
     //       or make them configurable from the network table (network listener for debug)
     // PID values (currently set for protobot's shooter)
@@ -45,6 +48,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     double kMaxOutput = 1;
     double kMinOutput = -1;
+
+    private static final ShooterSubsystem INSTANCE_SHOOTER = new ShooterSubsystem();
 
     private ShooterSubsystem() {
 
@@ -81,22 +86,19 @@ public class ShooterSubsystem extends SubsystemBase {
         m_pidController.setD(D_SHOOTERSUBSYSTEM.get());
 
         m_shooter.setSmartCurrentLimit(60);
+
     }
 
     public boolean isActive() {
         return m_shooter != null;
     }
 
-    private static class ShooterHolder {
-        private static final ShooterSubsystem INSTANCE_SHOOTER = new ShooterSubsystem();
-    }
-
     /**
      * Returns the singleton instance for the ShooterSubsystem
      */
     public static ShooterSubsystem getInstance() {
-        if ( ShooterHolder.INSTANCE_SHOOTER.isActive())
-            return ShooterHolder.INSTANCE_SHOOTER;
+        if (INSTANCE_SHOOTER.isActive())
+            return INSTANCE_SHOOTER;
         else
             return null;
     }
@@ -107,12 +109,13 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setTargetRPM(int inputRPM) {
         targetRPM = inputRPM;
         m_pidController.setReference(targetRPM, ControlType.kVelocity);
+
     }
 
     /**
      * Return the motor velocity (RPM) measured by the encoder
      */
-    public double getRPM() {
+    public double getMeasuredRPM() {
         return m_encoder.getVelocity();
     }
 
@@ -133,5 +136,14 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         
+    }
+
+    /**
+     * Check the actual RPM and compare it with targetRPM to verify that the shooter
+     * is up to necessary speed to fire.
+     */
+    public boolean isAtTargetRPM() {
+        double errorRPM = targetRPM - getMeasuredRPM();
+        return (Math.abs(errorRPM) < RPM_TOLERANCE);
     }
 }
