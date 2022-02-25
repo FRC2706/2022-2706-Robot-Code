@@ -1,13 +1,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
 import frc.robot.config.FluidConstant;
 
-public class IntakeSubsystem extends ConditionalSubsystemBase {
+public class IntakeSubsystem extends SubsystemBase {
     /**
      * The Singleton instance of this IntakeSubsystem. External classes should
      * use the {@link #getInstance()} method to get the instance.
@@ -15,26 +16,48 @@ public class IntakeSubsystem extends ConditionalSubsystemBase {
     private final static IntakeSubsystem INSTANCE = new IntakeSubsystem();
 
     // The supplier of the intake speed
-    private final static FluidConstant<Double> INTAKE_SPEED = new FluidConstant<>("intake-target-speed", 1.0d)
+    //@todo: final tuning
+    private final static FluidConstant<Double> INTAKE_SPEED = new FluidConstant<>("intake-target-speed", 0.5d)
             .registerToTable(Config.constantsTable);
 
     // The intake motor (if any)
-    private TalonSRX intakeMotor;
-
+    private CANSparkMax intakeMotor;
+ 
     /**
      * Creates a new instance of this IntakeSubsystem.
      * This constructor is private since this class is a Singleton. External classes
      * should use the {@link #getInstance()} method to get the instance.
      */
-    private IntakeSubsystem() {
-
-        createCondition("operatorActivated", SubsystemConditionStates.TELEOP);
-        createCondition("autoActivated", SubsystemConditionStates.AUTO);
-        if (Config.INTAKE_MOTOR != -1) {
-            intakeMotor = new TalonSRX(Config.INTAKE_MOTOR);
-            intakeMotor.setInverted(true);
+    private IntakeSubsystem() 
+    {
+        if (Config.INTAKE_MOTOR != -1) 
+        {         
+            initializeSubsystem();
+        }
+        else
+        {
+            intakeMotor = null;
         }
         
+    }
+
+    /**
+     * Initialization process for the shooter to be run on robots with this
+     * mechanism.
+     */
+    private void initializeSubsystem() {
+
+        intakeMotor = new CANSparkMax(Config.INTAKE_MOTOR, MotorType.kBrushless);
+
+        // Factory Default to prevent unexpected behaviour
+        intakeMotor.restoreFactoryDefaults();
+
+        intakeMotor.setInverted(true);
+        intakeMotor.setSmartCurrentLimit(60);
+    }
+
+    public boolean isActive() {
+        return intakeMotor != null;
     }
 
     /**
@@ -43,21 +66,24 @@ public class IntakeSubsystem extends ConditionalSubsystemBase {
      * classes, rather than the constructor to get the instance of this class.
      */
     public static IntakeSubsystem getInstance() {
-        return INSTANCE;
+        if (INSTANCE.isActive() == true)
+            return INSTANCE;
+        else
+            return null;
+    }
+
+    public void runIntake()
+    {
+        intakeMotor.set(INTAKE_SPEED.get());
+    }
+
+    public void stopIntake()
+    {
+        intakeMotor.set(0d);
     }
 
     @Override
     public void periodic() {
-        // The intakeMotor will be null if the Config entry for it was -1. (Meaning this robot doesn't have an intake)
-        if (intakeMotor == null) return;
 
-        // If all the conditions are met, set the motor to run at the target speed, otherwise stop.
-        if (checkConditions()) {
-            intakeMotor.set(ControlMode.PercentOutput, INTAKE_SPEED.get());
-        } else {
-            intakeMotor.set(ControlMode.PercentOutput, 0d);
-        }
     }
 }
-
-//hi
