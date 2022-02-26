@@ -18,7 +18,7 @@ public class IndexerSubSystem extends SubsystemBase {
   private CANSparkMax m_indexer;
   private SparkMaxPIDController m_pidController;
   private RelativeEncoder m_encoder;
-  private double targetRPM;
+  private double targetRPM = 200;
   private double incrementalPosition = 2;
   public double kMaxOutput = 1;
   public double kMinOutput = -1;
@@ -108,6 +108,9 @@ public class IndexerSubSystem extends SubsystemBase {
 
       m_pidController.setReference(targetRPM, ControlType.kVelocity, 1);
 
+    }
+    public void stop() {
+      m_indexer.stopMotor();
     }
 
   @Override
