@@ -6,30 +6,54 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
+import frc.robot.config.Config;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.CANdle.LEDStripType;
 
 public class Bling extends SubsystemBase {
 
-
-  private static Bling INSTANCE = new Bling();
+  public CANdle candle; 
+  private static Bling INSTANCE = null;
   /**
    * Creates a new Bling.
    */
   private Bling() {
+    if ( Config.CANDLE_ID != -1 )
+    {
+      candle = new CANdle( Config.CANDLE_ID );
 
+      CANdleConfiguration config = new CANdleConfiguration();
+      config.stripType = LEDStripType.RGB; // set the strip type to RGB
+      config.brightnessScalar = 0.5; // dim the LEDs to half brightness
+
+      candle.configAllSettings(config);
+    }
+    else
+    {
+      candle = null;
+    }    
 
   }
 
   public static Bling getINSTANCE() {
+    if ( Config.CANDLE_ID == -1 )
+    {
+      INSTANCE = null;
+    }
+    else if ( INSTANCE == null )
+    {
+      INSTANCE = new Bling();
+    }
+
     return INSTANCE;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-  
-
-    
+      
   }
 }
