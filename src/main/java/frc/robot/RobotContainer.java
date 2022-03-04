@@ -169,12 +169,18 @@ public class RobotContainer {
             // Command readTrajectory = new ReadPath( Robot.trajectoryRead, "Slalom path");
             // new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readTrajectory);
 
-            //Turn a specific angle
-            moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 0.5);
-            new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
+            Command readIrSensor = new ReadAnalogInput(7);
+            new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(readIrSensor);
 
-            Command alignment = new DrivetrainAlignment();
-            new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
+            Command readColorSensor = new ReadColorSensor();
+            new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
+
+            //Turn a specific angle
+            // moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 0.5);
+            // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
+
+            // Command alignment = new DrivetrainAlignment();
+            // new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
         }
         
         if (Config.ARM_TALON != -1) {
