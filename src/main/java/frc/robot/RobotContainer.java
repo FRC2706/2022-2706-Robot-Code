@@ -130,77 +130,6 @@ public class RobotContainer {
         sensitiveDriving = new SensitiveDriverControl(driverStick);
         new JoystickButton(driverStick, XboxController.Button.kLeftBumper.value).whenHeld(sensitiveDriving);
  
-        if(Config.robotId != 2) //any robot except for Beetle
-        {
-            // Instantiate the intake command and bind it
-            intakeCommand = new OperatorIntakeCommand();
-            new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeCommand);
-
-            positionPowercell = new PositionPowercellCommand();
-            new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).toggleWhenActive(positionPowercell, true);
-
-            reverseFeeder = new ReverseFeeder();
-            new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(reverseFeeder);
-
-            incrementFeeder = new IncrementFeeder(-FeederSubsystem.FEEDERSUBSYSTEM_INCREMENT_TICKS.get());
-            new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(incrementFeeder);
-
-            moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 2.0);
-            new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
-        }
-        else //specifically for Beetle
-        {
-            //Front ring light
-            Command controlFrontRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_FRONT);
-            new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(controlFrontRinglight);
-            
-            //Rear small ring light
-            Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
-            new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(controlRearSmallRinglight);
-            
-            //Command printX = new PrintOdometry();
-            //new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(printX);
-
-            //Rear large ring light
-            Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
-            new JoystickButton(driverStick, XboxController.Button.kY.value).whenPressed(controlRearLargeRinglight);
-                    
-            //Read a trajectory
-            // Command readTrajectory = new ReadPath( Robot.trajectoryRead, "Slalom path");
-            // new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readTrajectory);
-
-            Command readIrSensor = new ReadAnalogInput(7);
-            new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(readIrSensor);
-
-            Command readColorSensor = new ReadColorSensor();
-            new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
-
-            //Turn a specific angle
-            // moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 0.5);
-            // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
-
-            // Command alignment = new DrivetrainAlignment();
-            // new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
-        }
-        
-        if (Config.ARM_TALON != -1) {
-            reverseArmManually = new MoveArmManuallyCommand(-0.35);
-            new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(reverseArmManually);
-
-            moveArm = new MoveArmManuallyCommand(10);
-            new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(moveArm);
-
-            Command lowerArm = new LowerArm();
-            // new JoystickButton(driverStick, XboxController.Button.kB.value).whenActive(lowerArm);
-        }
-
-        if (Config.FEEDER_SUBSYSTEM_TALON != -1) {
-            // Set default command of feeder to index when limit is pressed
-            Command indexFeeder = new IndexBall().andThen(new DoNothingForSeconds(1.5));
-            Command pollInputSwitch = new PollLimitSwitch(indexFeeder, FeederSubsystem.getInstance(), FeederSubsystem::isBallAtInput);
-            FeederSubsystem.getInstance().setDefaultCommand(pollInputSwitch); 
-        }
-
         // Command resetHeading = new InstantCommand(() -> DriveBaseHolder.getInstance().resetHeading(Rotation2d.fromDegrees(0)));
         // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenActive(resetHeading);
 
@@ -208,8 +137,96 @@ public class RobotContainer {
         Command resetPose = new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose( new Pose2d()));
         new JoystickButton(driverStick, XboxController.Button.kStart.value).whenActive(resetPose);
         
-        Command printOdometry = new PrintOdometry();
-        new JoystickButton(driverStick, XboxController.Button.kBack.value).whenPressed(printOdometry);
+        switch ( Config.robotId )
+        {
+            case 0:
+            {
+                // Instantiate the intake command and bind it
+                intakeCommand = new OperatorIntakeCommand();
+                new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeCommand);
+              
+                positionPowercell = new PositionPowercellCommand();
+                new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).toggleWhenActive(positionPowercell, true);
+                
+                reverseFeeder = new ReverseFeeder();
+                new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(reverseFeeder);
+                
+                incrementFeeder = new IncrementFeeder(-FeederSubsystem.FEEDERSUBSYSTEM_INCREMENT_TICKS.get());
+                new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(incrementFeeder);
+                
+                moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 2.0);
+                new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
+                
+                if (Config.ARM_TALON != -1) {
+                    reverseArmManually = new MoveArmManuallyCommand(-0.35);
+                    new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(reverseArmManually);
+        
+                    moveArm = new MoveArmManuallyCommand(10);
+                    new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(moveArm);
+        
+                    Command lowerArm = new LowerArm();
+                    // new JoystickButton(driverStick, XboxController.Button.kB.value).whenActive(lowerArm);
+                }
+        
+                if (Config.FEEDER_SUBSYSTEM_TALON != -1) {
+                    // Set default command of feeder to index when limit is pressed
+                    Command indexFeeder = new IndexBall().andThen(new DoNothingForSeconds(1.5));
+                    Command pollInputSwitch = new PollLimitSwitch(indexFeeder, FeederSubsystem.getInstance(), FeederSubsystem::isBallAtInput);
+                    FeederSubsystem.getInstance().setDefaultCommand(pollInputSwitch); 
+                }
+                break;
+            }
+            case 1: 
+            {
+                break;
+            }
+            case 2: //Beetle
+            {
+                //Front ring light
+                Command controlFrontRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_FRONT);
+                new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(controlFrontRinglight);
+                
+                //Rear small ring light
+                Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
+                new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(controlRearSmallRinglight);
+                
+                //Command printX = new PrintOdometry();
+                //new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(printX);
+
+                //Rear large ring light
+                Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
+                new JoystickButton(driverStick, XboxController.Button.kY.value).whenPressed(controlRearLargeRinglight);
+                        
+                //Read a trajectory
+                // Command readTrajectory = new ReadPath( Robot.trajectoryRead, "Slalom path");
+                // new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readTrajectory);
+
+                Command readIrSensor = new ReadAnalogInput(7);
+                new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(readIrSensor);
+
+                Command readColorSensor = new ReadColorSensor();
+                new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
+
+                //Turn a specific angle
+                // moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 0.5);
+                // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
+
+                // Command alignment = new DrivetrainAlignment();
+                // new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
+
+                break;
+            }
+            case 3: //Cosmobot
+            {
+                Command setBling =  new SetBlingPattern(2);
+                new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(setBling);
+
+                break;
+            }
+            default:
+                break;
+        }
+
     }
 
     /**
@@ -235,7 +252,7 @@ public class RobotContainer {
         logger.info("Selectors: " + selectorOne);
 
         // Testing forced numbers
-        int selectFolder = 3;
+        int selectFolder = 5;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
