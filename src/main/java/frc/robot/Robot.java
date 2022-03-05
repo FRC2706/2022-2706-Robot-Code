@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -55,8 +54,6 @@ public class Robot extends TimedRobot {
     private Boolean bFromTeleMode;
     //flag to indicate the real match
     private Boolean bRealMatch;
-
-    AnalogInput analogInput;
 
     //imported trajectory
     //on RoboRio at "/home/lvuser/deploy";
@@ -135,9 +132,9 @@ public class Robot extends TimedRobot {
         try {
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
             trajectoryRead = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-         } catch (IOException ex) {
+        } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-         }
+        }
 
         DriveBaseHolder.init();
         m_robotContainer = new RobotContainer();
@@ -150,8 +147,6 @@ public class Robot extends TimedRobot {
         bRealMatch = false;
 
         logger.addHandler(Config.logFileHandler);
-
-        analogInput = new AnalogInput(3);
 
         DriverStation.silenceJoystickConnectionWarning(true);
         
@@ -258,13 +253,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
-
-
-
         CommandScheduler.getInstance().run();
-
-
-        SmartDashboard.putNumber("Analog Light Sensor", analogInput.getValue());
     }
 
     @Override

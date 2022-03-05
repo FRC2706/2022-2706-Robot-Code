@@ -38,7 +38,7 @@ public class SetBlingPattern extends InstantCommand {
           setRainbow();
           break;
         case 2:
-          setFire();
+          bling.setPurple();
           break;
         case 3:
           setStrobe();

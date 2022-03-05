@@ -87,10 +87,10 @@ public class Config {
     private static Class<? extends DriveBase> Pre2020DriveBase = DriveBasePre2020.class.asSubclass(DriveBase.class);
     private static Class<? extends DriveBase> Post2020DriveBase = DriveBase2020.class.asSubclass(DriveBase.class);
     public static Class<? extends DriveBase> DRIVEBASE_CLASS = robotSpecific(Post2020DriveBase, Post2020DriveBase, Post2020DriveBase, Post2020DriveBase, Pre2020DriveBase, Pre2020DriveBase, Pre2020DriveBase, Pre2020DriveBase, Pre2020DriveBase);
-    public static int RIGHT_FRONT_MOTOR = robotSpecific(2, 2, 1, 2, 2);
-    public static int RIGHT_REAR_MOTOR = robotSpecific(4, 4, -1, 4, 4);
-    public static int LEFT_FRONT_MOTOR = robotSpecific(1, 1, -1, 1, 1);
-    public static int LEFT_REAR_MOTOR = robotSpecific(3, 3, 2, 3, 3);
+    public static int RIGHT_FRONT_MOTOR = robotSpecific(2, 2, 1, 3, 2);
+    public static int RIGHT_REAR_MOTOR = robotSpecific(4, 4, -1, 9, 4);
+    public static int LEFT_FRONT_MOTOR = robotSpecific(1, 1, -1, 5, 1);
+    public static int LEFT_REAR_MOTOR = robotSpecific(3, 3, 2, 7, 3);
     public static int INTAKE_MOTOR = robotSpecific(6, 6, -1, -1, -1);
     public static int SHOOTER_MOTOR = robotSpecific(5, 5, -1, -1, 16); //protobot is 16
     public static int CLIMBER_TALON = robotSpecific(10, 10, -1, -1, 16);
@@ -98,10 +98,10 @@ public class Config {
     public static int INDEXER_MOTOR = robotSpecific(6, 9, -1, -1);
     public static int RIGHT_MASTER = robotSpecific(RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR);
     public static int LEFT_MASTER = robotSpecific(LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR, LEFT_REAR_MOTOR, LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR);
+    public static int CANDLE_ID = robotSpecific(-1, -1, -1, 15);
 
-
-    public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, true, false, false);
-    public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, true, false, false);
+    public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
+    public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
     
     // Invert talons to consider forward as forward (same practice for all objects)
     public static boolean LEFT_FRONT_INVERTED = robotSpecific(false, false, false, false);
@@ -120,7 +120,7 @@ public class Config {
     public static boolean MOTOR_CURRENT_LIMIT = true;   //Enable or disable motor current limiting.
 
     public static int TALON_5_PLYBOY = robotSpecific(-1, -1, -1, -1, -1, 5);
-    public static int PIGEON_ID = robotSpecific(CLIMBER_TALON, CLIMBER_TALON, 27, LEFT_REAR_MOTOR, LEFT_REAR_MOTOR, TALON_5_PLYBOY);
+    public static int PIGEON_ID = robotSpecific(CLIMBER_TALON, CLIMBER_TALON, 27, 27, LEFT_REAR_MOTOR, TALON_5_PLYBOY);
     
     public static int ANALOG_SELECTOR_ONE = robotSpecific(0, 0, -1, -1, -1, 0);
     public static int ANALOG_SELECTOR_TWO = robotSpecific(0, 0, -1, -1, -1, 0);
@@ -130,7 +130,7 @@ public class Config {
 
     public static int FEEDER_SUBSYSTEM_TALON = robotSpecific(8, 8, -1, -1);
 
-    public static int shooterAnalogSensor = robotSpecific(8, 8);
+    public static int shooterAnalogSensor = robotSpecific(8, 8, -1, -1);
 
     public static int FEEDER_SWITCH_INPUT = robotSpecific(9, 9, -1, -1);
     public static int FEEDER_SWITCH_OUTPUT = robotSpecific(8, 8, -1, -1);
@@ -231,7 +231,7 @@ public class Config {
     //              - Turkish Center Carpet: 1.0251, 3.7758, 0.72224
     //              - Competition Carpet: 1.1848, 4.766, 1.2249 (forward/backward)
     //              - Competition Carpet: 2.5335, 3.0167, 1.2117 (rotation)
-    // id3: DS Robot - Church Parking Lot 1.28, 3.13, 0.463
+    // id3: Cosmobot - scaled robot. Not charaterized yet.
     public static double ksVolts = robotSpecific(1.1, 1.15, 1.1848, 1.28);
     public static double kvVoltSecondsPerMeter = robotSpecific(3.03, 2.84, 4.766, 3.13);
     public static double kaVoltSecondsSquaredPerMeter = robotSpecific(0.4, 0.4, 1.2249, 0.463);
@@ -379,9 +379,6 @@ public class Config {
     public static FluidConstant<Integer> FEEDERSUBSYSTEM_IZONE = new FluidConstant<>("FeederSubsystemIZONE", 120)
                 .registerToTable(Config.constantsTable);
     
-    //CANdle CAN ID
-    public static final int CANDLE_ID = -1;
-
     //Sensor ports of analog inputs on Beetle
     public static final int MINIROBOT_MB1043_ANALOG_PORT = 4;
     public static final int MINIROBOT_MB1013_ANALOG_PORT = 5;

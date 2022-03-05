@@ -51,6 +51,11 @@ public class Bling extends SubsystemBase {
     return INSTANCE;
   }
 
+  public void setPurple()
+  {
+    candle.setLEDs(138, 43, 226);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
