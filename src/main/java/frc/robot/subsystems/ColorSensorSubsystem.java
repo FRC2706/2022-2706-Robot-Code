@@ -28,6 +28,7 @@ public class ColorSensorSubsystem extends SubsystemBase {
   public static final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
   public static final Color kRedTarget = new Color(0.561, 0.232, 0.114);
   public static final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
+  private static final ColorSensorSubsystem INSTANCE_COLOR_SENSOR_SUBSYSTEM = new ColorSensorSubsystem();
 
   public ColorSensorSubsystem() {
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
@@ -39,6 +40,10 @@ public class ColorSensorSubsystem extends SubsystemBase {
     colorMatch.addColorMatch(kRedTarget);
     colorMatch.addColorMatch(kYellowTarget);
   }
+  public static ColorSensorSubsystem getInstance() {
+    return INSTANCE_COLOR_SENSOR_SUBSYSTEM;
+  }
+
 
   /**
    * Returns the red value of the sensed color
@@ -127,5 +132,10 @@ public class ColorSensorSubsystem extends SubsystemBase {
   public Color getClosestColor(double confidence) {
     colorMatch.setConfidenceThreshold(confidence);
     return colorMatch.matchClosestColor(getColor()).color;
+  }
+
+  public boolean isDetected() {
+    //TODO
+    return false;
   }
 }
