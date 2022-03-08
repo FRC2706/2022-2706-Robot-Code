@@ -92,10 +92,10 @@ public class Config {
     public static int LEFT_FRONT_MOTOR = robotSpecific(1, 1, -1, 5, 1);
     public static int LEFT_REAR_MOTOR = robotSpecific(3, 3, 2, 7, 3);
     public static int INTAKE_MOTOR = robotSpecific(6, 6, -1, -1, -1);
-    public static int SHOOTER_MOTOR = robotSpecific(5, 5, -1, -1, 16); //protobot is 16
+    public static int SHOOTER_MOTOR = robotSpecific(5, 5, 5, -1, 16); //Beetle prototype on Beetle:5
     public static int CLIMBER_TALON = robotSpecific(10, 10, -1, -1, 16);
     public static int AGITATOR_MOTOR = robotSpecific(9, 9, -1, -1);
-    public static int INDEXER_MOTOR = robotSpecific(6, 9, -1, -1);
+    public static int INDEXER_MOTOR = robotSpecific(6, 9, 7, -1); //Beetle prototype on Beetle:7
     public static int RIGHT_MASTER = robotSpecific(RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR);
     public static int LEFT_MASTER = robotSpecific(LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR, LEFT_REAR_MOTOR, LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR);
     public static int CANDLE_ID = robotSpecific(-1, -1, -1, 15);
@@ -132,6 +132,7 @@ public class Config {
 
     public static int shooterAnalogSensor = robotSpecific(8, 8, -1, -1);
 
+    public static int INDEXER_SWITCH = robotSpecific(-1,-1,7,-1);//Beetle prototype
     public static int FEEDER_SWITCH_INPUT = robotSpecific(9, 9, -1, -1);
     public static int FEEDER_SWITCH_OUTPUT = robotSpecific(8, 8, -1, -1);
     public static int FEEDER_MAX_BALLS = 3;

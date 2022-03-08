@@ -170,9 +170,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Outer Port Yaw", VisionCtrlNetTable.yawToOuterPort.get());
         SmartDashboard.putNumber("PowerCell Distance", VisionCtrlNetTable.distanceToPowerCell.get());
         SmartDashboard.putNumber("Pigeon Yaw", DriveBaseHolder.getInstance().getOdometryHeading().getDegrees());
-        if (Config.SHOOTER_MOTOR != -1)
-            SmartDashboard.putBoolean("Limit Switch", FeederSubsystem.isBallAtOutput());
-
+        
         CommandScheduler.getInstance().run();
 
         //The following 2 lines run Drivebase methods that tell shuffleboard what the motor current draw is and if motor current limiting is active.

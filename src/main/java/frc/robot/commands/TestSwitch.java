@@ -4,34 +4,33 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ColorSensorSubsystem;
+import frc.robot.config.Config;
+import frc.robot.subsystems.SwitchSubsystem;
 
-public class ReadColorSensor extends CommandBase {
+public class TestSwitch extends CommandBase {
+  private SwitchSubsystem switchDetector;
 
-  ColorSensorSubsystem colorSensor;
- 
-  /** Creates a new ReadColorSensor. */
-  public ReadColorSensor() {
-
-    colorSensor = new ColorSensorSubsystem();
+  /** Creates a new TestSwitch. */
+  public TestSwitch() {
+    switchDetector = new SwitchSubsystem(Config.INDEXER_SWITCH);
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(colorSensor);
+    addRequirements(switchDetector);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if( switchDetector.isDetected() == true )
+    {
+      System.out.println("Switch detected");
+    }
 
+  //  System.out.println("test result: "+ switchDetector.getResult());
   }
 
   // Called once the command ends or is interrupted.

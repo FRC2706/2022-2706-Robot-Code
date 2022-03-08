@@ -7,38 +7,48 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorSensorV3.RawColor;
 
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ColorSensorSubsystem extends SubsystemBase {
-  private final ColorSensorV3 colorSensor;
-  private final ColorMatch colorMatch;
+  private final int AVERAGE_NUMBER = 10;
+  private final int RED_THRESHOLD = 130;
+  private final int RED_PROXIMITY_THRESHOLD = 60;
+  private final int BLUE_THRESHOLD = 110;
+  private final int BLUE_PROXIMITY_THRESHOLD = 55;
+  
+  private NetworkTableEntry redValue, blueValue, irValue, proximityValue; 
+  private NetworkTableEntry detectRed, detectBlue;
+  private LinearFilter filterRed, filterBlue, filterIR, filterProximity;
 
-  /**
-   * Copied values from RevRobotic's ColorMatch example
-   * https://github.com/REVrobotics/Color-Sensor-v3-Examples/blob/master/Java/Color%20Match/src/main/java/frc/robot/Robot.java
-   */
-  public static final Color kBlueTarget = new Color(0.143, 0.427, 0.429);
-  public static final Color kGreenTarget = new Color(0.197, 0.561, 0.240);
-  public static final Color kRedTarget = new Color(0.561, 0.232, 0.114);
-  public static final Color kYellowTarget = new Color(0.361, 0.524, 0.113);
+  private boolean bDetectedCargo = false;
+
+  private final ColorSensorV3 colorSensor;
   private static final ColorSensorSubsystem INSTANCE_COLOR_SENSOR_SUBSYSTEM = new ColorSensorSubsystem();
 
   public ColorSensorSubsystem() {
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
-    colorMatch = new ColorMatch();
+  
+    var table = NetworkTableInstance.getDefault().getTable("colorSensor");
+    redValue = table.getEntry("redValue");
+    blueValue = table.getEntry("blueValue");
+    irValue = table.getEntry("IRValue");
+    proximityValue = table.getEntry("proximityValue");
+    detectRed = table.getEntry("detectRed");
+    detectBlue = table.getEntry("detectBlue");
+    filterRed = LinearFilter.movingAverage(AVERAGE_NUMBER);
+    filterBlue = LinearFilter.movingAverage(AVERAGE_NUMBER);
+    filterIR = LinearFilter.movingAverage(AVERAGE_NUMBER);
+    filterProximity = LinearFilter.movingAverage(AVERAGE_NUMBER);
 
-    // Add the target values to the ColorMatch class
-    colorMatch.addColorMatch(kBlueTarget);
-    colorMatch.addColorMatch(kGreenTarget);
-    colorMatch.addColorMatch(kRedTarget);
-    colorMatch.addColorMatch(kYellowTarget);
   }
   public static ColorSensorSubsystem getInstance() {
     return INSTANCE_COLOR_SENSOR_SUBSYSTEM;
@@ -108,34 +118,47 @@ public class ColorSensorSubsystem extends SubsystemBase {
     return colorSensor.getRawColor();
   }
 
-  /**
-   * Sets the confidence threshold for color matching
-   */
-  public void setColorMatchConfidence(double confidence) {
-    colorMatch.setConfidenceThreshold(confidence);
-  }
-
-  /**
-   * Reads the current color value from the sensor and returns the closest match
-   * 
-   * @return The exact color value of the closest match
-   */
-  public Color getClosestColor() {
-    return colorMatch.matchClosestColor(getColor()).color;
-  }
-
-  /**
-   * Reads the current color value from the sensor and returns the closest match
-   * 
-   * @return The exact color value of the closest match
-   */
-  public Color getClosestColor(double confidence) {
-    colorMatch.setConfidenceThreshold(confidence);
-    return colorMatch.matchClosestColor(getColor()).color;
-  }
-
   public boolean isDetected() {
-    //TODO
-    return false;
+    return bDetectedCargo;
+  }
+
+  @Override
+  public void periodic() {
+
+    //proximity sensor range: 1cm to 10cm
+
+    /* Used instance variables
+    int proximity = colorSensor.getProximity();
+    int ir = colorSensor.getIR();
+    int red = colorSensor.getRed();
+    int blue = colorSensor.getBlue();
+    */
+
+    double red = filterRed.calculate(colorSensor.getRed());
+    double blue = filterBlue.calculate(colorSensor.getBlue());
+    double ir = filterIR.calculate(colorSensor.getIR());
+    double proximity = filterProximity.calculate(colorSensor.getProximity());
+
+    boolean isRed = false;
+    boolean isBlue = false;
+
+    //First, detect the red cargo. If it is not detected, then detect the blue cargo
+    if(red > RED_THRESHOLD && proximity > RED_PROXIMITY_THRESHOLD)
+    {
+      isRed = true;
+    }
+    else if(blue > BLUE_THRESHOLD && proximity > BLUE_PROXIMITY_THRESHOLD)
+    {
+      isBlue = true;
+    }
+
+    redValue.setNumber((double)red);
+    blueValue.setNumber((double)blue);
+    irValue.setNumber((double)ir);
+    proximityValue.setNumber((double) proximity);
+    detectRed.setBoolean(isRed);
+    detectBlue.setBoolean(isBlue);
+   
+    bDetectedCargo = isRed || isBlue;
   }
 }

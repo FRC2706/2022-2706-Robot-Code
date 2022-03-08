@@ -4,39 +4,35 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.filter.LinearFilter;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ColorSensorSubsystem;
+import frc.robot.subsystems.IndexerSubSystem;
 
-public class ReadColorSensor extends CommandBase {
+public class IndexerForShooter extends CommandBase {
+  private IndexerSubSystem indexer;
 
-  ColorSensorSubsystem colorSensor;
- 
-  /** Creates a new ReadColorSensor. */
-  public ReadColorSensor() {
+  /** Creates a new IndexerForShooter. */
+  public IndexerForShooter() {
+    indexer = IndexerSubSystem.getInstance();
 
-    colorSensor = new ColorSensorSubsystem();
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(colorSensor);
+    addRequirements(indexer);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    indexer.runForShooter();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    indexer.stop();
+  }
 
   // Returns true when the command should end.
   @Override

@@ -33,16 +33,19 @@ public class ShooterSubsystem extends SubsystemBase {
     //       or make them configurable from the network table (network listener for debug)
     // PID values (currently set for protobot's shooter)
     public static FluidConstant<Double> P_SHOOTERSUBSYSTEM = new FluidConstant<>
-            ("P_ShooterSubsystem", 0.0025).registerToTable(Config.constantsTable);
+            ("P_ShooterSubsystem", 6.5e-5).registerToTable(Config.constantsTable);
 
     public static FluidConstant<Double> I_SHOOTERSUBSYSTEM = new FluidConstant<>
-            ("I_ShooterSubsystem", 0.0).registerToTable(Config.constantsTable);
+            ("I_ShooterSubsystem", 1.0e-6).registerToTable(Config.constantsTable);
 
     public static FluidConstant<Double> D_SHOOTERSUBSYSTEM = new FluidConstant<>
-            ("D_ShooterSubsystem", 0.004).registerToTable(Config.constantsTable);
+            ("D_ShooterSubsystem", 4.0e-6).registerToTable(Config.constantsTable);
 
     public static FluidConstant<Double> F_SHOOTERSUBSYSTEM = new FluidConstant<>
-            ("F_ShooterSubsystem", 0.0002).registerToTable(Config.constantsTable);
+            ("F_ShooterSubsystem", 0.000175).registerToTable(Config.constantsTable);
+
+    public static FluidConstant<Double> IZONE_SHOOTERSUBSYSTEM = new FluidConstant<>
+            ("IZONE_ShooterSubsystem", 200.0).registerToTable(Config.constantsTable);
 
     int targetRPM = 0;
 
@@ -77,13 +80,14 @@ public class ShooterSubsystem extends SubsystemBase {
         m_pidController = m_shooter.getPIDController();
         m_encoder = m_shooter.getEncoder();
 
-        m_shooter.setInverted(true);
+        m_shooter.setInverted(false);
 
         m_pidController.setOutputRange(kMinOutput, kMaxOutput);
         m_pidController.setFF(F_SHOOTERSUBSYSTEM.get());
         m_pidController.setP(P_SHOOTERSUBSYSTEM.get());
         m_pidController.setI(I_SHOOTERSUBSYSTEM.get());
         m_pidController.setD(D_SHOOTERSUBSYSTEM.get());
+        m_pidController.setIZone(IZONE_SHOOTERSUBSYSTEM.get());
 
         m_shooter.setSmartCurrentLimit(60);
 
