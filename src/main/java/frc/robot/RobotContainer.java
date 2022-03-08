@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.config.Config;
@@ -187,26 +188,44 @@ public class RobotContainer {
                 new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(controlFrontRinglight);
                 
                 //Rear small ring light
-                Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
-                new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(controlRearSmallRinglight);
+               // Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
+               // new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(controlRearSmallRinglight);
                 
                 //Command printX = new PrintOdometry();
                 //new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(printX);
 
                 //Rear large ring light
-                Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
-                new JoystickButton(driverStick, XboxController.Button.kY.value).whenPressed(controlRearLargeRinglight);
+               // Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
+                //new JoystickButton(driverStick, XboxController.Button.kY.value).whenPressed(controlRearLargeRinglight);
                         
                 //Read a trajectory
                 // Command readTrajectory = new ReadPath( Robot.trajectoryRead, "Slalom path");
                 // new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readTrajectory);
 
-                Command readIrSensor = new ReadAnalogInput(7);
-                new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(readIrSensor);
+                // Command readIrSensor = new ReadAnalogInput(7);
+                // new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(readIrSensor);
 
-                Command readColorSensor = new ReadColorSensor();
-                new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
+               // Command readSwitch = new TestSwitch();
+                //new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(readSwitch);
 
+            //    Command readColorSensor = new ReadColorSensor();
+             //   new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
+
+                //for shooter command
+                Command wait1s = new WaitCommand(1);
+                Command delayIndexer = wait1s.andThen( new IndexerForShooter());
+                Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(2000, 10), delayIndexer);
+                new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(shooter);
+
+                //Command testIndexer = new TestIndexer();
+                //new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(testIndexer);
+
+                //indexer cargo command
+                Command indexercmd = new IndexerCargo();
+                new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(indexercmd);
+
+                //Command indexerOne = new IndexerOneCargo();
+                //new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(indexerOne);
                 //Turn a specific angle
                 // moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 0.5);
                 // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);

@@ -30,6 +30,7 @@ public class SpinUpShooterWithTime extends CommandBase {
     @Override
     public void initialize() {
         timer.start();
+        timer.reset();
     }
 
     @Override
@@ -53,6 +54,7 @@ public class SpinUpShooterWithTime extends CommandBase {
         
         //stop the shooter
         shooterSubsystem.setTargetRPM(0);       
+        timer.stop();
     }
 
     // Returns true when the command should end.

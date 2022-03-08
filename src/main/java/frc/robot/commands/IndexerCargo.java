@@ -49,19 +49,33 @@ public class IndexerCargo extends CommandBase {
       indexer.stop();
     } else {
       colorSensorDetected = colorSensor.isDetected();
+      if ( colorSensorDetected == true)
+      {
+      //  System.out.println("detected one cargo");
+      }
+
       if (colorSensorDetected == true && colorSensorFirstDetected == false) {
         colorSensorFirstDetected = true;
-
+        System.out.println("start shuffling the cargo");
       }
+      
       if (colorSensorFirstDetected == true) {
         
         indexer.runForIntake();
         counter++;
         
         // TODO tune for 100
-        if (counter > 100) {
+        if (counter > 200) {
           // At this time, the cargo should be in the indexer, and the indexer should stop
+
+          //reset for the next cargo 
           colorSensorFirstDetected = false;
+          colorSensorDetected = false;
+          counter = 0;
+          indexer.setIndexerPosition();
+          System.out.println("stop shuffling the cargo");
+          indexer.stop();
+
         }
       } else {
         indexer.stop();
@@ -71,7 +85,10 @@ public class IndexerCargo extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) 
+  {
+    indexer.stop();
+  }
 
   // Returns true when the command should end.
   @Override

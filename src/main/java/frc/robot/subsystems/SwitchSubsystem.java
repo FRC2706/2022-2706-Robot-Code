@@ -21,12 +21,18 @@ public class SwitchSubsystem extends SubsystemBase {
     }
 
   }
-  public boolean isNotActive() {
+  public boolean isActive() {
     return limitSwitch != null;
 }
   public boolean isDetected(){
-    return limitSwitch.get();
+    //switch default state is open
+    return  limitSwitch.get();
     //to double check the value of get
+  }
+
+  public boolean getResult()
+  {
+    return limitSwitch.get();
   }
   @Override
   public void periodic() {

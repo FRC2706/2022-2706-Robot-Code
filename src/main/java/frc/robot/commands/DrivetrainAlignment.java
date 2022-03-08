@@ -61,7 +61,7 @@ public class DrivetrainAlignment extends CommandBase {
     addRequirements(m_drivebase);
 
     m_timer = new Timer();
-    m_timeout = 2.0;  //seconds //@todo: from config
+    m_timeout = 1.5;  //seconds //@todo: from config
     
     if ( bUsbLogger == true )
     {
