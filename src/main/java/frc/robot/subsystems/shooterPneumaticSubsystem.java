@@ -18,7 +18,6 @@ public class shooterPneumaticSubsystem extends SubsystemBase {
   public shooterPneumaticSubsystem() 
   {
     //@todo: Check the channel ports
-    //assume CTRE PCM uses the default CAN ID = 0
     doubleSolenoidShooter = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID, 
                                                PneumaticsModuleType.CTREPCM,
                                                Config.SHOOTER_PNEUMATIC_FORWARD_CHANNEL,
