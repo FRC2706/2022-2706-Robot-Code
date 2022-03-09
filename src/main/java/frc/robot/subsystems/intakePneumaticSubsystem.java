@@ -18,17 +18,21 @@ public class intakePneumaticSubsystem extends SubsystemBase {
   /** Creates a new intakePneumaticSubsystem. */
   public intakePneumaticSubsystem() 
   {
-    intakeUpDown = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 
+    intakeUpDown = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
+                                      PneumaticsModuleType.CTREPCM, 
                                       Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL_1, 
                                       Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL_1);
-    intakeFloat = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 
+
+    intakeFloat = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
+                                     PneumaticsModuleType.CTREPCM, 
                                      Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL_2, 
                                      Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL_2); 
   }
 
   public boolean isActive()
   {
-    if(Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL_1 == -1 || 
+    if(Config.CTRE_PCM_CAN_ID == -1 ||
+       Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL_1 == -1 || 
        Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL_1 == -1 ||
        Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL_2 == -1 ||
        Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL_2 == -1)

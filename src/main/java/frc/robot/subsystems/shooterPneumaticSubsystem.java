@@ -18,14 +18,18 @@ public class shooterPneumaticSubsystem extends SubsystemBase {
   public shooterPneumaticSubsystem() 
   {
     //@todo: Check the channel ports
-    doubleSolenoidShooter = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 
+    //assume CTRE PCM uses the default CAN ID = 0
+    doubleSolenoidShooter = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID, 
+                                               PneumaticsModuleType.CTREPCM,
                                                Config.SHOOTER_PNEUMATIC_FORWARD_CHANNEL,
                                                Config.SHOOTER_PNEUMATIC_REVERSE_CHANNEL);
   }
 
   public boolean isActive()
   {
-    if(Config.SHOOTER_PNEUMATIC_REVERSE_CHANNEL == -1 || Config.SHOOTER_PNEUMATIC_FORWARD_CHANNEL == -1)
+    if(Config.CTRE_PCM_CAN_ID == -1 || 
+       Config.SHOOTER_PNEUMATIC_REVERSE_CHANNEL == -1 || 
+       Config.SHOOTER_PNEUMATIC_FORWARD_CHANNEL == -1)
     {
       return false;
     } 

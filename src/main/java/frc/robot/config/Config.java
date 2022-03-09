@@ -99,7 +99,7 @@ public class Config {
     public static int RIGHT_MASTER = robotSpecific(RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR);
     public static int LEFT_MASTER = robotSpecific(LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR, LEFT_REAR_MOTOR, LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR);
     public static int CANDLE_ID = robotSpecific(-1, -1, -1, 15);
-    public static int CTRE_PCM_ID = robotSpecific(-1, -1, -1, -1);
+    public static int CTRE_PCM_CAN_ID = robotSpecific(-1, -1, -1, -1);
     
     public static int SHOOTER_PNEUMATIC_FORWARD_CHANNEL = robotSpecific(-1, -1, -1, -1);
     public static int SHOOTER_PNEUMATIC_REVERSE_CHANNEL = robotSpecific(-1, -1, -1, -1);
