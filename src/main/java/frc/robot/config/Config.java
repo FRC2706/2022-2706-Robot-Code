@@ -75,7 +75,7 @@ public class Config {
     //ID 0 is Rapid React competition bot
     //ID 1 is Rapid React practice bot
     //ID 2 is Beetle
-    //ID 3 is Mergonaut (Deep Space Chassis)
+    //ID 3 is Cosmobot (Deep Space Chassis)
     //
     
     // This is a static class which should not be instantiated
@@ -99,6 +99,14 @@ public class Config {
     public static int RIGHT_MASTER = robotSpecific(RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR);
     public static int LEFT_MASTER = robotSpecific(LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR, LEFT_REAR_MOTOR, LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR);
     public static int CANDLE_ID = robotSpecific(-1, -1, -1, 15);
+    public static int CTRE_PCM_CAN_ID = robotSpecific(-1, -1, -1, -1);
+    
+    public static int SHOOTER_PNEUMATIC_FORWARD_CHANNEL = robotSpecific(-1, -1, -1, -1);
+    public static int SHOOTER_PNEUMATIC_REVERSE_CHANNEL = robotSpecific(-1, -1, -1, -1);
+    public static int INTAKE_PNEUMATIC_FORWARD_CHANNEL_1 = robotSpecific(-1, -1, -1, -1);
+    public static int INTAKE_PNEUMATIC_REVERSE_CHANNEL_1 = robotSpecific(-1, -1, -1, -1);
+    public static int INTAKE_PNEUMATIC_FORWARD_CHANNEL_2 = robotSpecific(-1, -1, -1, -1);
+    public static int INTAKE_PNEUMATIC_REVERSE_CHANNEL_2 = robotSpecific(-1, -1, -1, -1);
 
     public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
     public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);

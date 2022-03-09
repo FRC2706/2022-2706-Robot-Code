@@ -59,6 +59,7 @@ public class IndexerSubSystem extends SubsystemBase {
         m_pidController.setI(1e-6);
         m_pidController.setD(1e-6);
         m_pidController.setIZone(100);
+        
         //Set max acceleration, velocity, and minimum velocity
         m_pidController.setSmartMotionMaxAccel(1000, 0);
         m_pidController.setSmartMotionMaxVelocity(1200, 0);
@@ -101,9 +102,12 @@ public class IndexerSubSystem extends SubsystemBase {
 
     //Run the intake
     public void runForIntake() {
-      
       //Use smartmotion to go from current position to new position
-      m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0);
+
+      //m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0);
+
+      //Use arbitrary feed forward
+      m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0, 0.5, com.revrobotics.SparkMaxPIDController.ArbFFUnits.kVoltage);
 
     }
 
