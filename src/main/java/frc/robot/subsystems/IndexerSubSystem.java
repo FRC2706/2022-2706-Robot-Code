@@ -18,7 +18,7 @@ public class IndexerSubSystem extends SubsystemBase {
   private CANSparkMax m_indexer;
   private SparkMaxPIDController m_pidController;
   private RelativeEncoder m_encoder;
-  private double targetRPM = 1000;
+  private double targetRPM = 750;//1000;
   private double incrementalPosition = 6;
   public double kMaxOutput = 1;
   public double kMinOutput = -1;
@@ -104,10 +104,10 @@ public class IndexerSubSystem extends SubsystemBase {
     public void runForIntake() {
       //Use smartmotion to go from current position to new position
 
-      //m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0);
+      m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0);
 
       //Use arbitrary feed forward
-      m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0, 0.5, com.revrobotics.SparkMaxPIDController.ArbFFUnits.kVoltage);
+      //m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0, 0.5, com.revrobotics.SparkMaxPIDController.ArbFFUnits.kVoltage);
 
     }
 
