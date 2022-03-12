@@ -48,7 +48,7 @@ public class ClimberSubsystem extends SubsystemBase {
      * Stops the motor
      */
     public void stopClimberMotor() {
-        m_climber.set(0);
+        m_climber.set(ControlMode.PercentOutput, 0);
     }
 
 
