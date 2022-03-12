@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import frc.robot.config.Config;
@@ -18,6 +20,9 @@ public class ClimberSubsystem extends SubsystemBase {
         if (Config.CLIMBER_TALON != -1) {
             initializeSubsystem();
         }
+        else{
+            m_climber = null;
+        }
     }
 
     /**
@@ -25,7 +30,7 @@ public class ClimberSubsystem extends SubsystemBase {
      * mechanism.
      */
     private void initializeSubsystem() {
-        m_climber = new WPI_TalonSRX(Config.CLIMBER_TALON);;
+        m_climber = new WPI_TalonSRX(Config.CLIMBER_TALON);
 
         m_climber.setInverted(true);
     }
@@ -36,8 +41,9 @@ public class ClimberSubsystem extends SubsystemBase {
      */
     public void climb() {
         m_climber.set(1.0);
+        m_climber.set(ControlMode.PercentOutput, 0.05);
+    
     }
-
     /**
      * Stops the motor
      */
@@ -59,7 +65,12 @@ public class ClimberSubsystem extends SubsystemBase {
      * Returns the singleton instance for the ShooterSubsystem
      */
     public static ClimberSubsystem getInstance() {
-        return ClimberHolder.INSTANCE_CLIMBER;
+        if(ClimberHolder.INSTANCE_CLIMBER.isActive()==true){
+            return ClimberHolder.INSTANCE_CLIMBER;
+        }
+        else{
+            return null;
+        }
     }
 
     /**
