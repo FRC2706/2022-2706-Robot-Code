@@ -20,7 +20,7 @@ public class IndexerOneCargo extends CommandBase {
   public IndexerOneCargo() {
 
     indexer = IndexerSubSystem.getInstance();
-    switchDetector = new SwitchSubsystem(7);
+    switchDetector = new SwitchSubsystem(Config.INDEXER_MOTOR);
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(indexer);

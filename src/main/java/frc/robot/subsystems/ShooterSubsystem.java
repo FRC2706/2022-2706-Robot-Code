@@ -89,7 +89,7 @@ public class ShooterSubsystem extends SubsystemBase {
         m_pidController.setD(D_SHOOTERSUBSYSTEM.get());
         m_pidController.setIZone(IZONE_SHOOTERSUBSYSTEM.get());
 
-        m_shooter.setSmartCurrentLimit(60);
+        m_shooter.setSmartCurrentLimit(80);
 
     }
 
