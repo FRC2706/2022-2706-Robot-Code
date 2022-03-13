@@ -47,6 +47,11 @@ public class ShooterSubsystem extends SubsystemBase {
     public static FluidConstant<Double> IZONE_SHOOTERSUBSYSTEM = new FluidConstant<>
             ("IZONE_ShooterSubsystem", 200.0).registerToTable(Config.constantsTable);
 
+    public static FluidConstant<Double> TARGET_RPM = new FluidConstant<>
+            ("TARGET_RPM_ShooterSubsystem", 2000.0).registerToTable(Config.constantsTable);
+    //note: during the test to find a good RPM, use TARGET_RPM in setTargetRPM(int inputRPM).
+   
+
     int targetRPM = 0;
 
     double kMaxOutput = 1;
@@ -112,6 +117,9 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public void setTargetRPM(int inputRPM) {
         targetRPM = inputRPM;
+        //using network table, only for testing
+        //targetRPM = (int) ((double) TARGET_RPM.getValue());
+
         m_pidController.setReference(targetRPM, ControlType.kVelocity);
 
     }
