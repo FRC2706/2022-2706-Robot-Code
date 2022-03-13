@@ -10,16 +10,23 @@ import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.config.Config;
+import frc.robot.config.FluidConstant;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IndexerSubSystem extends SubsystemBase {
   
+  public static FluidConstant<Double> INDEXER_RPM = new FluidConstant<>
+  ("Indexer_PRM",700.).registerToTable(Config.constantsTable);
+  
+  public static FluidConstant<Double> INDEXER_INCREMENTPOS= new FluidConstant<>
+  ("Indexer_IncrementPos", 6.0).registerToTable(Config.constantsTable);
+
   //Instance Variables
   private CANSparkMax m_indexer;
   private SparkMaxPIDController m_pidController;
   private RelativeEncoder m_encoder;
-  private double targetRPM = 750;//1000;
-  private double incrementalPosition = 6;
+  private double targetRPM = INDEXER_RPM.getValue();//700;//1000;
+  private double incrementalPosition = INDEXER_INCREMENTPOS.getValue();//6.0
   public double kMaxOutput = 1;
   public double kMinOutput = -1;
   public double currentPosition = 0;
@@ -106,7 +113,8 @@ public class IndexerSubSystem extends SubsystemBase {
 
       m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0);
 
-      //Use arbitrary feed forward
+      //Use arbitrary feed forward: 0.5 voltage
+      //note: arbitraryFF could be dependent on if there is already one cargo in the indexer
       //m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0, 0.5, com.revrobotics.SparkMaxPIDController.ArbFFUnits.kVoltage);
 
     }
