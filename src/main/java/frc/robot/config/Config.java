@@ -100,6 +100,7 @@ public class Config {
     public static int LEFT_MASTER = robotSpecific(LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR, LEFT_REAR_MOTOR, LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR);
     public static int CANDLE_ID = robotSpecific(-1, -1, -1, 15);
     public static int CTRE_PCM_CAN_ID = robotSpecific(-1, -1, -1, -1);
+    public static int ANALOG_SELECTOR_PORT = robotSpecific(-1, -1, 0, -1);
     
     public static int SHOOTER_PNEUMATIC_FORWARD_CHANNEL = robotSpecific(-1, -1, -1, -1);
     public static int SHOOTER_PNEUMATIC_REVERSE_CHANNEL = robotSpecific(-1, -1, -1, -1);
@@ -248,7 +249,7 @@ public class Config {
     // Track width and kinematics
     // id2: Beetle on competition carpet 0.34928
     //                parking lot: 0.3136
-    public static double kTrackWidth = robotSpecific(0.6, 0.57, 0.34928, 0.569);
+    public static double kTrackWidth = robotSpecific(0.6, 0.57, 0.3136, 0.569);
     public static DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackWidth);
 
     // Ramsete Max Velocity and max acceleration
@@ -265,7 +266,7 @@ public class Config {
     public static double METERS_IN_ONE_FOOT = 0.3048;
     // Scale the field
     private static double defaultScale = 1.0;
-    public static double scaleField = robotSpecific(defaultScale, defaultScale, 0.5, defaultScale);
+    public static double scaleField = robotSpecific(defaultScale, defaultScale, 1.0, defaultScale);
 
     // VISION STUFF BELOW
     // Allowable vision error in meters
@@ -328,7 +329,7 @@ public class Config {
     // id2: (Beetle) based on 75% output
     public static int DRIVETRAIN_SLOTID_RAMSETE = 1;
     public static double RAMSETE_KF = robotSpecific(0.0, 0.0, 0.38, 0.0);
-    public static double RAMSETE_KP = robotSpecific(0.03, 0.0207, 2.2772, 0.05); //0.0884//0.0105
+    public static double RAMSETE_KP = robotSpecific(0.03, 0.0207, 0.0434, 0.05); //0.0884//0.0105
     public static double RAMSETE_KI = 0;
     public static double RAMSETE_KD = 0; //maybe set to some value
     public static double RAMSETE_ALLOWABLE_PID_ERROR = 0; // <- never stop the P loop from running
