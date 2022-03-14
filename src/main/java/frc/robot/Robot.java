@@ -60,6 +60,12 @@ public class Robot extends TimedRobot {
     String trajectoryJSON = "./paths/scaled3.wpilib.json";
     public static Trajectory trajectoryRead = new Trajectory();
 
+    String threeOption1p1 = "./paths/3Option1P1.json";
+    public static Trajectory trajectoryReadO1P1 = new Trajectory();
+
+    String threeOption1p2 = "./paths/3Option1P2.json";
+    public static Trajectory trajectoryReadO1P2 = new Trajectory();
+
     /**
      * Determines if the robot is in a real match.
      *
@@ -132,6 +138,13 @@ public class Robot extends TimedRobot {
         try {
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
             trajectoryRead = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+            
+            Path trajectoryPathO1P1 = Filesystem.getDeployDirectory().toPath().resolve(threeOption1p1);
+            trajectoryReadO1P1 = TrajectoryUtil.fromPathweaverJson(trajectoryPathO1P1);
+
+            Path trajectoryPathO1P2 = Filesystem.getDeployDirectory().toPath().resolve(threeOption1p2);
+            trajectoryReadO1P2 = TrajectoryUtil.fromPathweaverJson(trajectoryPathO1P2);
+
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
         }

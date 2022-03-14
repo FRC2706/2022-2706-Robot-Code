@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoIntakeCommand;
 import frc.robot.commands.DriveWithTime;
-import frc.robot.commands.IndexBall;
 import frc.robot.commands.LowerArm;
 import frc.robot.commands.OuterGoalErrorLoop;
 import frc.robot.commands.ramseteAuto.VisionPose.VisionType;
@@ -54,6 +53,7 @@ public class AutoRoutines {
 
     public static Command getAutoCommandBeetle(int selectorOne)
     {
+        System.out.println("Auto selectorOne: "+selectorOne);
         switch(selectorOne)
         {
             case 0:
@@ -65,6 +65,16 @@ public class AutoRoutines {
                 return new SequentialCommandGroup (
                         new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRead.getInitialPose())),
                         ramsete1);
+            case 2:
+                RamseteCommandMerge ramsete2 = new RamseteCommandMerge(Robot.trajectoryReadO1P1, "Trajectory-Read");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryReadO1P1.getInitialPose())),
+                    ramsete2);
+            case 3:
+                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryReadO1P2, "Trajectory-Read");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryReadO1P2.getInitialPose())),
+                    ramsete3);
             default:
                 return null;
         }
@@ -129,7 +139,7 @@ public class AutoRoutines {
                     new InstantCommand(() -> FeederSubsystem.getInstance().setBallsAroundFeeder(0)),
                     //new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.5, 7)),
                     new ParallelRaceGroup(new AutoIntakeCommand(), new RamseteCommandMerge(trajectory1, "R5FullR-1")),
-                    new RamseteCommandMerge(trajectory2, "R5FullR-2").alongWith(new IndexBall()),
+                 //   new RamseteCommandMerge(trajectory2, "R5FullR-2").alongWith(new IndexBall()),
                     new OuterGoalErrorLoop(true, 3.0)
                    // new ParallelRaceGroup(new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.7, 8)), new AutoIntakeCommand()
                 ); 
