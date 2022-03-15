@@ -30,9 +30,9 @@ public class DrivetrainAlignment extends CommandBase {
   double m_currRightPosMeter;
 
   //@todo: move to Config
-  //Hub center coordinates
-  double m_hubX = 1.8;
-  double m_hubY = 2.5;
+  //Hub center coordinates in meters
+  double m_hubX = 4.115;
+  double m_hubY = 8.23;
 
   double m_theta;
   double m_deltaTheta;
@@ -47,7 +47,7 @@ public class DrivetrainAlignment extends CommandBase {
 
   private boolean bDone;
   private boolean bTimeouted;
-  private final double m_errMeters = 0.01;// 1cm
+  private final double m_errMeters = 0.01;//in meter, 1cm
 
   // USB Logger
   private boolean bUsbLogger = false;
@@ -115,6 +115,7 @@ public class DrivetrainAlignment extends CommandBase {
     m_currLeftPosMeter =  m_drivebase.getLeftPosition();
     m_currRightPosMeter = m_drivebase.getRightPosition();
 
+    //@todo: this may not be accurate. The reason is after the command finishes, the robot still may move.
     if ( (Math.abs(m_currLeftPosMeter - m_targetLeftPositionMeter) < m_errMeters )
          && ( Math.abs(m_currRightPosMeter - m_targetRightPositionMeter) < m_errMeters ))
     {

@@ -32,7 +32,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.config.Config;
-import frc.robot.sensors.AnalogSelector;
 import frc.robot.subsystems.*;
 import frc.robot.commands.ramseteAuto.AutoRoutines;
 import frc.robot.commands.ramseteAuto.DriveToWaypoint;
@@ -70,18 +69,16 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...    
   private Joystick driverStick;
   private Joystick controlStick;
-  public AnalogSelector analogSelectorOne;
-  private AnalogSelector analogSelectorTwo;
+  private AnalogSelectorSubsystem analogSelectorOne;
   private Command driveCommand;
+  private Command sensitiveDriving;
+  //todo: Clean up code
   private Command intakeCommand;
   private Command reverseFeeder;
   private Command moveToOuterPort;
   private Command reverseArmManually;
-  private Command positionPowercell;
-  private Command rampShooterCommand;
-  private Command incrementFeeder;
   private Command moveArm;
-  private Command sensitiveDriving;
+  private Command positionPowerCell;
   private Logger logger = Logger.getLogger("RobotContainer");
   private final double AUTO_DRIVE_TIME = 1.0;
   private final double AUTO_LEFT_MOTOR_SPEED = 0.2;
@@ -92,17 +89,9 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer() {
-       // UltrasoundSensor sensor = new UltrasoundSensor();
-
+       
         // Configure the button bindings
         logger.addHandler(Config.logFileHandler);
-        if (Config.ANALOG_SELECTOR_ONE != -1) {
-            analogSelectorOne = new AnalogSelector(Config.ANALOG_SELECTOR_ONE);
-        }
-
-        ArmSubsystem armSubsystem;
-        if (Config.ARM_TALON != -1)
-            armSubsystem = ArmSubsystem.getInstance();
 
         configureButtonBindings();
 
@@ -111,8 +100,7 @@ public class RobotContainer {
         if (Config.robotId == 2) {
             RelaySubsystem.getInstance();
         }
-
-    
+   
     }
 
     /**
@@ -146,14 +134,14 @@ public class RobotContainer {
                 intakeCommand = new OperatorIntakeCommand();
                 new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeCommand);
               
-                positionPowercell = new PositionPowercellCommand();
-                new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).toggleWhenActive(positionPowercell, true);
+                positionPowerCell = new PositionPowercellCommand();
+                new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).toggleWhenActive(positionPowerCell, true);
                 
                 reverseFeeder = new ReverseFeeder();
                 new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(reverseFeeder);
                 
-                incrementFeeder = new IncrementFeeder(-FeederSubsystem.FEEDERSUBSYSTEM_INCREMENT_TICKS.get());
-                new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(incrementFeeder);
+                // incrementFeeder = new IncrementFeeder(-FeederSubsystem.FEEDERSUBSYSTEM_INCREMENT_TICKS.get());
+                // new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(incrementFeeder);
                 
                 moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 2.0);
                 new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
@@ -169,12 +157,12 @@ public class RobotContainer {
                     // new JoystickButton(driverStick, XboxController.Button.kB.value).whenActive(lowerArm);
                 }
         
-                if (Config.FEEDER_SUBSYSTEM_TALON != -1) {
-                    // Set default command of feeder to index when limit is pressed
-                    Command indexFeeder = new IndexBall().andThen(new DoNothingForSeconds(1.5));
-                    Command pollInputSwitch = new PollLimitSwitch(indexFeeder, FeederSubsystem.getInstance(), FeederSubsystem::isBallAtInput);
-                    FeederSubsystem.getInstance().setDefaultCommand(pollInputSwitch); 
-                }
+                // if (Config.FEEDER_SUBSYSTEM_TALON != -1) {
+                //     // Set default command of feeder to index when limit is pressed
+                //     Command indexFeeder = new IndexBall().andThen(new DoNothingForSeconds(1.5));
+                //     Command pollInputSwitch = new PollLimitSwitch(indexFeeder, FeederSubsystem.getInstance(), FeederSubsystem::isBallAtInput);
+                //     FeederSubsystem.getInstance().setDefaultCommand(pollInputSwitch); 
+                // }
                 break;
             }
             case 1: 
@@ -184,8 +172,8 @@ public class RobotContainer {
             case 2: //Beetle
             {
                 //Front ring light
-                Command controlFrontRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_FRONT);
-                new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(controlFrontRinglight);
+                //Command controlFrontRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_FRONT);
+                //new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(controlFrontRinglight);
                 
                 //Rear small ring light
                // Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
@@ -195,8 +183,8 @@ public class RobotContainer {
                 //new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(printX);
 
                 //Rear large ring light
-               // Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
-                //new JoystickButton(driverStick, XboxController.Button.kY.value).whenPressed(controlRearLargeRinglight);
+                Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
+                new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(controlRearLargeRinglight);
                         
                 //Read a trajectory
                 // Command readTrajectory = new ReadPath( Robot.trajectoryRead, "Slalom path");
@@ -214,7 +202,7 @@ public class RobotContainer {
                 //for shooter command
                 Command wait1s = new WaitCommand(1);
                 Command delayIndexer = wait1s.andThen( new IndexerForShooter());
-                Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(2000, 10), delayIndexer);
+                Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(900, 20), delayIndexer);
                 new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(shooter);
 
                 //Command testIndexer = new TestIndexer();
@@ -224,6 +212,8 @@ public class RobotContainer {
                 Command indexercmd = new IndexerCargo();
                 new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(indexercmd);
 
+                Command testAnalog = new TestAnalogSelector();
+                new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(testAnalog);
                 //Command indexerOne = new IndexerOneCargo();
                 //new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(indexerOne);
                 //Turn a specific angle
@@ -260,6 +250,8 @@ public class RobotContainer {
         int selectHardCodedPath = 1;
         int selectorOne = 0;
 
+        analogSelectorOne = AnalogSelectorSubsystem.getInstance();
+        
         if (analogSelectorOne != null){
             selectorOne = analogSelectorOne.getIndex();
             System.out.println("SELECTOR SWITCH NOT NULL AND ID " + selectorOne);
@@ -271,7 +263,9 @@ public class RobotContainer {
         logger.info("Selectors: " + selectorOne);
 
         // Testing forced numbers
-        int selectFolder = 5;
+        int selectFolder = 3;
+        //@todo: hard coded here. Remove this line will use analog selector.
+        selectorOne = 2;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
