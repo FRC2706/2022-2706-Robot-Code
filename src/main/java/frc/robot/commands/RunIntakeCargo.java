@@ -12,7 +12,10 @@ public class RunIntakeCargo extends CommandBase {
   /** Creates a new RunPneumaticsIntake. */
   public RunIntakeCargo() {
     intakeCargoSubsystem = IntakeCargoSubsystem.getInstance();
-    addRequirements(intakeCargoSubsystem);
+    if (intakeCargoSubsystem != null)
+    {
+      addRequirements(intakeCargoSubsystem);
+    }
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -23,13 +26,20 @@ public class RunIntakeCargo extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeCargoSubsystem.start();
+    if (intakeCargoSubsystem != null)
+    {
+      intakeCargoSubsystem.start();
+    }
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeCargoSubsystem.stop();
+    if (intakeCargoSubsystem != null)
+    {
+      intakeCargoSubsystem.stop();
+    }
   }
 
   // Returns true when the command should end.
