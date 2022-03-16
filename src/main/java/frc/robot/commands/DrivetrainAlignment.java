@@ -31,8 +31,8 @@ public class DrivetrainAlignment extends CommandBase {
 
   //@todo: move to Config
   //Hub center coordinates in meters
-  double m_hubX = 4.115;
-  double m_hubY = 8.23;
+  double m_hubX = 8.23;
+  double m_hubY = 4.115;
 
   double m_theta;
   double m_deltaTheta;
@@ -214,10 +214,10 @@ public class DrivetrainAlignment extends CommandBase {
     //m_distance = Math.signum(m_deltaTheta)*(0.00205*Math.abs(m_deltaTheta)+0.0601);
 
     //use the trend polynomial (Beetle in basement)
-    //m_distance = Math.signum(m_deltaTheta)*(0.0592 + 0.00209*Math.abs(m_deltaTheta) - 0.000000171*m_deltaTheta*m_deltaTheta);
+    m_distance = Math.signum(m_deltaTheta)*(0.0592 + 0.00209*Math.abs(m_deltaTheta) - 0.000000171*m_deltaTheta*m_deltaTheta);
 
     //Beetle on competition carpet
-    m_distance =  Math.signum(m_deltaTheta)*(0.00309*Math.abs(m_deltaTheta)+0.0068);
+    //m_distance =  Math.signum(m_deltaTheta)*(0.00309*Math.abs(m_deltaTheta)+0.0068);
 
     m_targetDeltaPositionMeter = m_distance;
   }

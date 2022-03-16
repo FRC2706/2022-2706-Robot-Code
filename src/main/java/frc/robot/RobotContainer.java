@@ -200,10 +200,10 @@ public class RobotContainer {
              //   new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
 
                 //for shooter command
-                Command wait1s = new WaitCommand(1);
-                Command delayIndexer = wait1s.andThen( new IndexerForShooter());
-                Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(900, 20), delayIndexer);
-                new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(shooter);
+                //Command wait1s = new WaitCommand(1);
+                //Command delayIndexer = wait1s.andThen( new IndexerForShooter());
+                //Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(900, 20), delayIndexer);
+                //Snew JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(shooter);
 
                 //Command testIndexer = new TestIndexer();
                 //new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(testIndexer);
@@ -220,8 +220,8 @@ public class RobotContainer {
                 // moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 0.5);
                 // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
 
-                // Command alignment = new DrivetrainAlignment();
-                // new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
+                Command alignment = new DrivetrainAlignment();
+                new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
 
                 break;
             }
@@ -265,7 +265,7 @@ public class RobotContainer {
         // Testing forced numbers
         int selectFolder = 3;
         //@todo: hard coded here. Remove this line will use analog selector.
-        selectorOne = 2;
+        selectorOne = 4;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
