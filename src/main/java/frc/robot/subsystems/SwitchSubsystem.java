@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class SwitchSubsystem extends SubsystemBase {
   private DigitalInput limitSwitch;
+  private boolean currentState;
 
   /** Creates a new SwithSubsytem. */
-  public SwitchSubsystem(int switchPort) {
+public SwitchSubsystem(int switchPort) {
     // Initialize the subsystem if the shooter exists
     if (switchPort != -1) {
       limitSwitch = new DigitalInput(switchPort);
+      currentState = limitSwitch.get();
     }
     else
     {
@@ -24,14 +26,26 @@ public class SwitchSubsystem extends SubsystemBase {
   public boolean isActive() {
     return limitSwitch != null;
 }
-  public boolean isDetected(){
-    //switch default state is open
-    return  limitSwitch.get();
-    //to double check the value of get
+public boolean isStateChanged(){
+    //detect the state change
+    //then it doesn't matter the open state is true of false
+    //will have two close detections
+    if(limitSwitch.get() != currentState)
+    {
+      currentState = limitSwitch.get();
+      return true;
+    }
+    else
+    {
+      return false;
+    }
   }
 
+  //Open is false, closed is true
   public boolean getResult()
   {
+    //@todo: add a counter for detection
+    //
     return limitSwitch.get();
   }
   @Override

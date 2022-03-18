@@ -33,6 +33,7 @@ public class TestAnalogSelector extends CommandBase {
     {
       int selectorIndex = m_analogSelector.getIndex();
       System.out.println("selectorIndex: "+selectorIndex);
+      System.out.println("getAverageVoltage(): "+m_analogSelector.getAverageVoltage());
     }
   }
 

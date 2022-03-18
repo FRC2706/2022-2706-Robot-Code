@@ -14,6 +14,7 @@ public class TestSwitch extends CommandBase {
   /** Creates a new TestSwitch. */
   public TestSwitch() {
     switchDetector = new SwitchSubsystem(Config.INDEXER_SWITCH);
+   
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(switchDetector);
   }
@@ -29,8 +30,8 @@ public class TestSwitch extends CommandBase {
     {
       System.out.println("Switch detected");
     }
+    System.out.println("Switch read" + switchDetector.getResult());
 
-  //  System.out.println("test result: "+ switchDetector.getResult());
   }
 
   // Called once the command ends or is interrupted.

@@ -17,16 +17,12 @@ public class IndexerSubSystem extends SubsystemBase {
   
   public static FluidConstant<Double> INDEXER_RPM = new FluidConstant<>
   ("Indexer_PRM",700.).registerToTable(Config.constantsTable);
-  
-  public static FluidConstant<Double> INDEXER_INCREMENTPOS= new FluidConstant<>
-  ("Indexer_IncrementPos", 6.0).registerToTable(Config.constantsTable);
 
   //Instance Variables
   private CANSparkMax m_indexer;
   private SparkMaxPIDController m_pidController;
   private RelativeEncoder m_encoder;
   private double targetRPM = INDEXER_RPM.getValue();//700;//1000;
-  private double incrementalPosition = INDEXER_INCREMENTPOS.getValue();//6.0
   public double kMaxOutput = 1;
   public double kMinOutput = -1;
   public double currentPosition = 0;
@@ -108,10 +104,13 @@ public class IndexerSubSystem extends SubsystemBase {
     }
 
     //Run the intake
-    public void runForIntake() {
+    public void runForIntake( int increPosition) {
       //Use smartmotion to go from current position to new position
 
-      m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0);
+      m_pidController.setReference(currentPosition + increPosition, ControlType.kSmartMotion, 0);
+
+      //use the finxed incrementalPosition
+      //m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0);
 
       //Use arbitrary feed forward: 0.5 voltage
       //note: arbitraryFF could be dependent on if there is already one cargo in the indexer
