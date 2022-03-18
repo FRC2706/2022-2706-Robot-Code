@@ -14,16 +14,15 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ColorSensorSubsystem extends SubsystemBase {
   private final int AVERAGE_NUMBER = 10;
-  private final int RED_THRESHOLD = 130;
-  private final int RED_PROXIMITY_THRESHOLD = 60;
-  private final int BLUE_THRESHOLD = 110;
-  private final int BLUE_PROXIMITY_THRESHOLD = 55;
+  private final int RED_THRESHOLD = 250;
+  private final int RED_PROXIMITY_THRESHOLD = 110;
+  private final int BLUE_THRESHOLD = 200;
+  private final int BLUE_PROXIMITY_THRESHOLD = 110;
   
   private NetworkTableEntry redValue, blueValue, irValue, proximityValue; 
   private NetworkTableEntry detectRed, detectBlue;
@@ -49,6 +48,7 @@ public class ColorSensorSubsystem extends SubsystemBase {
     filterIR = LinearFilter.movingAverage(AVERAGE_NUMBER);
     filterProximity = LinearFilter.movingAverage(AVERAGE_NUMBER);
 
+  
   }
   public static ColorSensorSubsystem getInstance() {
     return INSTANCE_COLOR_SENSOR_SUBSYSTEM;

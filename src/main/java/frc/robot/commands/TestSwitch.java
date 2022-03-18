@@ -14,6 +14,7 @@ public class TestSwitch extends CommandBase {
   /** Creates a new TestSwitch. */
   public TestSwitch() {
     switchDetector = new SwitchSubsystem(Config.INDEXER_SWITCH);
+   
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(switchDetector);
   }
@@ -25,12 +26,12 @@ public class TestSwitch extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if( switchDetector.isDetected() == true )
+    if( switchDetector.getResult() == true )
     {
       System.out.println("Switch detected");
     }
+    System.out.println("Switch read" + switchDetector.getResult());
 
-  //  System.out.println("test result: "+ switchDetector.getResult());
   }
 
   // Called once the command ends or is interrupted.

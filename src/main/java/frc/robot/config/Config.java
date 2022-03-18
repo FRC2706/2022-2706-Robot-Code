@@ -141,7 +141,7 @@ public class Config {
 
     public static int shooterAnalogSensor = robotSpecific(8, 8, -1, -1);
 
-    public static int INDEXER_SWITCH = robotSpecific(-1,-1,7,-1);//Beetle prototype
+    public static int INDEXER_SWITCH = robotSpecific(-1,-1,8,-1);//Beetle prototype
     public static int FEEDER_SWITCH_INPUT = robotSpecific(9, 9, -1, -1);
     public static int FEEDER_SWITCH_OUTPUT = robotSpecific(8, 8, -1, -1);
     public static int FEEDER_MAX_BALLS = 3;
