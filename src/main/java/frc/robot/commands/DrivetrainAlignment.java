@@ -16,6 +16,8 @@ import frc.robot.config.Config;
 import frc.robot.commands.ramseteAuto.SimpleCsvLogger;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class DrivetrainAlignment extends CommandBase {
   /** Creates a new DrivetrainAlignment. */
@@ -49,16 +51,26 @@ public class DrivetrainAlignment extends CommandBase {
   private boolean bTimeouted;
   private final double m_errMeters = 0.01;//in meter, 1cm
 
+  private boolean m_bVision;
+  private boolean m_bValidAngle;
+
   // USB Logger
   private boolean bUsbLogger = false;
   private SimpleCsvLogger usbLogger;
   private String loggingDataIdentifier = "DrivetrainAlignment";
 
-  public DrivetrainAlignment() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  private NetworkTableEntry visionAngle;
 
+
+  public DrivetrainAlignment(boolean bVision) {
+    // Use addRequirements() here to declare subsystem dependencies.
     m_drivebase = DriveBaseHolder.getInstance();
     addRequirements(m_drivebase);
+
+    m_bVision = bVision;
+
+    var visionTable = NetworkTableInstance.getDefault().getTable("MergeVisionPipelinePi21");
+    visionAngle = visionTable.getEntry("YawToTarget");
 
     m_timer = new Timer();
     m_timeout = 1.5;  //seconds //@todo: from config
@@ -76,54 +88,78 @@ public class DrivetrainAlignment extends CommandBase {
     {
       startLogging();
     }
+    
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //Calculate the degree that the robot needs to turn
-    calcDeltaDegree();
-    //Map the degree to distance in meters
-    covertDegreeToPositionMeter();
+    if(m_bVision == false)
+    {
+      //Calculate the degree that the robot needs to turn
+      calcDeltaDegree();
+      m_bValidAngle = true;
+    }
+    else
+    {
+      //read network table
+      m_deltaTheta = visionAngle.getDouble(0.0);
 
-    m_targetLeftPositionMeter  = m_drivebase.getLeftPosition() - m_targetDeltaPositionMeter;
-    m_targetRightPositionMeter = m_drivebase.getRightPosition() + m_targetDeltaPositionMeter;
+      //@todo: Check invalid angle value
+      if(m_deltaTheta == -1)
+      {
+        m_bValidAngle = false;
+      }
+      else
+      {
+        m_bValidAngle = true;
+      }
+    }
 
-    m_initDegree = m_drivebase.getOdometryHeading().getDegrees();
-    m_targetDegree = m_initDegree + m_deltaDegree;
+    if(m_bValidAngle == true)
+    {
+      //Map the degree to distance in meters
+      covertDegreeToPositionMeter();
 
-    //setup PID slot of two master talons
-    m_drivebase.setActivePIDSlot(Config.DRIVETRAIN_SLOTID_ALIGNMENT);
-    m_drivebase.setCoastMode();
+      m_targetLeftPositionMeter  = m_drivebase.getLeftPosition() - m_targetDeltaPositionMeter;
+      m_targetRightPositionMeter = m_drivebase.getRightPosition() + m_targetDeltaPositionMeter;
 
-    m_timer.start();
-    m_timer.reset();
+      m_initDegree = m_drivebase.getOdometryHeading().getDegrees();
+      m_targetDegree = m_initDegree + m_deltaDegree;
 
-    bDone = false;
-    bTimeouted = false;
+      //setup PID slot of two master talons
+      m_drivebase.setActivePIDSlot(Config.DRIVETRAIN_SLOTID_ALIGNMENT);
+      m_drivebase.setCoastMode();
 
+      m_timer.start();
+      m_timer.reset();
+
+      bDone = false;
+      bTimeouted = false;
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    //Since targe position is fixed, we can set it multiple times
-    m_drivebase.tankDrivePosition( m_targetLeftPositionMeter, m_targetRightPositionMeter);
-
-    //get the current encoder positions
-    m_currLeftPosMeter =  m_drivebase.getLeftPosition();
-    m_currRightPosMeter = m_drivebase.getRightPosition();
-
-    //@todo: this may not be accurate. The reason is after the command finishes, the robot still may move.
-    if ( (Math.abs(m_currLeftPosMeter - m_targetLeftPositionMeter) < m_errMeters )
-         && ( Math.abs(m_currRightPosMeter - m_targetRightPositionMeter) < m_errMeters ))
+    if(m_bValidAngle == true)
     {
-      bDone = true;
-      // System.out.println("left error abs: " + Math.abs(m_currLeftPosMeter - m_targetLeftPositionMeter));
-      // System.out.println("right error abs: "+ Math.abs(m_currRightPosMeter - m_targetRightPositionMeter));
-    }
+      //Since targe position is fixed, we can set it multiple times
+      m_drivebase.tankDrivePosition( m_targetLeftPositionMeter, m_targetRightPositionMeter);
 
+      //get the current encoder positions
+      m_currLeftPosMeter =  m_drivebase.getLeftPosition();
+      m_currRightPosMeter = m_drivebase.getRightPosition();
+
+      //@todo: this may not be accurate. The reason is after the command finishes, the robot still may move.
+      if ( (Math.abs(m_currLeftPosMeter - m_targetLeftPositionMeter) < m_errMeters )
+          && ( Math.abs(m_currRightPosMeter - m_targetRightPositionMeter) < m_errMeters ))
+      {
+        bDone = true;
+        // System.out.println("left error abs: " + Math.abs(m_currLeftPosMeter - m_targetLeftPositionMeter));
+        // System.out.println("right error abs: "+ Math.abs(m_currRightPosMeter - m_targetRightPositionMeter));
+      }
+    }
   } 
 
   // Called once the command ends or is interrupted.

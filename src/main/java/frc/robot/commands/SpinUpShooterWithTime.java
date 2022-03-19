@@ -53,7 +53,8 @@ public class SpinUpShooterWithTime extends CommandBase {
         SmartDashboard.putBoolean("shooter isTargetRPM", shooterSubsystem.isAtTargetRPM());
         
         //stop the shooter
-        shooterSubsystem.setTargetRPM(0);       
+        shooterSubsystem.setTargetRPM(0);   
+        shooterSubsystem.stop();
         timer.stop();
     }
 

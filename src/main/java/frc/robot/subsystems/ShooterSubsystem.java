@@ -150,6 +150,11 @@ public class ShooterSubsystem extends SubsystemBase {
         
     }
 
+    public void stop()
+    {
+        m_shooter.stopMotor();
+    }
+
     /**
      * Check the actual RPM and compare it with targetRPM to verify that the shooter
      * is up to necessary speed to fire.

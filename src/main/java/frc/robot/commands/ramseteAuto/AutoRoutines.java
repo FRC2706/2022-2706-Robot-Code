@@ -70,32 +70,70 @@ public class AutoRoutines {
             case 2:
                 //testing option 3: path1
                 //todo: Check if ending position is the same spot as the starting position of path 2
-                RamseteCommandMerge ramsete2 = new RamseteCommandMerge(Robot.trajectoryReadO1P1, "Trajectory-Read-O1P1");
+                RamseteCommandMerge ramsete2 = new RamseteCommandMerge(Robot.trajectoryBlue3O1P1, "Trajectory-Blue3-O1P1");
                 return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryReadO1P1.getInitialPose())),
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlue3O1P1.getInitialPose())),
                     ramsete2);
             case 3:
-                //testing option 3: path2
-                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryReadO1P2, "Trajectory-Read-O1P2");
+                //testing blue option 2
+                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
                 return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryReadO1P2.getInitialPose())),
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
                     ramsete3);
+            case 4:
+                //testing blue option 3
+                RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectoryBlueO3, "Trajectory-Blue-O3");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO3.getInitialPose())),
+                    ramsete4);
 
-            case 4: 
-                //option 3
-                RamseteCommandMerge ramsete3_1 = new RamseteCommandMerge(Robot.trajectoryReadO1P1, "Trajectory-Read-O1P1");
-                RamseteCommandMerge ramsete3_2 = new RamseteCommandMerge(Robot.trajectoryReadO1P2, "Trajectory-Read-O1P2");
-                Pose2d initalPose = Robot.trajectoryReadO1P1.getInitialPose();
+            case 5: 
+                //option 3 (Two blue paths)
+                RamseteCommandMerge ramsete3_1 = new RamseteCommandMerge(Robot.trajectoryBlue3O1P1, "Trajectory-Blue3-O1P1");
+                RamseteCommandMerge ramsete3_2 = new RamseteCommandMerge(Robot.trajectoryBlue3O1P2, "Trajectory-Blue3-O1P2");
+                //Pose2d initalPose = Robot.trajectoryReadO1P1.getInitialPose();
                 //System.out.println("x: "+initalPose.getX());
                 //System.out.println("y: "+initalPose.getY());
                 //System.out.println("angle: "+initalPose.getRotation());
                 return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryReadO1P1.getInitialPose())),
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlue3O1P1.getInitialPose())),
                     ramsete3_1,         //new ParallelCommandGroup(ramsete3_1, intakeCommand(3)),
                     new WaitCommand(1), //shoot two cargo, no need for alignment. replaced by the shooter command
                     ramsete3_2,         //new ParallelCommandGroup(ramsete3_2, intakeCommand(3)),
-                    new DrivetrainAlignment() );
+                    new DrivetrainAlignment(false) );
                     //@todo: add a shooter command at the end
+            case 6:
+                //testing red option 1
+                RamseteCommandMerge ramsete6 = new RamseteCommandMerge(Robot.trajectoryRedO1, "Trajectory-Red-O1");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO1.getInitialPose())),
+                    ramsete6);
+            case 7:
+                //testing red option 2
+                RamseteCommandMerge ramsete7 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
+                    ramsete7);
+            case 8:
+                //testing blue option 3
+                RamseteCommandMerge ramsete8 = new RamseteCommandMerge(Robot.trajectoryRedO3, "Trajectory-Red-O3");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO3.getInitialPose())),
+                    ramsete8);
+            case 9:
+                //testing blue option for human player
+                RamseteCommandMerge ramsete4_1 = new RamseteCommandMerge(Robot.trajectoryBlue4OP1, "Trajectory-Blue4-O1P1");
+                RamseteCommandMerge ramsete4_2 = new RamseteCommandMerge(Robot.trajectoryBlue4OP2, "Trajectory-Blue4-O1P2");
+                RamseteCommandMerge ramsete4_3 = new RamseteCommandMerge(Robot.trajectoryBlue4OP3, "Trajectory-Blue4-O1P3");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlue4OP1.getInitialPose())),
+                    ramsete4_1,         //new ParallelCommandGroup(ramsete3_1, intakeCommand(3)),
+                    new WaitCommand(1), //shoot two cargo, no need for alignment. replaced by the shooter command
+                    ramsete4_2,
+                    new WaitCommand(1),
+                    ramsete4_3);         //new ParallelCommandGroup(ramsete3_2, intakeCommand(3)),
+
+
             default:
                 return null;
         }

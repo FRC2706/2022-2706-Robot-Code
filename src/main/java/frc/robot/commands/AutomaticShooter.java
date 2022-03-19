@@ -19,6 +19,7 @@ public class AutomaticShooter extends CommandBase {
   private shooterPneumaticSubsystem deflectorSubsystem;
   private NetworkTableEntry tableTargetRPM, tableMeasuredRPM, tableErrorRPM, tableTemperature;
   private NetworkTableEntry tableCurrent, tableIsAtTargetRPM, tableTargetV, tableTargetDistance;
+  private NetworkTableEntry visionDistance;
 
   //calculated for the shooter
   double targetDistance = 0;
@@ -57,14 +58,13 @@ public class AutomaticShooter extends CommandBase {
   private NetworkTableEntry currentX, currentY;
 
   /** Creates a new AutomaticShooter. */
-  public AutomaticShooter( boolean bHighGoal, boolean bVision) {
-    //todo: m_bHighGoal can be determined by the distance
-    m_bHighGoal = bHighGoal;
+  public AutomaticShooter(boolean bVision) {
     m_bVision = bVision;
     
     // Use addRequirements() here to declare subsystem dependencies.
     shooterSubsystem = ShooterSubsystem.getInstance();
-    deflectorSubsystem = shooterPneumaticSubsystem.getInstance();
+    //deflectorSubsystem = shooterPneumaticSubsystem.getInstance();
+    deflectorSubsystem = null;
 
     if (shooterSubsystem != null) 
     {
@@ -89,14 +89,17 @@ public class AutomaticShooter extends CommandBase {
     tableCurrent = shooterTable.getEntry("current");
     tableIsAtTargetRPM = shooterTable.getEntry("isAtTargetRPM");
     tableTargetDistance = shooterTable.getEntry("targetDistance (m)");
-    tableTargetV = shooterTable.getEntry("targetV (m/s)");
+    tableTargetV = shooterTable.getEntry("targetV (m per s)");
+    
+    var visionTable = NetworkTableInstance.getDefault().getTable("MergeVisionPipelinePi21");
+    visionDistance = visionTable.getEntry("AverageDistance");
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize()
   {
-    timer.start();
+   // timer.start();
 
     //Calculate the RPM of the shooter wheel.
     calculateTargetRPM();
@@ -137,22 +140,32 @@ public class AutomaticShooter extends CommandBase {
     tableCurrent.setNumber(shooterSubsystem.getCurrentDraw());
     tableIsAtTargetRPM.setBoolean(shooterSubsystem.isAtTargetRPM());
     //stop the shooter
-    shooterSubsystem.setTargetRPM(0);   
+    //shooterSubsystem.setTargetRPM(0); 
+    shooterSubsystem.stop();  
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() > timeout;
+    //return timer.get() > timeout;
+    return false;
   }
 
   public void calculateTargetRPM()
   {
     getDistance();
     tableTargetDistance.setNumber(targetDistance);
+    if(targetDistance == -1)
+    {
+      //Don't set a targetRPM value (default value is 0)
+      targetRPM = 0;
+      return;
+    }
 
+    //todo: m_bHighGoal can be determined by the distance
     //@todo: Use distance to determine if we aim for high goal or low goal and if the deflector is used
-    //m_bHighGoal = true;
+
+    m_bHighGoal = true;
     m_bDeflector = false;
 
     //option1: calculate the target RPM: formula
@@ -204,6 +217,14 @@ public class AutomaticShooter extends CommandBase {
     else
     {
       //todo: Use vision and network tables to get targetDistance
+      targetDistance = visionDistance.getDouble(0);
+      System.out.println("targetDistance from vision: "+targetDistance);
+      //@todo: Double check if the target distance is valid or not.
+      //Note: Unit is feet, we have to convert to
+      if(targetDistance > 5 || targetDistance < 0.5)
+      {
+        targetDistance = -1;
+      }
     }
   }
 
