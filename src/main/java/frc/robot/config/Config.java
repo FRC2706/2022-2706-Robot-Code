@@ -135,6 +135,9 @@ public class Config {
     public static int ANALOG_SELECTOR_TWO = robotSpecific(0, 0, -1, -1, -1, 0);
     public static boolean hasSelectorSwitches = robotSpecific(false, false, false, false);
 
+    public static double HUB_X = 8.23;
+    public static double HUB_Y = 4.115;
+
     public static int ARM_TALON = robotSpecific(7, 7, -1, -1);
 
     public static int FEEDER_SUBSYSTEM_TALON = robotSpecific(8, 8, -1, -1);

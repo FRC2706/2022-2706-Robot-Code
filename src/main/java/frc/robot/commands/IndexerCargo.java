@@ -13,7 +13,6 @@ public class IndexerCargo extends CommandBase {
 
   private IndexerSubSystem indexer;
   private ColorSensorSubsystem colorSensor;
-  private SwitchSubsystem switchDetector;
   public boolean switchDetected;
   public boolean colorSensorDetected;
   public boolean colorSensorFirstDetected = false;
@@ -28,15 +27,23 @@ public class IndexerCargo extends CommandBase {
     colorSensor = ColorSensorSubsystem.getInstance();
     
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(indexer);
-    addRequirements(colorSensor);
+    if ( indexer != null )
+    {
+      addRequirements(indexer);
+    }
+
+    if(colorSensor != null)
+    {
+      addRequirements(colorSensor);
+    }
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
 
-    indexer.setIndexerPosition();
+    if ( indexer != null )
+      indexer.setIndexerPosition();
 
     nColorSensorDetectedCount = 0;
     colorSensorFirstDetected = false;
@@ -45,7 +52,14 @@ public class IndexerCargo extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (indexer == null)
+      return;
+
+    if (colorSensor != null )
     colorSensorDetected = colorSensor.isDetected();
+    else
+      colorSensorFirstDetected = false;
+    
     if ( colorSensorDetected == true)
     {
      // System.out.println("detected one cargo");
@@ -93,7 +107,8 @@ public class IndexerCargo extends CommandBase {
   @Override
   public void end(boolean interrupted) 
   {
-    indexer.stop();
+    if ( indexer != null )
+      indexer.stop();
   }
 
   // Returns true when the command should end.

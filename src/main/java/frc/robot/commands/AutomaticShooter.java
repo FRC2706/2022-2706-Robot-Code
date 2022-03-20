@@ -4,13 +4,11 @@
 
 package frc.robot.commands;
 
-import javax.swing.plaf.TreeUI;
-
-import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.config.Config;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.shooterPneumaticSubsystem;
 
@@ -26,8 +24,8 @@ public class AutomaticShooter extends CommandBase {
   int targetRPM = 0;
 
   private Timer timer;
-  //@todo: final tune
-  private int timeout = 10; //sec
+  private int timeout = 5; //sec
+  private boolean m_bUseTimer = false;
 
   //todo: can be configured in config file as well
   //todo: measure the radius for the shooting wheel
@@ -43,10 +41,8 @@ public class AutomaticShooter extends CommandBase {
   private final double HALF_OF_GRAVITY = 4.91;
   private final double CONVERSION_NUMBER = 3000;
   
-  //todo: Set to right value later
-  //todo: Add to config.java
-  private final double HUB_X = 1.0;
-  private final double HUB_Y = 1.0;
+  private final double HUB_X = Config.HUB_X;
+  private final double HUB_Y = Config.HUB_Y;
 
   private double targetHeight;
   private double shooterAngle;
@@ -63,6 +59,8 @@ public class AutomaticShooter extends CommandBase {
     
     // Use addRequirements() here to declare subsystem dependencies.
     shooterSubsystem = ShooterSubsystem.getInstance();
+
+    //@todo: add deflector subsystem later
     //deflectorSubsystem = shooterPneumaticSubsystem.getInstance();
     deflectorSubsystem = null;
 
@@ -75,7 +73,8 @@ public class AutomaticShooter extends CommandBase {
       addRequirements(deflectorSubsystem);
     }
 
-    timer = new Timer();
+    if( m_bUseTimer == true )
+      timer = new Timer();
 
     var table = NetworkTableInstance.getDefault().getTable("DrivetrainData");
     currentX = table.getEntry("currentX");
@@ -99,7 +98,11 @@ public class AutomaticShooter extends CommandBase {
   @Override
   public void initialize()
   {
-   // timer.start();
+    if ( m_bUseTimer == true )
+    {
+      timer.start();
+      timer.reset();
+    }
 
     //Calculate the RPM of the shooter wheel.
     calculateTargetRPM();
@@ -115,6 +118,10 @@ public class AutomaticShooter extends CommandBase {
       {
         deflectorSubsystem.moveDown();
       }
+    }
+    else
+    {
+      m_bDeflector = false;
     }
   }
 
@@ -134,27 +141,39 @@ public class AutomaticShooter extends CommandBase {
   {
     //print debug info here
     tableTargetRPM.setNumber(targetRPM);
-    tableMeasuredRPM.setNumber(shooterSubsystem.getMeasuredRPM());
-    tableErrorRPM.setNumber(targetRPM-shooterSubsystem.getMeasuredRPM());
-    tableTemperature.setNumber(shooterSubsystem.getTemperature());
-    tableCurrent.setNumber(shooterSubsystem.getCurrentDraw());
-    tableIsAtTargetRPM.setBoolean(shooterSubsystem.isAtTargetRPM());
-    //stop the shooter
-    //shooterSubsystem.setTargetRPM(0); 
-    shooterSubsystem.stop();  
+
+    if ( shooterSubsystem != null )
+    {
+      tableMeasuredRPM.setNumber(shooterSubsystem.getMeasuredRPM());
+      tableErrorRPM.setNumber(targetRPM-shooterSubsystem.getMeasuredRPM());
+      tableTemperature.setNumber(shooterSubsystem.getTemperature());
+      tableCurrent.setNumber(shooterSubsystem.getCurrentDraw());
+      tableIsAtTargetRPM.setBoolean(shooterSubsystem.isAtTargetRPM());
+
+      //stop the shooter
+      //shooterSubsystem.setTargetRPM(0); 
+      shooterSubsystem.stop();  
+    }
+
+    if( m_bUseTimer == true)
+      timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //return timer.get() > timeout;
-    return false;
+    if ( m_bUseTimer == true )
+      return timer.get() > timeout;
+    else
+      return false;
   }
 
   public void calculateTargetRPM()
   {
     getDistance();
+
     tableTargetDistance.setNumber(targetDistance);
+    //validate distance: for the right range of shooting
     if(targetDistance == -1)
     {
       //Don't set a targetRPM value (default value is 0)
@@ -162,7 +181,8 @@ public class AutomaticShooter extends CommandBase {
       return;
     }
 
-    //todo: m_bHighGoal can be determined by the distance
+    //@todo: m_bHighGoal can be determined by the distance
+    //@todo: m_bDeflector can be determined by the distance
     //@todo: Use distance to determine if we aim for high goal or low goal and if the deflector is used
 
     m_bHighGoal = true;
@@ -189,7 +209,12 @@ public class AutomaticShooter extends CommandBase {
 
     double targetV  = initVelocity();
     targetRPM       = (int) velocityToRPM (targetV);  
+
     tableTargetV.setValue(targetV);
+
+    //validate the targetRPM
+    //@todo: hard coded here for now
+    targetRPM = 0;
 
     //option2: map the distance to the target RPM
     //From test relationships between the distance and RPM, obtain a formula that represents said relationship
@@ -220,11 +245,14 @@ public class AutomaticShooter extends CommandBase {
       targetDistance = visionDistance.getDouble(0);
       System.out.println("targetDistance from vision: "+targetDistance);
       //@todo: Double check if the target distance is valid or not.
-      //Note: Unit is feet, we have to convert to
-      if(targetDistance > 5 || targetDistance < 0.5)
-      {
-        targetDistance = -1;
-      }
+      //Note: Unit is feet, we have to convert to meter
+
+    }
+
+    //@todo: validate the targetDistance
+    if(targetDistance > 5 || targetDistance < 0.5)
+    {
+      targetDistance = -1;
     }
   }
 
@@ -252,8 +280,7 @@ public class AutomaticShooter extends CommandBase {
     }
 
     return dInitVelocity;
-  
- }
+  }
 
  // convert velocity to RPM
  // velocity: unit m/s
