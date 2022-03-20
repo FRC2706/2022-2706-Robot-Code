@@ -62,18 +62,19 @@ public class AutoRoutines {
                 // This is our 'do nothing' selector
                 return null;
             case 1:
+                //testing blue option 2
+                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
+                    ramsete3);
+            case 2:
                 //testing option 3: path1
                 //todo: Check if ending position is the same spot as the starting position of path 2
                 RamseteCommandMerge ramsete2 = new RamseteCommandMerge(Robot.trajectoryBlue3O1P1, "Trajectory-Blue3-O1P1");
                 return new SequentialCommandGroup (
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlue3O1P1.getInitialPose())),
                     ramsete2);
-            case 2:
-                //testing blue option 2
-                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
-                return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
-                    ramsete3);
+
             case 3:
                 //testing blue option 3
                 RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectoryBlueO3, "Trajectory-Blue-O3");

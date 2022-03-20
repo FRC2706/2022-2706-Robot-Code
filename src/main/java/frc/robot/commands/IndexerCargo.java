@@ -3,7 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.subsystems.ColorSensorSubsystem;
 import frc.robot.subsystems.IndexerSubSystem;
@@ -55,8 +57,11 @@ public class IndexerCargo extends CommandBase {
     if (indexer == null)
       return;
 
+      //System.out.println("auto mode: "+ Robot.m_bAutoMode);
+      // System.out.println("indexer sensor: "+ indexer.m_bForIntakeGoodSensors);
+
     if (colorSensor != null )
-    colorSensorDetected = colorSensor.isDetected();
+      colorSensorDetected = colorSensor.isDetected();
     else
       colorSensorFirstDetected = false;
     
@@ -75,14 +80,24 @@ public class IndexerCargo extends CommandBase {
     if (colorSensorFirstDetected == true && nColorSensorDetectedCount < 3) 
     {
       if ( nColorSensorDetectedCount == 1)
-       indexer.runForIntake(14);
+      {
+        //@todo: currently for auto mode pre-loaded one cargo
+        if(Robot.m_bAutoMode==true)
+        {
+          indexer.runForIntake(6);
+        }
+        else
+        {
+          indexer.runForIntake(14);
+        }
+      }
       else if ( nColorSensorDetectedCount == 2)
        indexer.runForIntake(6);
 
        counter++;
       // TODO tune for 100
       //For one time position change: note this number depends how fast/smoothly the cargo is shuffled in
-      if (counter > 200)
+      if (counter > 150)
       {
         // At this time, the cargo should be in the indexer, and the indexer should stop
 
