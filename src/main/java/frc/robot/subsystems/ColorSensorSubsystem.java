@@ -29,12 +29,17 @@ public class ColorSensorSubsystem extends SubsystemBase {
   private LinearFilter filterRed, filterBlue, filterIR, filterProximity;
 
   private boolean bDetectedCargo = false;
-
+  private boolean bColorSensorGood = false;
   private final ColorSensorV3 colorSensor;
   private static final ColorSensorSubsystem INSTANCE_COLOR_SENSOR_SUBSYSTEM = new ColorSensorSubsystem();
 
   public ColorSensorSubsystem() {
     colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+
+    if(colorSensor != null)
+    {
+      bColorSensorGood = true;
+    }
   
     var table = NetworkTableInstance.getDefault().getTable("colorSensor");
     redValue = table.getEntry("redValue");
@@ -51,9 +56,12 @@ public class ColorSensorSubsystem extends SubsystemBase {
   
   }
   public static ColorSensorSubsystem getInstance() {
-    return INSTANCE_COLOR_SENSOR_SUBSYSTEM;
+    if ( INSTANCE_COLOR_SENSOR_SUBSYSTEM.bColorSensorGood == true)
+      return INSTANCE_COLOR_SENSOR_SUBSYSTEM;
+    else{
+      return null;
+    }
   }
-
 
   /**
    * Returns the red value of the sensed color

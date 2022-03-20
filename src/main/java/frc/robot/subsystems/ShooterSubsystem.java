@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.config.Config;
@@ -9,22 +8,17 @@ import frc.robot.config.FluidConstant;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.config.Config;
-import frc.robot.config.FluidConstant;
 
 public class ShooterSubsystem extends SubsystemBase {
 
     private CANSparkMax m_shooter;
     private SparkMaxPIDController m_pidController;
     private RelativeEncoder m_encoder;
+
+    boolean m_bGoodSensors;
 
     //@todo: final tuning
     private final int RPM_TOLERANCE = 75;
@@ -51,7 +45,6 @@ public class ShooterSubsystem extends SubsystemBase {
             ("TARGET_RPM_ShooterSubsystem", 2000.0).registerToTable(Config.constantsTable);
     //note: during the test to find a good RPM, use TARGET_RPM in setTargetRPM(int inputRPM).
    
-
     int targetRPM = 0;
 
     double kMaxOutput = 1;
@@ -76,23 +69,45 @@ public class ShooterSubsystem extends SubsystemBase {
      * mechanism.
      */
     private void initializeSubsystem() {
+
+        REVLibError errorCode;
+        m_bGoodSensors = true;
+        
         m_shooter = new CANSparkMax(Config.SHOOTER_MOTOR, MotorType.kBrushless);
 
         // Factory Default to prevent unexpected behaviour
         m_shooter.restoreFactoryDefaults();
+        m_shooter.setInverted(false);
 
         // PID controller for the shooter
         m_pidController = m_shooter.getPIDController();
+        if ( m_pidController == null)
+            m_bGoodSensors = false;
+
         m_encoder = m_shooter.getEncoder();
+        if ( m_encoder == null )
+            m_bGoodSensors = false;
 
-        m_shooter.setInverted(false);
+        if ( m_bGoodSensors == true )
+        {
+            errorCode = m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+            m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
 
-        m_pidController.setOutputRange(kMinOutput, kMaxOutput);
-        m_pidController.setFF(F_SHOOTERSUBSYSTEM.get());
-        m_pidController.setP(P_SHOOTERSUBSYSTEM.get());
-        m_pidController.setI(I_SHOOTERSUBSYSTEM.get());
-        m_pidController.setD(D_SHOOTERSUBSYSTEM.get());
-        m_pidController.setIZone(IZONE_SHOOTERSUBSYSTEM.get());
+            errorCode = m_pidController.setFF(F_SHOOTERSUBSYSTEM.get());
+            m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+
+            errorCode = m_pidController.setP(P_SHOOTERSUBSYSTEM.get());
+            m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+
+            errorCode = m_pidController.setI(I_SHOOTERSUBSYSTEM.get());
+            m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+
+            errorCode = m_pidController.setD(D_SHOOTERSUBSYSTEM.get());
+            m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+
+            errorCode = m_pidController.setIZone(IZONE_SHOOTERSUBSYSTEM.get());
+            m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+        }
 
         m_shooter.setSmartCurrentLimit(80);
 
@@ -120,15 +135,26 @@ public class ShooterSubsystem extends SubsystemBase {
         //using network table, only for testing
         //targetRPM = (int) ((double) TARGET_RPM.getValue());
 
-        m_pidController.setReference(targetRPM, ControlType.kVelocity);
-
+        if( m_bGoodSensors == true )
+        {
+            m_pidController.setReference(targetRPM, ControlType.kVelocity);
+        }
+        else
+        {
+            //don't use PIDF any more.
+            //@todo: test this for a fixed spot on the field.
+            m_shooter.set(0.3);
+        }
     }
 
     /**
      * Return the motor velocity (RPM) measured by the encoder
      */
     public double getMeasuredRPM() {
-        return m_encoder.getVelocity();
+        if ( m_bGoodSensors == true )
+            return m_encoder.getVelocity();
+        else
+            return 0.0;
     }
 
     /**

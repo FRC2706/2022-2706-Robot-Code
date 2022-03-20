@@ -33,9 +33,9 @@ public class DrivetrainAlignment extends CommandBase {
 
   //@todo: move to Config
   //Hub center coordinates in meters
-  double m_hubX = 8.23;
-  double m_hubY = 4.115;
-
+  double m_hubX = Config.HUB_X;
+  double m_hubY = Config.HUB_Y;
+  
   double m_theta;
   double m_deltaTheta;
   double m_distance;
@@ -303,8 +303,11 @@ public class DrivetrainAlignment extends CommandBase {
     
     //note:: m_deltaTheta > 0 --> counter clockwise rotation
     //       m_deltaTheta < 0 --> clockwise rotation
-    m_deltaTheta = m_theta - currPose.getRotation().getDegrees();
+    // adjust current angle to alignment with the back of the robot.
+    // then current angle = [-180, 180] + 180 = [0, 360]. 
+    m_deltaTheta = m_theta - ( currPose.getRotation().getDegrees() + 180.0 );
     
+    //need to cover: [-180, 180] - [0, 360] = [-180-360, 180]
     //make sure m_deltaTheta is [-180, +180]
     if ( m_deltaTheta > 180 )
     {
@@ -313,7 +316,8 @@ public class DrivetrainAlignment extends CommandBase {
     else if ( m_deltaTheta < -180 )
     {
       m_deltaTheta += 360;
-    }
+    }  
+
   }
 
     /**

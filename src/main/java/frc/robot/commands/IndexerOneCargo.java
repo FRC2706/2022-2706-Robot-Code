@@ -23,8 +23,11 @@ public class IndexerOneCargo extends CommandBase {
     switchDetector = new SwitchSubsystem(Config.INDEXER_SWITCH);
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(indexer);
-    addRequirements(switchDetector);
+    if ( indexer != null )
+     addRequirements(indexer);
+
+    if (switchDetector != null)
+      addRequirements(switchDetector);
   }
 
   // Called when the command is initially scheduled.
@@ -35,21 +38,32 @@ public class IndexerOneCargo extends CommandBase {
   @Override
   public void execute() 
   {
-      if(switchDetector.getResult() == true)
-      {
-        indexer.stop();
-      }
-      else
-      {
-        indexer.setTargetRPM(TARGET_RPM);
-      }
+    if (indexer == null )
+      return;
+
+    boolean bSwitchDetected = false;
+
+    if(switchDetector != null )
+    {
+      bSwitchDetected = switchDetector.getResult();
+    }
+
+    if( bSwitchDetected == true)
+    {
+      indexer.stop();
+    }
+    else
+    {
+      indexer.setTargetRPM(TARGET_RPM);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted)
   {
-    indexer.stop();
+    if ( indexer != null)
+      indexer.stop();
   }
 
   // Returns true when the command should end.
