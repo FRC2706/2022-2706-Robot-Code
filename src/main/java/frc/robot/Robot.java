@@ -55,6 +55,8 @@ public class Robot extends TimedRobot {
     //flag to indicate the real match
     private Boolean bRealMatch;
 
+    public static boolean m_bAutoMode = false;
+
     //imported trajectory
     //on RoboRio at "/home/lvuser/deploy";
     String trajectoryJSON = "./paths/scaled3.wpilib.json";
@@ -242,9 +244,11 @@ public class Robot extends TimedRobot {
         // and running subsystem periodic() methods.  This must be called from the robot's periodic
         // block in order for anything in the Command-based framework to work.
 
-        SmartDashboard.putNumber("Outer Port Yaw", VisionCtrlNetTable.yawToOuterPort.get());
-        SmartDashboard.putNumber("PowerCell Distance", VisionCtrlNetTable.distanceToPowerCell.get());
-        SmartDashboard.putNumber("Pigeon Yaw", DriveBaseHolder.getInstance().getOdometryHeading().getDegrees());
+        // SmartDashboard.putNumber("Outer Port Yaw", VisionCtrlNetTable.yawToOuterPort.get());
+        // SmartDashboard.putNumber("PowerCell Distance", VisionCtrlNetTable.distanceToPowerCell.get());
+        // SmartDashboard.putNumber("Pigeon Yaw", DriveBaseHolder.getInstance().getOdometryHeading().getDegrees());
+
+        m_bAutoMode = DriverStation.isAutonomous();
         
         CommandScheduler.getInstance().run();
 

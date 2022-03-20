@@ -90,8 +90,10 @@ public class IndexerSubSystem extends SubsystemBase {
       m_bForIntakeGoodSensors = m_bForIntakeGoodSensors && (errorCode == REVLibError.kOk);
       errorCode = m_pidController.setSmartMotionMaxVelocity(1200, 0);
       m_bForIntakeGoodSensors = m_bForIntakeGoodSensors && (errorCode == REVLibError.kOk);
-      errorCode = m_pidController.setSmartMotionMinOutputVelocity(-1, 0);
-      m_bForIntakeGoodSensors = m_bForIntakeGoodSensors && (errorCode == REVLibError.kOk);
+      
+      // the following line cause the trouble: make m_bForIntakeGoodSensors to false
+      //  errorCode = m_pidController.setSmartMotionMinOutputVelocity(-1, 0);
+      // m_bForIntakeGoodSensors = m_bForIntakeGoodSensors && (errorCode == REVLibError.kOk);
 
       //Set for shooter slot 1
       //Use velocity closed loop controller
