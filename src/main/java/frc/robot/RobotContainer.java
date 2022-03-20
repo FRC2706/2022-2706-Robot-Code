@@ -44,6 +44,7 @@ import frc.robot.commands.ramseteAuto.VisionPose.VisionType;
 //import frc.robot.commands.ramseteAuto.ReadPath;
 
 import frc.robot.nettables.VisionCtrlNetTable;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
@@ -84,6 +85,10 @@ public class RobotContainer {
   private final double AUTO_LEFT_MOTOR_SPEED = 0.2;
   private final double AUTO_RIGHT_MOTOR_SPEED = 0.2;
   private Command runFeeder;
+
+  NetworkTable selectorTable = NetworkTableInstance.getDefault().getTable("selectorTable");
+  private NetworkTableEntry tableAnalogSelectorOne, tableAnalogSelectorTwo;
+
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -148,7 +153,7 @@ public class RobotContainer {
                 
                 if (Config.ARM_TALON != -1) {
                     reverseArmManually = new MoveArmManuallyCommand(-0.35);
-                    new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(reverseArmManually);
+                    //new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(reverseArmManually);
         
                     moveArm = new MoveArmManuallyCommand(10);
                     new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(moveArm);
@@ -193,34 +198,35 @@ public class RobotContainer {
                 // Command readIrSensor = new ReadAnalogInput(7);
                 // new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(readIrSensor);
 
-               // Command readSwitch = new TestSwitch();
-                //new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(readSwitch);
+            //    Command readSwitch = new TestSwitch();
+            //     new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(readSwitch);
 
             //    Command readColorSensor = new ReadColorSensor();
              //   new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
 
                 //for shooter command
-                //Command wait1s = new WaitCommand(1);
-                //Command delayIndexer = wait1s.andThen( new IndexerForShooter());
-                //Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(900, 20), delayIndexer);
-                //Snew JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(shooter);
-
+                /*
+                Command wait1s = new WaitCommand(1);
+                Command delayIndexer = wait1s.andThen( new IndexerForShooter());
+                Command shooter = new ParallelCommandGroup(new AutomaticShooter(true, false), delayIndexer);
+                new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(shooter);
+                */
                 //Command testIndexer = new TestIndexer();
                 //new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(testIndexer);
 
                 //indexer cargo command
-                Command indexercmd = new IndexerCargo();
-                new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(indexercmd);
+                 Command indexercmd = new IndexerCargo();
+                 new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(indexercmd);
 
-                Command testAnalog = new TestAnalogSelector();
-                new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(testAnalog);
-                //Command indexerOne = new IndexerOneCargo();
-                //new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(indexerOne);
+                // Command testAnalog = new TestAnalogSelector();
+                // new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(testAnalog);
+                Command indexerOne = new IndexerOneCargo();
+                new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(indexerOne);
                 //Turn a specific angle
                 // moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 0.5);
                 // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
 
-                Command alignment = new DrivetrainAlignment();
+                Command alignment = new DrivetrainAlignment(false);
                 new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
 
                 break;
@@ -244,17 +250,20 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        
         //Note: if there is not selector,
         //      selectorOne will be forced to selectHardCodedPath
         int selectHardCodedPath = 1;
         int selectorOne = 0;
+
+        tableAnalogSelectorOne = selectorTable.getEntry("AnalogSelectorOne");
+        tableAnalogSelectorTwo = selectorTable.getEntry("AnalogSelectorTwo");
 
         analogSelectorOne = AnalogSelectorSubsystem.getInstance();
         
         if (analogSelectorOne != null){
             selectorOne = analogSelectorOne.getIndex();
             System.out.println("SELECTOR SWITCH NOT NULL AND ID " + selectorOne);
+            tableAnalogSelectorOne.setValue(selectorOne);
         }
         else
         {
@@ -262,10 +271,11 @@ public class RobotContainer {
         }
         logger.info("Selectors: " + selectorOne);
 
+
         // Testing forced numbers
         int selectFolder = 3;
         //@todo: hard coded here. Remove this line will use analog selector.
-        selectorOne = 4;
+        selectorOne = 2;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
