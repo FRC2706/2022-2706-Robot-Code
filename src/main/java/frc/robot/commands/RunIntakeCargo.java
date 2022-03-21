@@ -4,13 +4,31 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeCargoSubsystem;
 
 public class RunIntakeCargo extends CommandBase {
   IntakeCargoSubsystem intakeCargoSubsystem;
+
+  private double timeout;
+  private Timer timer;
+  private boolean m_bUseTimer = false;
+
   /** Creates a new RunPneumaticsIntake. */
-  public RunIntakeCargo() {
+  public RunIntakeCargo( int timeOut ) {
+    timeout = timeOut;
+
+    if ( timeout > 0 )
+    {
+      m_bUseTimer = true;
+      timer = new Timer();
+    }
+    else
+    {
+      m_bUseTimer = false;
+    }
+
     intakeCargoSubsystem = IntakeCargoSubsystem.getInstance();
     if (intakeCargoSubsystem != null)
     {
@@ -21,7 +39,14 @@ public class RunIntakeCargo extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if( m_bUseTimer == true )
+    { 
+        timer.start();
+        timer.reset();
+    }
+
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -40,11 +65,19 @@ public class RunIntakeCargo extends CommandBase {
     {
       intakeCargoSubsystem.stop();
     }
+
+    if( m_bUseTimer == true )
+     timer.stop();
+
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if( m_bUseTimer == true )
+    return timer.get() > timeout;
+else
     return false;
+
   }
 }

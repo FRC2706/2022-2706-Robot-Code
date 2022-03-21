@@ -38,15 +38,18 @@ public class IntakeCargoSubsystem extends SubsystemBase {
     // Init all the talon values
     m_intake = new WPI_TalonSRX(Config.INTAKE_MOTOR);
 
-    // Config factory default to clear out any lingering values
-    m_intake.configFactoryDefault();
+    if ( m_intake != null )
+    { 
+      // Config factory default to clear out any lingering values
+      m_intake.configFactoryDefault();
 
-    // Setup the talon, recording the error code
-    // errorCode = m_intake.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,
-    //         0, Config.CAN_TIMEOUT_SHORT);
+      // Setup the talon, recording the error code
+      // errorCode = m_intake.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute,
+      //         0, Config.CAN_TIMEOUT_SHORT);
 
-    //@todo: need testing
-    m_intake.setInverted(Config.INVERT_ARM_TALON);
+      //@todo: need testing
+      m_intake.setInverted(Config.INVERT_ARM_TALON);
+    }
 
     //m_intake.configAllowableClosedloopError(0, Config.ARM_ALLOWABLE_CLOSED_LOOP_ERROR_TICKS, Config.CAN_TIMEOUT_SHORT);
 

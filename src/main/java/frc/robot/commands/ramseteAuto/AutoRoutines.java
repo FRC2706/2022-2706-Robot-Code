@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.AutoIntakeCommand;
 import frc.robot.commands.DriveWithTime;
 import frc.robot.commands.DrivetrainAlignment;
 import frc.robot.commands.LowerArm;
@@ -204,7 +203,7 @@ public class AutoRoutines {
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(new Pose2d(2.8, 1.7, Rotation2d.fromDegrees(-24)))),
                     new InstantCommand(() -> FeederSubsystem.getInstance().setBallsAroundFeeder(0)),
                     //new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.5, 7)),
-                    new ParallelRaceGroup(new AutoIntakeCommand(), new RamseteCommandMerge(trajectory1, "R5FullR-1")),
+                  //  new ParallelRaceGroup(new AutoIntakeCommand(), new RamseteCommandMerge(trajectory1, "R5FullR-1")),
                  //   new RamseteCommandMerge(trajectory2, "R5FullR-2").alongWith(new IndexBall()),
                     new OuterGoalErrorLoop(true, 3.0)
                    // new ParallelRaceGroup(new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.7, 8)), new AutoIntakeCommand()

@@ -136,8 +136,8 @@ public class RobotContainer {
             case 0:
             {
                 // Instantiate the intake command and bind it
-                intakeCommand = new OperatorIntakeCommand();
-                new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeCommand);
+                // intakeCommand = new OperatorIntakeCommand();
+                // new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeCommand);
               
                 positionPowerCell = new PositionPowercellCommand();
                 new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).toggleWhenActive(positionPowerCell, true);
