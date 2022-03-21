@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.Config;
 import frc.robot.nettables.VisionCtrlNetTable;
@@ -8,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class TurnToOuterPortCommand extends CommandBase {
+public class TurnToHubCommand extends CommandBase {
 
     // The target angle to turn the robot to
     private Double currentTarget;
@@ -25,7 +26,7 @@ public class TurnToOuterPortCommand extends CommandBase {
     // Logging
     private Logger logger = Logger.getLogger("TurnOuterPort");
 
-    public TurnToOuterPortCommand(boolean invert, Double acceptableError, Double maxTime) {
+    public TurnToHubCommand(boolean invert, Double acceptableError, Double maxTime) {
         this.invert = invert;
         this.maxTime = maxTime;
         this.acceptableError = acceptableError;
@@ -39,12 +40,15 @@ public class TurnToOuterPortCommand extends CommandBase {
     @Override
     public void initialize() {
         // Ensure the vision is running in tape mode
+        //@todo: Q: do we still need this?
         VisionCtrlNetTable.setTapeMode();
 
         // Get the target angle from NetworkTables
-        //currentTarget = VisionCtrlNetTable.yawToOuterPort.get();
+        currentTarget = VisionCtrlNetTable.yawToHub.get();
+        System.out.println("TurnToOuterPort vision yaw: "+ currentTarget);
+        
         //hard coded for unit-test
-        currentTarget = 29.0;
+        //currentTarget = 29.0;
     }
 
     /**
@@ -69,12 +73,12 @@ public class TurnToOuterPortCommand extends CommandBase {
             else {
                 // Ensure no movement on faulty values
                 drivetrainPIDTurnDelta = new DrivetrainPIDTurnDelta(0, 0, 0d, 0d);
-                logger.log(Level.WARNING, "Invalid Current Target: " + VisionCtrlNetTable.yawToOuterPort.get());
+                logger.log(Level.WARNING, "Invalid Current Target: " + VisionCtrlNetTable.yawToHub.get());
             }
         } else {
             // Ensure no movement on faulty values
             drivetrainPIDTurnDelta = new DrivetrainPIDTurnDelta(0, 0, 0d, 0d);
-            logger.log(Level.WARNING, "Invalid Current Target (Value Not Read): " + VisionCtrlNetTable.yawToOuterPort.get());
+            logger.log(Level.WARNING, "Invalid Current Target (Value Not Read): " + VisionCtrlNetTable.yawToHub.get());
         }
 
     }

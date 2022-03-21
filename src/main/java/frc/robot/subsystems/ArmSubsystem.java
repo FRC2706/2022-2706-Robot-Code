@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.ReverseFeeder;
 import frc.robot.config.Config;
 
 public class ArmSubsystem extends ConditionalSubsystemBase {

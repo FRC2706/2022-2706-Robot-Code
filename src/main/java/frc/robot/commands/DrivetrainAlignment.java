@@ -69,8 +69,8 @@ public class DrivetrainAlignment extends CommandBase {
 
     m_bVision = bVision;
 
-    var visionTable = NetworkTableInstance.getDefault().getTable("MergeVisionPipelinePi21");
-    visionAngle = visionTable.getEntry("YawToTarget");
+    var visionTable = NetworkTableInstance.getDefault().getTable(Config.VISION_TABLE_NAME_HUB);
+    visionAngle = visionTable.getEntry(Config.YAW_HUB);
 
     m_timer = new Timer();
     m_timeout = 1.5;  //seconds //@todo: from config
@@ -103,10 +103,11 @@ public class DrivetrainAlignment extends CommandBase {
     else
     {
       //read network table
-      m_deltaTheta = visionAngle.getDouble(0.0);
+      m_deltaTheta = visionAngle.getDouble(-99);
+      System.out.println("DrivetrainAlignment: vision angle "+ m_deltaTheta);
 
       //@todo: Check invalid angle value
-      if(m_deltaTheta == -1)
+      if(m_deltaTheta > 30 || m_deltaTheta < -30)
       {
         m_bValidAngle = false;
       }

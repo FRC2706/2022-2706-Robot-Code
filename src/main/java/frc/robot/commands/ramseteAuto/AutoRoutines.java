@@ -24,13 +24,16 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.DriveWithTime;
 import frc.robot.commands.DrivetrainAlignment;
+import frc.robot.commands.IndexerCargo;
+import frc.robot.commands.IndexerForShooter;
+import frc.robot.commands.IntakeDown;
 import frc.robot.commands.LowerArm;
 import frc.robot.commands.OuterGoalErrorLoop;
+import frc.robot.commands.RunIntakeCargo;
 import frc.robot.commands.ramseteAuto.VisionPose.VisionType;
 import frc.robot.config.Config;
 import frc.robot.nettables.VisionCtrlNetTable;
 import frc.robot.subsystems.DriveBaseHolder;
-import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.commands.SpinUpShooterWithTime;
 import frc.robot.Robot;
 
@@ -45,8 +48,23 @@ public class AutoRoutines {
                 // This is our 'do nothing' selector
                 return null;
             case 1:
-                //Placeholder
-                return null;
+                //testing blue option 2
+                RamseteCommandMerge ramsete1 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
+
+                Command wait1s = new WaitCommand(1);
+                Command delayIndexer = wait1s.andThen( new IndexerForShooter());
+                Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(3400, 5), delayIndexer);
+
+                //@todo: add ending to IndexerCargo
+                Command intake = new ParallelRaceGroup(new RunIntakeCargo(5), new IndexerCargo(), ramsete1);
+
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
+                    new IntakeDown(),
+                    intake,
+                    shooter
+                    );
+                
             default:
                 return null;
         }
@@ -201,7 +219,7 @@ public class AutoRoutines {
 
                 return new SequentialCommandGroup(
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(new Pose2d(2.8, 1.7, Rotation2d.fromDegrees(-24)))),
-                    new InstantCommand(() -> FeederSubsystem.getInstance().setBallsAroundFeeder(0)),
+                   // new InstantCommand(() -> FeederSubsystem.getInstance().setBallsAroundFeeder(0)),
                     //new SpinUpShooterWithTime((int) Config.RPM.get(), 7).alongWith(new RunFeederCommandWithTime(-0.5, 7)),
                   //  new ParallelRaceGroup(new AutoIntakeCommand(), new RamseteCommandMerge(trajectory1, "R5FullR-1")),
                  //   new RamseteCommandMerge(trajectory2, "R5FullR-2").alongWith(new IndexBall()),

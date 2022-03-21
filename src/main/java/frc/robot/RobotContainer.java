@@ -64,27 +64,36 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
     
-    // RobotContainer is a singleton class
-    private static RobotContainer currentInstance;
+  // RobotContainer is a singleton class
+  private static RobotContainer currentInstance;
 
   // The robot's subsystems and commands are defined here...    
   private Joystick driverStick;
   private Joystick controlStick;
-  private AnalogSelectorSubsystem analogSelectorOne;
   private Command driveCommand;
   private Command sensitiveDriving;
-  //todo: Clean up code
-  private Command intakeCommand;
-  private Command reverseFeeder;
-  private Command moveToOuterPort;
-  private Command reverseArmManually;
-  private Command moveArm;
-  private Command positionPowerCell;
+
+  private AnalogSelectorSubsystem analogSelectorOne;
+  private AnalogSelectorSubsystem analogSelectorTwo;
+ 
+  private Command intakeDown;
+  private Command intakeUp;
+
+  private Command cmdIntakeOneCargo;
+  private Command cmdIntakeTwoCargo;
+  private Command cmdShoot;
+  private Command cmdIndexerForShooter;
+  private Command cmdIndexerForIntake;
+
+  private Command cmdDriveTrainAlignment;
+  private Command cmdTurnToOuterPort;
+ 
+  
   private Logger logger = Logger.getLogger("RobotContainer");
   private final double AUTO_DRIVE_TIME = 1.0;
   private final double AUTO_LEFT_MOTOR_SPEED = 0.2;
   private final double AUTO_RIGHT_MOTOR_SPEED = 0.2;
-  private Command runFeeder;
+  
 
   NetworkTable selectorTable = NetworkTableInstance.getDefault().getTable("selectorTable");
   private NetworkTableEntry tableAnalogSelectorOne, tableAnalogSelectorTwo;
@@ -100,8 +109,8 @@ public class RobotContainer {
 
         configureButtonBindings();
 
-        // Only construct the RelaySubsystem if it has relays which is only on mini bot
-        // Atm the only way to tell if its the mini bot is if it has follower motors
+        // Only construct the RelaySubsystem if it has relays which is only on Beetle
+        // Beetle's robot id = 2
         if (Config.robotId == 2) {
             RelaySubsystem.getInstance();
         }
@@ -118,56 +127,47 @@ public class RobotContainer {
         driverStick = new Joystick(0);
         controlStick = new Joystick(1);
       
-        driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.LEFT_CONTROL_STICK_Y, Config.INVERT_FIRST_AXIS, Config.RIGHT_CONTROL_STICK_X, Config.INVERT_SECOND_AXIS, false);
+        driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.LEFT_CONTROL_STICK_Y, Config.INVERT_FIRST_AXIS, Config.RIGHT_CONTROL_STICK_X, Config.INVERT_SECOND_AXIS, true);
         DriveBaseHolder.getInstance().setDefaultCommand(driveCommand);
 
+        //???
         sensitiveDriving = new SensitiveDriverControl(driverStick);
         new JoystickButton(driverStick, XboxController.Button.kLeftBumper.value).whenHeld(sensitiveDriving);
  
         // Command resetHeading = new InstantCommand(() -> DriveBaseHolder.getInstance().resetHeading(Rotation2d.fromDegrees(0)));
         // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenActive(resetHeading);
-
-        //@todo: put the robot at the same place whenever we start a new path
-        Command resetPose = new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose( new Pose2d()));
-        new JoystickButton(driverStick, XboxController.Button.kStart.value).whenActive(resetPose);
-        
+     
         switch ( Config.robotId )
         {
             case 0:
             {
                 // Instantiate the intake command and bind it
-                // intakeCommand = new OperatorIntakeCommand();
-                // new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeCommand);
+                intakeDown = new IntakeDown();
+                new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeDown);
               
-                positionPowerCell = new PositionPowercellCommand();
-                new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).toggleWhenActive(positionPowerCell, true);
+                intakeUp = new IntakeUp();
+                new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenHeld(intakeUp);
+                               
+                cmdIntakeTwoCargo = new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(0)); 
+                new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(cmdIntakeTwoCargo);
+
+                cmdIntakeOneCargo = new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(0)); 
+                new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(cmdIntakeOneCargo);
+
+                cmdTurnToOuterPort = new TurnToHubCommand(true, 3.0, 2.0);
+                new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(cmdTurnToOuterPort, true);
                 
-                reverseFeeder = new ReverseFeeder();
-                new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(reverseFeeder);
-                
-                // incrementFeeder = new IncrementFeeder(-FeederSubsystem.FEEDERSUBSYSTEM_INCREMENT_TICKS.get());
-                // new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(incrementFeeder);
-                
-                moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 2.0);
-                new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
-                
-                if (Config.ARM_TALON != -1) {
-                    reverseArmManually = new MoveArmManuallyCommand(-0.35);
-                    //new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(reverseArmManually);
-        
-                    moveArm = new MoveArmManuallyCommand(10);
-                    new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(moveArm);
-        
-                    Command lowerArm = new LowerArm();
-                    // new JoystickButton(driverStick, XboxController.Button.kB.value).whenActive(lowerArm);
-                }
-        
-                // if (Config.FEEDER_SUBSYSTEM_TALON != -1) {
-                //     // Set default command of feeder to index when limit is pressed
-                //     Command indexFeeder = new IndexBall().andThen(new DoNothingForSeconds(1.5));
-                //     Command pollInputSwitch = new PollLimitSwitch(indexFeeder, FeederSubsystem.getInstance(), FeederSubsystem::isBallAtInput);
-                //     FeederSubsystem.getInstance().setDefaultCommand(pollInputSwitch); 
-                // }
+                // cmdDriveTrainAlignment = new DrivetrainAlignment(false);
+                // new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(cmdTurnToOuterPort, true);
+ 
+                //for shooter command
+                //Auto mode backup out of tarmac: target RPM: 3400 RPM
+                //at the top of tarmac: 3350 RPM
+                Command wait1s = new WaitCommand(1);
+                Command delayIndexer = wait1s.andThen( new IndexerForShooter());
+                cmdShoot = new ParallelCommandGroup(new SpinUpShooterWithTime(3350, 0), delayIndexer);
+                new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(cmdShoot);
+
                 break;
             }
             case 1: 
@@ -207,7 +207,6 @@ public class RobotContainer {
                 //for shooter command
                 //Auto mode backup out of tarmac: target RPM: 3400 RPM
                 //at the top of tarmac: 3350 RPM
-                //:
                 Command wait1s = new WaitCommand(1);
                 Command delayIndexer = wait1s.andThen( new IndexerForShooter());
                 Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(3350, 0), delayIndexer);

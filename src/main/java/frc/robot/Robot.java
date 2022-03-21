@@ -23,7 +23,6 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.DriveBase2020;
 import frc.robot.subsystems.DriveBaseHolder;
-import frc.robot.subsystems.FeederSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -57,6 +56,7 @@ public class Robot extends TimedRobot {
 
     public static boolean m_bAutoMode = false;
 
+    //@todo: clean up
     //imported trajectory
     //on RoboRio at "/home/lvuser/deploy";
     String trajectoryJSON = "./paths/scaled3.wpilib.json";
