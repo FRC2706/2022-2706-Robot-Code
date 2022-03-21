@@ -90,8 +90,8 @@ public class AutomaticShooter extends CommandBase {
     tableTargetDistance = shooterTable.getEntry("targetDistance (m)");
     tableTargetV = shooterTable.getEntry("targetV (m per s)");
     
-    var visionTable = NetworkTableInstance.getDefault().getTable("MergeVisionPipelinePi21");
-    visionDistance = visionTable.getEntry("AverageDistance");
+    var visionTable = NetworkTableInstance.getDefault().getTable(Config.VISION_TABLE_NAME_HUB);
+    visionDistance = visionTable.getEntry(Config.DISTANCE_HUB);
   }
 
   // Called when the command is initially scheduled.
@@ -242,7 +242,7 @@ public class AutomaticShooter extends CommandBase {
     else
     {
       //todo: Use vision and network tables to get targetDistance
-      targetDistance = visionDistance.getDouble(0);
+      targetDistance = visionDistance.getDouble(-1.0);
       System.out.println("targetDistance from vision: "+targetDistance);
       //@todo: Double check if the target distance is valid or not.
       //Note: Unit is feet, we have to convert to meter

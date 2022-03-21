@@ -19,14 +19,15 @@ public class VisionCtrlNetTable {
     private NetworkTable visionControlTable;
     private NetworkTableEntry VisionShutDownEntry;
     private NetworkTableEntry VisionStartUpEntry;
-    private static NetworkTable visionOuterPortTable;
-    private static NetworkTable visionPowercellTable;
+    private static NetworkTable visionHubTable;
+    private static NetworkTable visionCargoTable;
 
-    public static Supplier<Double> distanceToPowerCell;
-    public static Supplier<Double> distanceToOuterPort;
-    public static Supplier<Double> yawToPowerCell;
-    public static Supplier<Double> yawToOuterPort;
+    public static Supplier<Double> distanceToCargo;
+    public static Supplier<Double> yawToCargo;
     public static Supplier<Double> yawToDiamond;
+
+    public static Supplier<Double> distanceToHub;
+    public static Supplier<Double> yawToHub;
 
     //todo: for later integration
     //public static Supplier<Double> angleToOuterPort;
@@ -39,23 +40,21 @@ public class VisionCtrlNetTable {
         VisionShutDownEntry.setBoolean(false);
         VisionStartUpEntry.setBoolean(false);
 
-        visionOuterPortTable = inst.getTable(Config.VISION_TABLE_NAME_OUTERPORT);
-        distanceToOuterPort = () -> visionOuterPortTable.getEntry(Config.DISTANCE_OUTER_PORT).getDouble(-1);
-        yawToOuterPort = () -> visionPowercellTable.getEntry(Config.YAW_OUTER_PORT).getDouble(-99);
+        visionHubTable = inst.getTable(Config.VISION_TABLE_NAME_HUB);
+        distanceToHub = () -> visionHubTable.getEntry(Config.DISTANCE_HUB).getDouble(-1);
+        yawToHub = () -> visionCargoTable.getEntry(Config.YAW_HUB).getDouble(-99);
 
-        visionPowercellTable = inst.getTable(Config.VISION_TABLE_NAME_POWERCELL);
-        distanceToPowerCell = () -> visionPowercellTable.getEntry(Config.DISTANCE_POWERCELL).getDouble(-1);
-        yawToPowerCell = () -> visionPowercellTable.getEntry(Config.YAW_POWERCELL).getDouble(-99);
+        visionCargoTable = inst.getTable(Config.VISION_TABLE_NAME_CARGO);
+        distanceToCargo = () -> visionCargoTable.getEntry(Config.DISTANCE_CARGO).getDouble(-1);
+        yawToCargo = () -> visionCargoTable.getEntry(Config.YAW_CARGO).getDouble(-99);
 
-        visionPowercellTable = inst.getTable(Config.VISION_TABLE_NAME_OUTERPORT);
-        yawToDiamond = () -> visionPowercellTable.getEntry(Config.YAW_TO_DIAMOND).getDouble(-99);
-        
-        
+        yawToDiamond = () -> visionHubTable.getEntry(Config.YAW_TO_DIAMOND).getDouble(-99);
+         
 
     }
 
     public static void setTapeMode() {
-        visionOuterPortTable.getEntry("Tape").setBoolean(true);
+        visionHubTable.getEntry("Tape").setBoolean(true);
     }
 
     /**

@@ -62,7 +62,7 @@ public class OuterGoalErrorLoop extends CommandBase {
     @Override
     public void execute() {
         // Get the target angle from NetworkTables
-        double currentAngle = VisionCtrlNetTable.yawToOuterPort.get();
+        double currentAngle = VisionCtrlNetTable.yawToHub.get();
 
         // Check for no data code
         if (currentAngle == -99) {
