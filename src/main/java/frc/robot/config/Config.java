@@ -72,8 +72,8 @@ public class Config {
     /**
      * PLACE IDS OF ROBOTS HERE
      **/
-    //ID 0 is Rapid React competition bot
-    //ID 1 is Rapid React practice bot
+    //ID 0 
+    //ID 1 is Rapid React competition bot
     //ID 2 is Beetle
     //ID 3 is Cosmobot (Deep Space Chassis)
     //
@@ -83,22 +83,23 @@ public class Config {
     
     }
     
+
     // Static Constants
     private static Class<? extends DriveBase> Pre2020DriveBase = DriveBasePre2020.class.asSubclass(DriveBase.class);
     private static Class<? extends DriveBase> Post2020DriveBase = DriveBase2020.class.asSubclass(DriveBase.class);
     public static Class<? extends DriveBase> DRIVEBASE_CLASS = robotSpecific(Post2020DriveBase, Post2020DriveBase, Post2020DriveBase, Post2020DriveBase, Pre2020DriveBase, Pre2020DriveBase, Pre2020DriveBase, Pre2020DriveBase, Pre2020DriveBase);
-    public static int RIGHT_FRONT_MOTOR = robotSpecific(2, 2, 1, 3, 2);
-    public static int RIGHT_REAR_MOTOR = robotSpecific(4, 4, -1, 9, 4);
-    public static int LEFT_FRONT_MOTOR = robotSpecific(1, 1, -1, 5, 1);
-    public static int LEFT_REAR_MOTOR = robotSpecific(3, 3, 2, 7, 3);
-    public static int INTAKE_MOTOR = robotSpecific(6, 6, -1, -1, -1);
-    public static int SHOOTER_MOTOR = robotSpecific(5, 5, 5, -1, 16); //Beetle prototype on Beetle:5
-    public static int CLIMBER_TALON = robotSpecific(10, 10, -1, -1, 16);
-    public static int AGITATOR_MOTOR = robotSpecific(9, 9, -1, -1);
-    public static int INDEXER_MOTOR = robotSpecific(6, 9, 7, -1); //Beetle prototype on Beetle:7
+    public static int RIGHT_FRONT_MOTOR = robotSpecific(2, 3, 1, 3, 2);
+    public static int RIGHT_REAR_MOTOR = robotSpecific(4, 2, -1, 9, 4);
+    public static int LEFT_FRONT_MOTOR = robotSpecific(1, 6, -1, 5, 1);//6
+    public static int LEFT_REAR_MOTOR = robotSpecific(3, 5, 2, 7, 3);
+    public static int INTAKE_MOTOR = robotSpecific(6, 8, -1, -1, -1);
+    public static int SHOOTER_MOTOR = robotSpecific(5, 1, 5, -1, 16); //Beetle prototype on Beetle:5
+    public static int CLIMBER_TALON = robotSpecific(10, -1, -1, -1, 16);
+    public static int AGITATOR_MOTOR = robotSpecific(9, -1, -1, -1);
+    public static int INDEXER_MOTOR = robotSpecific(6, 7, 7, -1); //Beetle prototype on Beetle:7
     public static int RIGHT_MASTER = robotSpecific(RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR);
     public static int LEFT_MASTER = robotSpecific(LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR, LEFT_REAR_MOTOR, LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR);
-    public static int CANDLE_ID = robotSpecific(-1, -1, -1, 15);
+    public static int CANDLE_ID = robotSpecific(-1, 15, -1, 15);
     public static int CTRE_PCM_CAN_ID = robotSpecific(-1, -1, -1, -1);
     public static int ANALOG_SELECTOR_PORT = robotSpecific(-1, -1, 0, -1);
     
@@ -114,9 +115,9 @@ public class Config {
     
     // Invert talons to consider forward as forward (same practice for all objects)
     public static boolean LEFT_FRONT_INVERTED = robotSpecific(false, false, false, false);
-    public static boolean RIGHT_FRONT_INVERTED = robotSpecific(false, true, true, true);
-    public static boolean LEFT_REAR_INVERTED = robotSpecific(false, false, false, false);
-    public static boolean RIGHT_REAR_INVERTED = robotSpecific(false, true, false, true);
+    public static boolean RIGHT_FRONT_INVERTED = robotSpecific(false, false, true, true);
+    public static boolean LEFT_REAR_INVERTED = robotSpecific(false, true, false, false);
+    public static boolean RIGHT_REAR_INVERTED = robotSpecific(false, false, false, true);
     public static boolean DRIVETRAIN_LEFT_SENSORPHASE = robotSpecific(false, true, true, true);
     public static boolean DRIVETRAIN_RIGHT_SENSORPHASE = robotSpecific(false, true, true, true);
 
@@ -129,24 +130,24 @@ public class Config {
     public static boolean MOTOR_CURRENT_LIMIT = true;   //Enable or disable motor current limiting.
 
     public static int TALON_5_PLYBOY = robotSpecific(-1, -1, -1, -1, -1, 5);
-    public static int PIGEON_ID = robotSpecific(CLIMBER_TALON, CLIMBER_TALON, 27, 27, LEFT_REAR_MOTOR, TALON_5_PLYBOY);
+    public static int PIGEON_ID = robotSpecific(CLIMBER_TALON, 27, 27, 27, LEFT_REAR_MOTOR, TALON_5_PLYBOY);
     
-    public static int ANALOG_SELECTOR_ONE = robotSpecific(0, 0, -1, -1, -1, 0);
-    public static int ANALOG_SELECTOR_TWO = robotSpecific(0, 0, -1, -1, -1, 0);
+    public static int ANALOG_SELECTOR_ONE = robotSpecific(0, -1, -1, -1, -1, 0);
+    public static int ANALOG_SELECTOR_TWO = robotSpecific(0, -1, -1, -1, -1, 0);
     public static boolean hasSelectorSwitches = robotSpecific(false, false, false, false);
 
     public static double HUB_X = 8.23;
     public static double HUB_Y = 4.115;
 
-    public static int ARM_TALON = robotSpecific(7, 7, -1, -1);
+    public static int ARM_TALON = robotSpecific(7, -1, -1, -1);
 
     public static int FEEDER_SUBSYSTEM_TALON = robotSpecific(8, 8, -1, -1);
 
-    public static int shooterAnalogSensor = robotSpecific(8, 8, -1, -1);
+    public static int shooterAnalogSensor = robotSpecific(8, -1, -1, -1);
 
     public static int INDEXER_SWITCH = robotSpecific(-1,-1,8,-1);//Beetle prototype
-    public static int FEEDER_SWITCH_INPUT = robotSpecific(9, 9, -1, -1);
-    public static int FEEDER_SWITCH_OUTPUT = robotSpecific(8, 8, -1, -1);
+    public static int FEEDER_SWITCH_INPUT = robotSpecific(9, -1, -1, -1);
+    public static int FEEDER_SWITCH_OUTPUT = robotSpecific(8, -1, -1, -1);
     public static int FEEDER_MAX_BALLS = 3;
     public static int FEEDERSUBSYSTEM_INDEX_ALLOWABLE_ERROR = 50; 
     public static int FEEDERSUBSYSTEM_POS_PAST_SWITCH = 800;

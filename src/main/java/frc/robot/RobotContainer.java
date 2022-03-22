@@ -139,23 +139,34 @@ public class RobotContainer {
      
         switch ( Config.robotId )
         {
-            case 0:
+            case 0: 
+            {
+                break;
+            }
+ 
+            case 1:
             {
                 // Instantiate the intake command and bind it
-                intakeDown = new IntakeDown();
-                new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeDown);
+                // intakeDown = new IntakeDown();
+                // new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeDown);
               
-                intakeUp = new IntakeUp();
-                new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenHeld(intakeUp);
+                // intakeUp = new IntakeUp();
+                // new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenHeld(intakeUp);
                                
-                cmdIntakeTwoCargo = new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(0)); 
-                new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(cmdIntakeTwoCargo);
+                // cmdIntakeTwoCargo = new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(0)); 
+                // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(cmdIntakeTwoCargo);
+
+                Command cmdIntake = new RunIntakeCargo(0);
+                new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(cmdIntake);
+
+                // Command setBling =  new SetBlingPattern(2);
+                // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(setBling);
 
                 cmdIntakeOneCargo = new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(0)); 
                 new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(cmdIntakeOneCargo);
 
-                cmdTurnToOuterPort = new TurnToHubCommand(true, 3.0, 2.0);
-                new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(cmdTurnToOuterPort, true);
+                // cmdTurnToOuterPort = new TurnToHubCommand(true, 3.0, 2.0);
+                // new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(cmdTurnToOuterPort, true);
                 
                 // cmdDriveTrainAlignment = new DrivetrainAlignment(false);
                 // new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(cmdTurnToOuterPort, true);
@@ -163,18 +174,17 @@ public class RobotContainer {
                 //for shooter command
                 //Auto mode backup out of tarmac: target RPM: 3400 RPM
                 //at the top of tarmac: 3350 RPM
+                //
+                //with kicker on: 2550, high goal
+                //without kicker on: low goal 1850
                 Command wait1s = new WaitCommand(1);
                 Command delayIndexer = wait1s.andThen( new IndexerForShooter());
-                cmdShoot = new ParallelCommandGroup(new SpinUpShooterWithTime(3350, 0), delayIndexer);
+                cmdShoot = new ParallelCommandGroup(new SpinUpShooterWithTime(1850, 0), delayIndexer);
                 new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(cmdShoot);
 
                 break;
             }
-            case 1: 
-            {
-                break;
-            }
-            case 2: //Beetle
+           case 2: //Beetle
             {
                 //Front ring light
                 //Command controlFrontRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_FRONT);
@@ -276,7 +286,7 @@ public class RobotContainer {
         // Testing forced numbers
         int selectFolder = 3;
         //@todo: hard coded here. Remove this line will use analog selector.
-        //selectorOne = 2;
+        selectorOne = 0;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
