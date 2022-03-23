@@ -22,6 +22,7 @@ import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.DriveBaseHolder;
+import frc.robot.subsystems.DriveBase.DriveBaseState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.Config;
 
@@ -83,14 +84,16 @@ public class RamseteCommandMerge extends CommandBase {
         m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommandMerge");
 
         m_driveSubsystem = DriveBaseHolder.getInstance();
-
         m_follower = new RamseteController(Config.kRamseteB, Config.kRamseteZeta);
         m_kinematics = Config.kDriveKinematics;
 
         m_feedforward = new SimpleMotorFeedforward(Config.ksVolts, Config.kvVoltSecondsPerMeter,
                 Config.kaVoltSecondsSquaredPerMeter);
 
-        addRequirements(m_driveSubsystem);
+        if(m_driveSubsystem != null)
+        {
+            addRequirements(m_driveSubsystem);
+        }
 
         usbLogger = new SimpleCsvLogger();
         this.loggingDataIdentifier = loggingDataIdentifier;
@@ -124,56 +127,62 @@ public class RamseteCommandMerge extends CommandBase {
 
     @Override
     public void execute() {
-        m_totalTimeElapsed = m_timer.get();
-        double curTime = m_totalTimeElapsed - m_timeBeforeTrajectory;
-        double dt = m_totalTimeElapsed - m_prevTime;
 
-        Pose2d currentPose = m_driveSubsystem.getPose();
-        Trajectory.State desiredState = m_trajectory.sample(curTime);
+        if(m_driveSubsystem.getDriveBaseState() == DriveBaseState.Degraded)
+        {
+            System.out.println("RamseteCommandMerge: DriveBase is in degraded mode: Do nothing");
+        }
+        else
+        {
+            m_totalTimeElapsed = m_timer.get();
+            double curTime = m_totalTimeElapsed - m_timeBeforeTrajectory;
+            double dt = m_totalTimeElapsed - m_prevTime;
 
-        // Exclusively used for logging
-        Pose2d poseError = desiredState.poseMeters.relativeTo(currentPose);
-        xError.setNumber(poseError.getTranslation().getX());
-        yError.setNumber(poseError.getTranslation().getY());
-        rotError.setNumber(poseError.getRotation().getDegrees());
+            Pose2d currentPose = m_driveSubsystem.getPose();
+            Trajectory.State desiredState = m_trajectory.sample(curTime);
 
-        xCurrent.setNumber(currentPose.getTranslation().getX());
-        yCurrent.setNumber(currentPose.getTranslation().getY());
-        rotCurrent.setNumber(currentPose.getRotation().getDegrees());
+            // Exclusively used for logging
+            Pose2d poseError = desiredState.poseMeters.relativeTo(currentPose);
+            xError.setNumber(poseError.getTranslation().getX());
+            yError.setNumber(poseError.getTranslation().getY());
+            rotError.setNumber(poseError.getRotation().getDegrees());
 
-        var targetWheelSpeeds = m_kinematics.toWheelSpeeds(m_follower.calculate(currentPose, desiredState));
+            xCurrent.setNumber(currentPose.getTranslation().getX());
+            yCurrent.setNumber(currentPose.getTranslation().getY());
+            rotCurrent.setNumber(currentPose.getRotation().getDegrees());
 
-        double leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
-        double rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
+            var targetWheelSpeeds = m_kinematics.toWheelSpeeds(m_follower.calculate(currentPose, desiredState));
 
-        double leftAcceleration = (leftSpeedSetpoint - m_prevSpeeds.leftMetersPerSecond) / dt;
-        double rightAcceleration = (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt;
+            double leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
+            double rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
 
-        double leftFeedforward = m_feedforward.calculate(leftSpeedSetpoint, leftAcceleration);
-        double rightFeedforward = m_feedforward.calculate(rightSpeedSetpoint, rightAcceleration);
+            double leftAcceleration = (leftSpeedSetpoint - m_prevSpeeds.leftMetersPerSecond) / dt;
+            double rightAcceleration = (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt;
 
-        m_driveSubsystem.tankDriveVelocities(leftSpeedSetpoint, rightSpeedSetpoint,
-                leftFeedforward, rightFeedforward);
+            double leftFeedforward = m_feedforward.calculate(leftSpeedSetpoint, leftAcceleration);
+            double rightFeedforward = m_feedforward.calculate(rightSpeedSetpoint, rightAcceleration);
 
-        m_prevTime = m_totalTimeElapsed;
-        m_prevSpeeds = targetWheelSpeeds;
+            m_driveSubsystem.tankDriveVelocities(leftSpeedSetpoint, rightSpeedSetpoint,
+                    leftFeedforward, rightFeedforward);
 
-        // Get measure velocities for logging
-        double measuredVelocities[] = m_driveSubsystem.getMeasuredVelocities();
+            m_prevTime = m_totalTimeElapsed;
+            m_prevSpeeds = targetWheelSpeeds;
 
-        // Log Data - See Spreadsheet link at top
-        logData(m_totalTimeElapsed, desiredState.poseMeters.getTranslation().getX(),
-                desiredState.poseMeters.getTranslation().getY(), desiredState.poseMeters.getRotation().getDegrees(),
-                desiredState.velocityMetersPerSecond, desiredState.accelerationMetersPerSecondSq,
-                desiredState.curvatureRadPerMeter, currentPose.getTranslation().getX(),
-                currentPose.getTranslation().getY(), currentPose.getRotation().getDegrees(),
-                poseError.getTranslation().getX(), poseError.getTranslation().getY(),
-                poseError.getRotation().getDegrees(), leftSpeedSetpoint, rightSpeedSetpoint, measuredVelocities[0],
-                measuredVelocities[1], leftFeedforward, rightFeedforward, 
-                leftAcceleration, rightAcceleration, targetPose.getTranslation().getX(),
-                targetPose.getTranslation().getY(), targetPose.getRotation().getDegrees());
+            // Get measure velocities for logging
+            double measuredVelocities[] = m_driveSubsystem.getMeasuredVelocities();
 
-    
+            // Log Data - See Spreadsheet link at top
+            logData(m_totalTimeElapsed, desiredState.poseMeters.getTranslation().getX(),
+                    desiredState.poseMeters.getTranslation().getY(), desiredState.poseMeters.getRotation().getDegrees(),
+                    desiredState.velocityMetersPerSecond, desiredState.accelerationMetersPerSecondSq,
+                    desiredState.curvatureRadPerMeter, currentPose.getTranslation().getX(),
+                    currentPose.getTranslation().getY(), currentPose.getRotation().getDegrees(),
+                    poseError.getTranslation().getX(), poseError.getTranslation().getY(),
+                    poseError.getRotation().getDegrees(), leftSpeedSetpoint, rightSpeedSetpoint, measuredVelocities[0],
+                    measuredVelocities[1], leftFeedforward, rightFeedforward, 
+                    leftAcceleration, rightAcceleration, targetPose.getTranslation().getX(),
+                    targetPose.getTranslation().getY(), targetPose.getRotation().getDegrees());
+        }
     }
 
     @Override

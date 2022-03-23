@@ -221,6 +221,11 @@ public abstract class DriveBase extends SubsystemBase {
         return 0.0;
     }
 
+    public DriveBaseState getDriveBaseState()
+    {
+        return state;
+    }
+
     public void setActivePIDSlot(int slotId) {
         
     }

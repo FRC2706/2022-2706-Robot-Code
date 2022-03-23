@@ -47,16 +47,63 @@ public class AutoRoutines {
             case 0:
                 // This is our 'do nothing' selector
                 return null;
+
             case 1:
+                //description:
+                //starting position: within tarmac and facing a red cargo
+                // if using odometry: middle red cargo
+                //shoot first --> drive forward --> pick up a cargo --> shoot it again
+                
+                //testing red option 2
+                RamseteCommandMerge ramsete1 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
+                return new SequentialCommandGroup (
+                    //Shoot first 
+                    //new SpinUpShooterWithTime(2000, 0)
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
+                    ramsete1);
+                    //new ParallelCommandGroup(ramsete1, new RunIntakeCargo(2),
+                   // new SpinUpShooterWithTime(2500, 0));
+                    
+            case 2:
+                //description:
+                //starting position: within tarmac and facing a blue cargo
+                // if using odometry: middle blue cargo
+                //shoot first --> drive forward --> pick up a cargo --> shoot it again
                 //testing blue option 2
-                RamseteCommandMerge ramsete1 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
+                RamseteCommandMerge ramsete2 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
+                    ramsete2);
+            case 3:
+                //description:
+                //starting position: within tarmac and facing a red cargo
+                // if using odometry: middle red cargo
+                //drive forward first --> pick up 2nd cargo --> shoot both cargo
+                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
+                    ramsete3);
+            case 4:
+                //description:
+                //starting position: within tarmac and facing a red blue
+                // if using odometry: middle blue cargo
+                //drive forward first --> pick up 2nd cargo --> shoot both cargo
+                RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
+                    ramsete4);
+
+            case 5:
+                //an example
+                //testing blue option 2
+                RamseteCommandMerge ramsete5 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
 
                 Command wait1s = new WaitCommand(1);
                 Command delayIndexer = wait1s.andThen( new IndexerForShooter());
                 Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(3400, 5), delayIndexer);
 
                 //@todo: add ending to IndexerCargo
-                Command intake = new ParallelRaceGroup(new RunIntakeCargo(5), new IndexerCargo(), ramsete1);
+                Command intake = new ParallelRaceGroup(new RunIntakeCargo(5), new IndexerCargo(), ramsete5);
 
                 return new SequentialCommandGroup (
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
@@ -79,11 +126,33 @@ public class AutoRoutines {
                 // This is our 'do nothing' selector
                 return null;
             case 1:
+                //testing red option 2
+                RamseteCommandMerge ramsete1 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
+                return new SequentialCommandGroup (
+                    //Shoot first 
+                    //new SpinUpShooterWithTime(2000, 0)
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
+                    ramsete1);
+                    //new ParallelCommandGroup(ramsete1, new RunIntakeCargo(2),
+                   // new SpinUpShooterWithTime(2500, 0));
+                    
+            case 2:
                 //testing blue option 2
-                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
+                RamseteCommandMerge ramsete2 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
                 return new SequentialCommandGroup (
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
+                    ramsete2);
+            case 3:
+                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
                     ramsete3);
+            case 4:
+                RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
+                    ramsete4);
+                    /*
             case 2:
                 //testing option 3: path1
                 //todo: Check if ending position is the same spot as the starting position of path 2
@@ -114,6 +183,7 @@ public class AutoRoutines {
                     ramsete3_2,         //new ParallelCommandGroup(ramsete3_2, intakeCommand(3)),
                     new DrivetrainAlignment(false) );
                     //@todo: add a shooter command at the end
+                    
             case 5:
                 //testing red option 1
                 RamseteCommandMerge ramsete6 = new RamseteCommandMerge(Robot.trajectoryRedO1, "Trajectory-Red-O1");
@@ -121,11 +191,7 @@ public class AutoRoutines {
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO1.getInitialPose())),
                     ramsete6);
             case 6:
-                //testing red option 2
-                RamseteCommandMerge ramsete7 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
-                return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
-                    ramsete7);
+                
             case 7:
                 //testing blue option 3
                 RamseteCommandMerge ramsete8 = new RamseteCommandMerge(Robot.trajectoryRedO3, "Trajectory-Red-O3");
@@ -157,7 +223,7 @@ public class AutoRoutines {
                     ramsete8_1,         //new ParallelCommandGroup(ramsete3_1, intakeCommand(3)),
                     new WaitCommand(2), //shoot two cargo, no need for alignment. replaced by the shooter command
                     ramsete8_2);         //new ParallelCommandGroup(ramsete3_2, intakeCommand(3)),
-
+*/
             default:
                 return null;
         }

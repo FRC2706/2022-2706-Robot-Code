@@ -286,7 +286,7 @@ public class RobotContainer {
         // Testing forced numbers
         int selectFolder = 3;
         //@todo: hard coded here. Remove this line will use analog selector.
-        selectorOne = 0;
+        selectorOne = 1;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
