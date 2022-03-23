@@ -215,9 +215,17 @@ public class DriveBase2020 extends DriveBase {
         ErrorCode rightMasterError = rightMaster.configAllSettings(talonConfig);
 
         if (!leftMasterError.equals(ErrorCode.OK)) 
+        {
             logErrorCode(leftMasterError, "DrivetrainLeftMaster", Config.LEFT_FRONT_MOTOR, "configAllSettings");
+            this.state = DriveBaseState.Degraded;
+            System.out.println("DriveBase2020 Degraded: Line 221");
+        }
         if (!rightMasterError.equals(ErrorCode.OK))
+        {
             logErrorCode(rightMasterError, "DrivetrainRightMaster", Config.RIGHT_FRONT_MOTOR, "configAllSettings");
+            this.state = DriveBaseState.Degraded;
+            System.out.println("DriveBase2020 Degraded: Line 227");
+        }
 
         // Config the encoder and check if it worked
         ErrorCode e1 = leftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -225,6 +233,7 @@ public class DriveBase2020 extends DriveBase {
         
         if (e1.value != 0 || e2.value != 0) {
             this.state = DriveBaseState.Degraded;
+            System.out.println("DriveBase2020 Degraded: Line 236");
             logger.severe("DRIVETRAIN ENCODER NOT WORKING - DRIVETRAIN DEGRADED - ONLY DRIVER CONTROLS ACTIVE");
             logErrorCode(e1, "DrivetrainLeftMaster", Config.LEFT_FRONT_MOTOR, "configSelectedFeedbackSensor(MagEncoderRelative)");
             logErrorCode(e2, "DrivetrainRightMaster", Config.RIGHT_FRONT_MOTOR, "configSelectedFeedbackSensor(MagEncoderRelative)");
@@ -248,8 +257,13 @@ public class DriveBase2020 extends DriveBase {
         leftMaster.setSensorPhase(Config.DRIVETRAIN_LEFT_SENSORPHASE);
         rightMaster.setSensorPhase(Config.DRIVETRAIN_RIGHT_SENSORPHASE);
 
-        leftMaster.setSelectedSensorPosition(0);
-        rightMaster.setSelectedSensorPosition(0);
+        e1 = leftMaster.setSelectedSensorPosition(0);
+        e2 = rightMaster.setSelectedSensorPosition(0);
+
+        if (e1.value != 0 || e2.value != 0) {
+            this.state = DriveBaseState.Degraded;
+            System.out.println("DriveBase2020 Degraded: Line 265");
+        }
 
     }
 
