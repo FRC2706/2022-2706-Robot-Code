@@ -70,6 +70,12 @@ public class DriveBase2020 extends DriveBase {
             rightFollower = null;
         }
 
+        if ( leftMaster == null || rightMaster == null )
+        {
+            state = DriveBaseState.Degraded;
+            return;
+        }
+
         odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getCurrentAngle()));        
 
         differentialDrive = new DifferentialDrive(leftMaster, rightMaster);
@@ -88,8 +94,16 @@ public class DriveBase2020 extends DriveBase {
             else{
                 pigeon = new PigeonIMU(new WPI_TalonSRX(Config.PIGEON_ID));
             }
-            pigeon.setFusedHeading(0d, Config.CAN_TIMEOUT_LONG);
-        }
+
+            if ( pigeon != null)
+                pigeon.setFusedHeading(0d, Config.CAN_TIMEOUT_LONG);
+            else
+            {
+                state = DriveBaseState.Degraded;
+            }
+        }       
+
+
 
         logger.addHandler(Config.logFileHandler);
 
@@ -139,8 +153,11 @@ public class DriveBase2020 extends DriveBase {
 
     @Override
     public void stopMotors() {
-        leftMaster.stopMotor();
-        rightMaster.stopMotor();
+        if ( leftMaster != null )
+            leftMaster.stopMotor();
+
+        if ( rightMaster != null )
+            rightMaster.stopMotor();
 
         if(leftFollower != null){
             leftFollower.neutralOutput();
@@ -152,21 +169,71 @@ public class DriveBase2020 extends DriveBase {
     
     @Override
     protected void resetMotors() {
-        leftMaster.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
-        rightMaster.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
-        if(leftFollower != null){
-            leftFollower.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
-        }
-        if(rightFollower != null){
-            rightFollower.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
+        
+        ErrorCode errCode = leftMaster.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
+        if ( errCode.value != 0 )
+        {
+            state = DriveBaseState.Degraded;
         }
 
-        leftMaster.configPeakCurrentLimit(0);
-        leftMaster.configPeakCurrentDuration(0);
-        leftMaster.configContinuousCurrentLimit(0);
-        rightMaster.configPeakCurrentLimit(0);
-        rightMaster.configPeakCurrentDuration(0);
-        rightMaster.configContinuousCurrentLimit(0);
+       errCode =  rightMaster.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
+       if ( errCode.value != 0 )
+       {
+           state = DriveBaseState.Degraded;
+       }    
+
+        if(leftFollower != null){
+            errCode = leftFollower.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
+            if ( errCode.value != 0 )
+            {
+                state = DriveBaseState.Degraded;
+            }   
+        }
+
+        if(rightFollower != null){
+            errCode = rightFollower.configFactoryDefault(Config.CAN_TIMEOUT_LONG);
+            if ( errCode.value != 0 )
+            {
+                state = DriveBaseState.Degraded;
+            }
+    
+        }
+
+        errCode = leftMaster.configPeakCurrentLimit(0);
+        if ( errCode.value != 0 )
+        {
+            state = DriveBaseState.Degraded;
+        }
+
+        errCode = leftMaster.configPeakCurrentDuration(0);
+        if ( errCode.value != 0 )
+        {
+            state = DriveBaseState.Degraded;
+        }
+
+        errCode = leftMaster.configContinuousCurrentLimit(0);
+        if ( errCode.value != 0 )
+        {
+            state = DriveBaseState.Degraded;
+        }
+
+        errCode = rightMaster.configPeakCurrentLimit(0);
+        if ( errCode.value != 0 )
+        {
+            state = DriveBaseState.Degraded;
+        }
+
+        errCode = rightMaster.configPeakCurrentDuration(0);
+        if ( errCode.value != 0 )
+        {
+            state = DriveBaseState.Degraded;
+        }
+
+        errCode = rightMaster.configContinuousCurrentLimit(0);
+        if ( errCode.value != 0 )
+        {
+            state = DriveBaseState.Degraded;
+        }
 
         this.followMotors();
     }
@@ -217,13 +284,13 @@ public class DriveBase2020 extends DriveBase {
         if (!leftMasterError.equals(ErrorCode.OK)) 
         {
             logErrorCode(leftMasterError, "DrivetrainLeftMaster", Config.LEFT_FRONT_MOTOR, "configAllSettings");
-            this.state = DriveBaseState.Degraded;
+            state = DriveBaseState.Degraded;
             System.out.println("DriveBase2020 Degraded: Line 221");
         }
         if (!rightMasterError.equals(ErrorCode.OK))
         {
             logErrorCode(rightMasterError, "DrivetrainRightMaster", Config.RIGHT_FRONT_MOTOR, "configAllSettings");
-            this.state = DriveBaseState.Degraded;
+            state = DriveBaseState.Degraded;
             System.out.println("DriveBase2020 Degraded: Line 227");
         }
 
@@ -232,7 +299,7 @@ public class DriveBase2020 extends DriveBase {
         ErrorCode e2 = rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
         
         if (e1.value != 0 || e2.value != 0) {
-            this.state = DriveBaseState.Degraded;
+            state = DriveBaseState.Degraded;
             System.out.println("DriveBase2020 Degraded: Line 236");
             logger.severe("DRIVETRAIN ENCODER NOT WORKING - DRIVETRAIN DEGRADED - ONLY DRIVER CONTROLS ACTIVE");
             logErrorCode(e1, "DrivetrainLeftMaster", Config.LEFT_FRONT_MOTOR, "configSelectedFeedbackSensor(MagEncoderRelative)");
@@ -261,7 +328,7 @@ public class DriveBase2020 extends DriveBase {
         e2 = rightMaster.setSelectedSensorPosition(0);
 
         if (e1.value != 0 || e2.value != 0) {
-            this.state = DriveBaseState.Degraded;
+            state = DriveBaseState.Degraded;
             System.out.println("DriveBase2020 Degraded: Line 265");
         }
 
@@ -604,6 +671,10 @@ public class DriveBase2020 extends DriveBase {
         return talonPosistionToMeters(talonVelocity * 10); // Convert ticks/100ms to ticks/sec
     }
 
+    public DriveBaseState getDriveBaseState()
+    {
+        return state;
+    }
     /**
      * All Methods used for USB logging startLogging() logData(data) stopLogging()
      */

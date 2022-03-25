@@ -4,31 +4,39 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.intakePneumaticSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+//import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.subsystems.intakePneumaticSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakeDown  extends CommandBase{
+public class IntakeFloat extends CommandBase{//extends InstantCommand {
   intakePneumaticSubsystem intakePneumatic;
+  boolean m_bForward;
 
-  /** Creates a new IntakeDown. */
-  public IntakeDown() {
+  public IntakeFloat(boolean bForward) {
+
+    m_bForward = bForward;
+
     intakePneumatic = intakePneumaticSubsystem.getInstance();
-
-    if( intakePneumatic != null)
-    {
-      // Use addRequirements() here to declare subsystem dependencies.
+    // Use addRequirements() here to declare subsystem dependencies.
+    if(intakePneumatic != null)
       addRequirements(intakePneumatic);
-    }
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     if ( intakePneumatic != null )
-     intakePneumatic.moveDown();
+    {
+      if(m_bForward == true)
+       intakePneumatic.setFloatForward();
+      else
+       intakePneumatic.setFloatReverse();
+    }
+    
   }
 
   @Override
@@ -36,12 +44,13 @@ public class IntakeDown  extends CommandBase{
   {
 
   }
-
+  
   @Override
   public void end(boolean interrupted)
   {
-    if ( intakePneumatic != null)
-     intakePneumatic.stopIntakePneumatic();
+    //don't stopFloat()
+    // if ( intakePneumatic != null)
+    // intakePneumatic.stopFloat();
   }
 
   // Returns true when the command should end.

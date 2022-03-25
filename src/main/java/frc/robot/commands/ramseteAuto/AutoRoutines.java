@@ -30,6 +30,7 @@ import frc.robot.commands.IntakeDown;
 import frc.robot.commands.LowerArm;
 import frc.robot.commands.OuterGoalErrorLoop;
 import frc.robot.commands.RunIntakeCargo;
+import frc.robot.commands.ControlKicker;
 import frc.robot.commands.ramseteAuto.VisionPose.VisionType;
 import frc.robot.config.Config;
 import frc.robot.nettables.VisionCtrlNetTable;
@@ -49,20 +50,46 @@ public class AutoRoutines {
                 return null;
 
             case 1:
-                //description:
-                //starting position: within tarmac and facing a red cargo
-                // if using odometry: middle red cargo
-                //shoot first --> drive forward --> pick up a cargo --> shoot it again
+            //low goal
+                Command wait1sA = new WaitCommand(1);
+                Command delayIndexerA = wait1sA.andThen( new IndexerForShooter());
+                Command autoShoot = new ParallelCommandGroup(new SpinUpShooterWithTime(1800, 0), delayIndexerA);
+                return autoShoot;
+
+
+                // Command wait1sA = new WaitCommand(1);
+                // Command delayIndexerA = wait1sA.andThen( new IndexerForShooter());
+                // Command autoShoot = new ParallelCommandGroup(new SpinUpShooterWithTime(2750, 0), delayIndexerA);
+                // return autoShoot;
+
+                // Command kicker = new ControlKicker(false);
+                // Command kickerDown = new ParallelRaceGroup(kicker, new WaitCommand(1) );
+                // Command autoHigh = new SequentialCommandGroup (kickerDown, autoShoot);                                                              autoShoot);
+                // return autoHigh;
+
+                // return new SequentialCommandGroup(
+                //         new DriveWithTime(1.5,0.5,0.5),
+                //         new ParallelRaceGroup(new IntakeDown(),new WaitCommand(2))
+                        
+                //         //new ParallelRaceGroup(new RunIntakeCargo(true, 0), new DriveWithTime(1.5,0.5,0.5))
+                //         );
+
+
+            // case 1:
+            //     //description:
+            //     //starting position: within tarmac and facing a red cargo
+            //     // if using odometry: middle red cargo
+            //     //shoot first --> drive forward --> pick up a cargo --> shoot it again
                 
-                //testing red option 2
-                RamseteCommandMerge ramsete1 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
-                return new SequentialCommandGroup (
-                    //Shoot first 
-                    //new SpinUpShooterWithTime(2000, 0)
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
-                    ramsete1);
-                    //new ParallelCommandGroup(ramsete1, new RunIntakeCargo(2),
-                   // new SpinUpShooterWithTime(2500, 0));
+            //     //testing red option 2
+            //     RamseteCommandMerge ramsete1 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
+            //     return new SequentialCommandGroup (
+            //         //Shoot first 
+            //         //new SpinUpShooterWithTime(2000, 0)
+            //         new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
+            //         ramsete1);
+            //         //new ParallelCommandGroup(ramsete1, new RunIntakeCargo(2),
+            //        // new SpinUpShooterWithTime(2500, 0));
                     
             case 2:
                 //description:
@@ -103,7 +130,7 @@ public class AutoRoutines {
                 Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(3400, 5), delayIndexer);
 
                 //@todo: add ending to IndexerCargo
-                Command intake = new ParallelRaceGroup(new RunIntakeCargo(5), new IndexerCargo(), ramsete5);
+                Command intake = new ParallelRaceGroup(new RunIntakeCargo(true, 5), new IndexerCargo(), ramsete5);
 
                 return new SequentialCommandGroup (
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),

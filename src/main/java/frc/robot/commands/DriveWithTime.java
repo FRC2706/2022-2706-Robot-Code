@@ -47,6 +47,7 @@ public class DriveWithTime extends CommandBase {
 
     // Timer is started and will start counting UP from 0
     timer.start();
+    timer.reset();
     addRequirements(DriveBaseHolder.getInstance());
 
   }
@@ -65,6 +66,7 @@ public class DriveWithTime extends CommandBase {
   public void end(boolean interrupted) {
     // If using the withTimeout(double seconds); as the timer, return here.
     DriveBaseHolder.getInstance().stopMotors();
+    timer.stop();
   }
 
 

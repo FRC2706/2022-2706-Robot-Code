@@ -100,16 +100,19 @@ public class Config {
     public static int RIGHT_MASTER = robotSpecific(RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR);
     public static int LEFT_MASTER = robotSpecific(LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR, LEFT_REAR_MOTOR, LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR);
     public static int CANDLE_ID = robotSpecific(-1, 15, -1, 15);
-    public static int CTRE_PCM_CAN_ID = robotSpecific(-1, -1, -1, -1);
-    public static int ANALOG_SELECTOR_PORT = robotSpecific(-1, -1, 0, -1);
+    public static int CTRE_PCM_CAN_ID = robotSpecific(-1, 1, -1, -1);
+    public static int ANALOG_SELECTOR_PORT = robotSpecific(-1, 0, 0, -1);
     
-    public static int SHOOTER_PNEUMATIC_FORWARD_CHANNEL = robotSpecific(-1, -1, -1, -1);
-    public static int SHOOTER_PNEUMATIC_REVERSE_CHANNEL = robotSpecific(-1, -1, -1, -1);
-    public static int INTAKE_PNEUMATIC_FORWARD_CHANNEL_1 = robotSpecific(-1, -1, -1, -1);
-    public static int INTAKE_PNEUMATIC_REVERSE_CHANNEL_1 = robotSpecific(-1, -1, -1, -1);
-    public static int INTAKE_PNEUMATIC_FORWARD_CHANNEL_2 = robotSpecific(-1, -1, -1, -1);
-    public static int INTAKE_PNEUMATIC_REVERSE_CHANNEL_2 = robotSpecific(-1, -1, -1, -1);
+    public static int KICKER_PNEUMATIC_FORWARD_CHANNEL = robotSpecific(-1, 6, -1, -1);
+    public static int KICKER_PNEUMATIC_REVERSE_CHANNEL = robotSpecific(-1, 1, -1, -1);
+    public static int KICKER_PNEUMATIC_FLOAT_CHANNEL_1 = robotSpecific(-1, 0, -1, -1);
+    public static int KICKER_PNEUMATIC_FLOAT_CHANNEL_2 = robotSpecific(-1, 7, -1, -1);
 
+    public static int INTAKE_PNEUMATIC_FORWARD_CHANNEL = robotSpecific(-1, 4, -1, -1);
+    public static int INTAKE_PNEUMATIC_REVERSE_CHANNEL = robotSpecific(-1, 3, -1, -1);
+    public static int INTAKE_PNEUMATIC_FLOAT_CHANNEL_1 = robotSpecific(-1, 5, -1, -1);
+    public static int INTAKE_PNEUMATIC_FLOAT_CHANNEL_2 = robotSpecific(-1, 2, -1, -1); //not used
+    
     public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
     public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
     
@@ -132,7 +135,7 @@ public class Config {
     public static int TALON_5_PLYBOY = robotSpecific(-1, -1, -1, -1, -1, 5);
     public static int PIGEON_ID = robotSpecific(CLIMBER_TALON, 27, 27, 27, LEFT_REAR_MOTOR, TALON_5_PLYBOY);
     
-    public static int ANALOG_SELECTOR_ONE = robotSpecific(0, -1, -1, -1, -1, 0);
+    public static int ANALOG_SELECTOR_ONE = robotSpecific(0, 0, -1, -1, -1, 0);
     public static int ANALOG_SELECTOR_TWO = robotSpecific(0, -1, -1, -1, -1, 0);
     public static boolean hasSelectorSwitches = robotSpecific(false, false, false, false);
 
@@ -145,7 +148,8 @@ public class Config {
 
     public static int shooterAnalogSensor = robotSpecific(8, -1, -1, -1);
 
-    public static int INDEXER_SWITCH = robotSpecific(-1,-1,8,-1);//Beetle prototype
+    //8 or 9
+    public static int INDEXER_SWITCH = robotSpecific(-1,2,8,-1);//Beetle prototype
     public static int FEEDER_SWITCH_INPUT = robotSpecific(9, -1, -1, -1);
     public static int FEEDER_SWITCH_OUTPUT = robotSpecific(8, -1, -1, -1);
     public static int FEEDER_MAX_BALLS = 3;

@@ -18,24 +18,34 @@ public class intakePneumaticSubsystem extends SubsystemBase {
   /** Creates a new intakePneumaticSubsystem. */
   public intakePneumaticSubsystem() 
   {
-    intakeUpDown = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
+    if ( Config.CTRE_PCM_CAN_ID == -1 ||
+        Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL == -1 || 
+        Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL == -1 )
+    {
+        intakeUpDown = null;
+    }
+    else
+      intakeUpDown = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                       PneumaticsModuleType.CTREPCM, 
-                                      Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL_1, 
-                                      Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL_1);
+                                      Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL, 
+                                      Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL);
 
-    intakeFloat = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
+    if ( Config.CTRE_PCM_CAN_ID == -1 ||
+         Config.INTAKE_PNEUMATIC_FLOAT_CHANNEL_1 == -1 || 
+         Config.INTAKE_PNEUMATIC_FLOAT_CHANNEL_2 == -1 )
+    {
+        intakeFloat = null;
+    }
+    else
+        intakeFloat = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID,
                                      PneumaticsModuleType.CTREPCM, 
-                                     Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL_2, 
-                                     Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL_2); 
+                                     Config.INTAKE_PNEUMATIC_FLOAT_CHANNEL_1, 
+                                     Config.INTAKE_PNEUMATIC_FLOAT_CHANNEL_2); 
   }
 
   public boolean isActive()
   {
-    if(Config.CTRE_PCM_CAN_ID == -1 ||
-       Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL_1 == -1 || 
-       Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL_1 == -1 ||
-       Config.INTAKE_PNEUMATIC_REVERSE_CHANNEL_2 == -1 ||
-       Config.INTAKE_PNEUMATIC_FORWARD_CHANNEL_2 == -1)
+    if(intakeFloat == null || intakeUpDown == null )
     {
       return false;
     } 
@@ -62,20 +72,43 @@ public class intakePneumaticSubsystem extends SubsystemBase {
 
   public void moveDown()
   {
-    intakeUpDown.set(Value.kReverse);
-    //@todo: Determine which state for float
-    intakeFloat.set(Value.kReverse);
+    intakeFloat.set(Value.kForward);
+    intakeUpDown.set(Value.kForward); 
   }
 
   public void moveUp()
-  {
-    intakeFloat.set(Value.kOff);
-    intakeUpDown.set(Value.kForward);
+  {    
+    intakeFloat.set(Value.kForward);
+    intakeUpDown.set(Value.kReverse);
   }
 
-  public void stop()
+  //Does not work
+  public void setFloatForward()
+  {
+   // intakeFloat.set(Value.kForward);
+  }
+
+   //Works
+  public void setFloatReverse()
+  {
+    intakeFloat.set(Value.kReverse);
+  }
+
+
+  public void stopFloat()
+  {
+   intakeFloat.set(Value.kOff);
+  }
+
+  public void stopUpDown()
   {
     intakeUpDown.set(Value.kOff);
+  }
+
+  public void stopIntakePneumatic()
+  {
     intakeFloat.set(Value.kOff);
+    intakeUpDown.set(Value.kOff);
+
   }
 }
