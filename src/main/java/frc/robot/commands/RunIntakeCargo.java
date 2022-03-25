@@ -14,10 +14,12 @@ public class RunIntakeCargo extends CommandBase {
   private double timeout;
   private Timer timer;
   private boolean m_bUseTimer = false;
+  private boolean m_bForward;
 
   /** Creates a new RunPneumaticsIntake. */
-  public RunIntakeCargo( int timeOut ) {
+  public RunIntakeCargo( boolean bForward, int timeOut ) {
     timeout = timeOut;
+    m_bForward = bForward;
 
     if ( timeout > 0 )
     {
@@ -53,7 +55,10 @@ public class RunIntakeCargo extends CommandBase {
   public void execute() {
     if (intakeCargoSubsystem != null)
     {
-      intakeCargoSubsystem.start();
+      if (m_bForward == true)
+        intakeCargoSubsystem.start();
+      else
+       intakeCargoSubsystem.startReverse();;
     }
     
   }

@@ -86,6 +86,13 @@ public class IntakeCargoSubsystem extends SubsystemBase {
     m_intake.set(ControlMode.PercentOutput, 0.8);
   }
 
+  public void startReverse()
+  {
+    //@todo: need to adjust 0.2
+    //@todo: 
+    m_intake.set(ControlMode.PercentOutput, -0.8);
+  }
+
   public void stop()
   {
     m_intake.set(ControlMode.PercentOutput, 0);

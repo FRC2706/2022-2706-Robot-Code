@@ -107,6 +107,7 @@ public class AnalogSelectorSubsystem extends SubsystemBase {
   public int getIndex() {
 
     final double voltage = analogInput.getAverageVoltage();
+    System.out.println("selector average value"+voltage);
 
     int index = 0;
     // Check each voltage range

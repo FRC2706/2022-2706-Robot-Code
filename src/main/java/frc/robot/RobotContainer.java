@@ -135,7 +135,7 @@ public class RobotContainer {
         new JoystickButton(driverStick, XboxController.Button.kLeftBumper.value).whenHeld(sensitiveDriving);
  
         // Command resetHeading = new InstantCommand(() -> DriveBaseHolder.getInstance().resetHeading(Rotation2d.fromDegrees(0)));
-        // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenActive(resetHeading);
+        // new JoystickButton(driverStick, XboxController.Button.kBack.value).whenActive(resetHeading);
      
         switch ( Config.robotId )
         {
@@ -146,43 +146,66 @@ public class RobotContainer {
  
             case 1:
             {
-                // Instantiate the intake command and bind it
-                // intakeDown = new IntakeDown();
-                // new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(intakeDown);
-              
-                // intakeUp = new IntakeUp();
-                // new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenHeld(intakeUp);
-                               
-                // cmdIntakeTwoCargo = new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(0)); 
-                // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(cmdIntakeTwoCargo);
 
-                Command cmdIntake = new RunIntakeCargo(0);
-                new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(cmdIntake);
+            //=================
+            //up and down intake
+            //===================
+            //intake one cargo
+            cmdIntakeOneCargo = new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(true, 0)); 
+            new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenHeld(cmdIntakeOneCargo);
 
-                // Command setBling =  new SetBlingPattern(2);
-                // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(setBling);
-
-                cmdIntakeOneCargo = new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(0)); 
-                new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(cmdIntakeOneCargo);
-
-                // cmdTurnToOuterPort = new TurnToHubCommand(true, 3.0, 2.0);
-                // new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(cmdTurnToOuterPort, true);
+             //intake two cargo
+            cmdIntakeTwoCargo = new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(true, 0)); 
+            new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(cmdIntakeTwoCargo);
+             
+            Command intakeReverse = new RunIntakeCargo(false, 0);
+            new JoystickButton(controlStick, XboxController.Button.kBack.value).whenHeld(intakeReverse);
+             
+            //============
+            //intake
+            //=========
+            //intake up
+            intakeUp = new IntakeUp(); 
+            new JoystickButton(controlStick, XboxController.Button.kY.value).whenPressed(intakeUp);
                 
-                // cmdDriveTrainAlignment = new DrivetrainAlignment(false);
-                // new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(cmdTurnToOuterPort, true);
+            //intake down
+            Command intakeDownFloat = new SequentialCommandGroup(
+                                         new ParallelRaceGroup(new IntakeDown(), new WaitCommand(1)),
+                                         new IntakeFloat(false)); 
+            new JoystickButton(controlStick, XboxController.Button.kA.value).whenPressed(intakeDownFloat);
  
-                //for shooter command
-                //Auto mode backup out of tarmac: target RPM: 3400 RPM
-                //at the top of tarmac: 3350 RPM
-                //
-                //with kicker on: 2550, high goal
-                //without kicker on: low goal 1850
-                Command wait1s = new WaitCommand(1);
-                Command delayIndexer = wait1s.andThen( new IndexerForShooter());
-                cmdShoot = new ParallelCommandGroup(new SpinUpShooterWithTime(1850, 0), delayIndexer);
-                new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(cmdShoot);
+            //=============
+            //shooter
+            //=================================
+            //@todo #4: for shooter command
+            //Auto mode backup out of tarmac: target RPM: 3400 RPM
+            //at the top of tarmac: 3350 RPM
+            //
+            //with kicker on: 2550, high goal
+            //without kicker on: low goal 1850
+            //tarmat A: closer: RMP = 3200
+            Command wait1sA = new WaitCommand(1);
+            Command delayIndexerA = wait1sA.andThen( new IndexerForShooter());
+            Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(3200, 0), delayIndexerA);
+            new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(cmdShootA);
 
-                break;
+            // //tarmat B: farther: RPM = 3400
+            Command wait1sB = new WaitCommand(1);
+            Command delayIndexerB = wait1sB.andThen( new IndexerForShooter());
+            Command cmdShootB = new ParallelCommandGroup(new SpinUpShooterWithTime(3350, 0), delayIndexerB);
+            new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(cmdShootB);
+
+            //kicker floating
+            Command kickerFloat = new KickerFloat();
+            new JoystickButton(controlStick, XboxController.Button.kStart.value).whenPressed(kickerFloat);
+
+
+            //test switch
+            // Command readSwitch = new TestSwitch();
+            // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
+
+            
+            break;
             }
            case 2: //Beetle
             {
@@ -199,7 +222,7 @@ public class RobotContainer {
 
                 //Rear large ring light
                 Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
-                new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(controlRearLargeRinglight);
+                new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenPressed(controlRearLargeRinglight);
                         
                 //Read a trajectory
                 // Command readTrajectory = new ReadPath( Robot.trajectoryRead, "Slalom path");
@@ -208,8 +231,8 @@ public class RobotContainer {
                 // Command readIrSensor = new ReadAnalogInput(7);
                 // new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(readIrSensor);
 
-            //    Command readSwitch = new TestSwitch();
-            //     new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(readSwitch);
+               Command readSwitch = new TestSwitch();
+             new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
 
             //    Command readColorSensor = new ReadColorSensor();
              //   new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
@@ -280,13 +303,14 @@ public class RobotContainer {
         {
             selectorOne = selectHardCodedPath;
         }
+        
         logger.info("Selectors: " + selectorOne);
 
 
         // Testing forced numbers
-        int selectFolder = 3;
+        int selectFolder = 1;
         //@todo: hard coded here. Remove this line will use analog selector.
-        selectorOne = 1;
+        selectorOne = 0;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 

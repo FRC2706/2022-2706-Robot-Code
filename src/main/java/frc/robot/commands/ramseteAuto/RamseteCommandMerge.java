@@ -81,6 +81,7 @@ public class RamseteCommandMerge extends CommandBase {
      * @param trajectory The trajectory to follow.
      */
     public RamseteCommandMerge(Trajectory trajectory, String loggingDataIdentifier) {
+       
         m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommandMerge");
 
         m_driveSubsystem = DriveBaseHolder.getInstance();
@@ -111,18 +112,22 @@ public class RamseteCommandMerge extends CommandBase {
 
     @Override
     public void initialize() {
-        m_prevTime = 0;
-        var initialState = m_trajectory.sample(0);
-        m_prevSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(initialState.velocityMetersPerSecond, 0,
-                initialState.curvatureRadPerMeter * initialState.velocityMetersPerSecond));
-        m_timer.reset();
-        m_timer.start();
 
-        startLogging();
-        targetPose = m_trajectory.sample(m_trajectory.getTotalTimeSeconds()).poseMeters;
+        if(m_driveSubsystem.getDriveBaseState() != DriveBaseState.Degraded)
+        {
+            m_prevTime = 0;
+            var initialState = m_trajectory.sample(0);
+            m_prevSpeeds = m_kinematics.toWheelSpeeds(new ChassisSpeeds(initialState.velocityMetersPerSecond, 0,
+                    initialState.curvatureRadPerMeter * initialState.velocityMetersPerSecond));
+            m_timer.reset();
+            m_timer.start();
 
-        m_driveSubsystem.setActivePIDSlot(Config.DRIVETRAIN_SLOTID_RAMSETE);
-        m_driveSubsystem.setCoastMode();
+            startLogging();
+            targetPose = m_trajectory.sample(m_trajectory.getTotalTimeSeconds()).poseMeters;
+
+            m_driveSubsystem.setActivePIDSlot(Config.DRIVETRAIN_SLOTID_RAMSETE);
+            m_driveSubsystem.setCoastMode();
+        }
     }
 
     @Override
@@ -197,8 +202,12 @@ public class RamseteCommandMerge extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return m_timer.advanceIfElapsed(m_trajectory.getTotalTimeSeconds() + m_timeBeforeTrajectory);
-    }
+        if(m_driveSubsystem.getDriveBaseState() == DriveBaseState.Degraded)
+            return true;
+        else
+            return m_timer.advanceIfElapsed(m_trajectory.getTotalTimeSeconds() + m_timeBeforeTrajectory);
+      
+     }
 
     public double getTotalTime() {
         return m_trajectory.getTotalTimeSeconds();

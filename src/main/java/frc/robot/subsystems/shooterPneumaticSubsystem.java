@@ -12,23 +12,45 @@ import frc.robot.config.Config;
 
 public class shooterPneumaticSubsystem extends SubsystemBase {
   DoubleSolenoid doubleSolenoidShooter;
+  DoubleSolenoid doubleSolenoidFloat;
   private static final shooterPneumaticSubsystem SHOOTER_PNEUMATIC_SUBSYSTEM = new shooterPneumaticSubsystem();
 
   /** Creates a new shooterPneumaticSubsystem. */
   public shooterPneumaticSubsystem() 
   {
-    //@todo: Check the channel ports
+    
+    if (Config.CTRE_PCM_CAN_ID == -1 
+    || Config.KICKER_PNEUMATIC_FORWARD_CHANNEL == -1 
+    || Config.KICKER_PNEUMATIC_REVERSE_CHANNEL == -1)
+    {
+      doubleSolenoidShooter = null;
+    }
+    else
+    {
     doubleSolenoidShooter = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID, 
                                                PneumaticsModuleType.CTREPCM,
-                                               Config.SHOOTER_PNEUMATIC_FORWARD_CHANNEL,
-                                               Config.SHOOTER_PNEUMATIC_REVERSE_CHANNEL);
+                                               Config.KICKER_PNEUMATIC_FORWARD_CHANNEL,
+                                               Config.KICKER_PNEUMATIC_REVERSE_CHANNEL);
+    }
+
+    if(Config.CTRE_PCM_CAN_ID == -1 
+    || Config.KICKER_PNEUMATIC_FLOAT_CHANNEL_1 == -1 
+    || Config.KICKER_PNEUMATIC_FLOAT_CHANNEL_2 == -1)
+    {
+      doubleSolenoidFloat = null;
+    }
+    else
+    {
+      doubleSolenoidFloat = new DoubleSolenoid(Config.CTRE_PCM_CAN_ID, 
+                                              PneumaticsModuleType.CTREPCM,
+                                              Config.KICKER_PNEUMATIC_FLOAT_CHANNEL_1,
+                                              Config.KICKER_PNEUMATIC_FLOAT_CHANNEL_2);
+    }
   }
 
   public boolean isActive()
   {
-    if(Config.CTRE_PCM_CAN_ID == -1 || 
-       Config.SHOOTER_PNEUMATIC_REVERSE_CHANNEL == -1 || 
-       Config.SHOOTER_PNEUMATIC_FORWARD_CHANNEL == -1)
+    if(doubleSolenoidFloat == null || doubleSolenoidShooter == null)
     {
       return false;
     } 
@@ -50,19 +72,33 @@ public class shooterPneumaticSubsystem extends SubsystemBase {
 
   public void moveUp()
   {
-    doubleSolenoidShooter.set(Value.kForward);
+    doubleSolenoidFloat.set(Value.kForward);
+    doubleSolenoidShooter.set(Value.kReverse);
+
   }
 
   public void moveDown()
   {
-    doubleSolenoidShooter.set(Value.kReverse);
+    doubleSolenoidFloat.set(Value.kForward);
+    doubleSolenoidShooter.set(Value.kForward);
   }
 
-  public void stop()
+  public void setToFloatForward()
+  {
+    doubleSolenoidFloat.set(Value.kForward);
+  }
+
+  public void setToFloatReverse()
+  {
+    doubleSolenoidFloat.set(Value.kReverse);
+  }
+
+  public void stopShooterPneumatic()
   {
     doubleSolenoidShooter.set(Value.kOff);
+    doubleSolenoidFloat.set(Value.kOff);
   }
-
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
