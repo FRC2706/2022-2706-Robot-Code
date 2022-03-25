@@ -198,11 +198,11 @@ public class RobotContainer {
             //kicker floating
             Command kickerFloat = new KickerFloat();
             new JoystickButton(controlStick, XboxController.Button.kStart.value).whenPressed(kickerFloat);
-
-
+ 
             //test switch
             // Command readSwitch = new TestSwitch();
             // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
+
 
             
             break;
@@ -310,7 +310,7 @@ public class RobotContainer {
         // Testing forced numbers
         int selectFolder = 1;
         //@todo: hard coded here. Remove this line will use analog selector.
-        selectorOne = 0;
+        //selectorOne = 0;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
