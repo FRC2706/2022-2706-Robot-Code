@@ -186,13 +186,14 @@ public class RobotContainer {
             //tarmat A: closer: RMP = 3200
             Command wait1sA = new WaitCommand(1);
             Command delayIndexerA = wait1sA.andThen( new IndexerForShooter());
-            Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(3200, 0), delayIndexerA);
+            //Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(3200, 0), delayIndexerA);
+            Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(1800, 0), delayIndexerA);
             new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(cmdShootA);
 
             // //tarmat B: farther: RPM = 3400
             Command wait1sB = new WaitCommand(1);
             Command delayIndexerB = wait1sB.andThen( new IndexerForShooter());
-            Command cmdShootB = new ParallelCommandGroup(new SpinUpShooterWithTime(3350, 0), delayIndexerB);
+            Command cmdShootB = new ParallelCommandGroup(new SpinUpShooterWithTime(3500, 0), delayIndexerB);
             new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(cmdShootB);
 
             //kicker floating

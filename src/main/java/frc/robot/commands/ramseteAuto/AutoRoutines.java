@@ -60,10 +60,12 @@ public class AutoRoutines {
             
             Command wait1s = new WaitCommand(1);
             Command delayIndexer = wait1s.andThen( new IndexerForShooter());
-            Command autoShoot2 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 0), delayIndexer);
+            Command autoShoot2 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer);
             
-            Command shooterWithTimeOut = new ParallelRaceGroup(autoShoot2, new WaitCommand(4));
-            Command driveOnly = new DriveWithTime(1.5,0.5,0.5);
+            Command shooterWithTimeOut = new SequentialCommandGroup(autoShoot2, new WaitCommand(4));
+            //Command driveOnly = new DriveWithTime(1.5,0.5,0.5);
+            Command driveOnly = new DriveWithTime(2, 0.5, 0.5);
+            //return driveOnly;
             return new SequentialCommandGroup(shooterWithTimeOut, driveOnly);
             
             //     //description:
