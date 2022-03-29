@@ -13,7 +13,7 @@ public class TestSwitch extends CommandBase {
 
   /** Creates a new TestSwitch. */
   public TestSwitch() {
-    switchDetector = new SwitchSubsystem(Config.INDEXER_SWITCH);
+    switchDetector = SwitchSubsystem.getInstance();
    
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(switchDetector);

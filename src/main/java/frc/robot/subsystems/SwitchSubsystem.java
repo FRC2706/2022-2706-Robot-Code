@@ -6,33 +6,50 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.config.Config;
 public class SwitchSubsystem extends SubsystemBase {
-  private DigitalInput limitSwitch;
+  private DigitalInput limitSwitchOne;
+  private DigitalInput limitSwitchTwo;
   private boolean currentState;
 
+  private static SwitchSubsystem instance = null;
+
+  public static SwitchSubsystem getInstance() {
+    if (instance == null) {
+      instance = new SwitchSubsystem();
+    }
+    return instance;
+  }
+
+
   /** Creates a new SwithSubsytem. */
-public SwitchSubsystem(int switchPort) {
+  private SwitchSubsystem() {
+  
     // Initialize the subsystem if the shooter exists
-    if (switchPort != -1) {
-      limitSwitch = new DigitalInput(switchPort);
-      currentState = limitSwitch.get();
+    if (Config.INDEXER_SWITCH_ONE != -1) {
+      limitSwitchOne = new DigitalInput(Config.INDEXER_SWITCH_ONE);
+      currentState = limitSwitchOne.get();
     }
     else
     {
-      limitSwitch = null;
+      limitSwitchOne = null;
+    }
+
+    if (Config.INDEXER_SWITCH_TWO != -1) {
+      limitSwitchTwo = new DigitalInput(Config.INDEXER_SWITCH_TWO);
     }
 
   }
   public boolean isActive() {
-    return limitSwitch != null;
+    return limitSwitchOne != null;
 }
 public boolean isStateChanged(){
     //detect the state change
     //then it doesn't matter the open state is true of false
     //will have two close detections
-    if(limitSwitch.get() != currentState)
+    if(limitSwitchOne.get() != currentState)
     {
-      currentState = limitSwitch.get();
+      currentState = limitSwitchOne.get();
       return true;
     }
     else
@@ -46,10 +63,21 @@ public boolean isStateChanged(){
   {
     //@todo: add a counter for detection
     //
-    return limitSwitch.get();
+    return limitSwitchOne.get();
   }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  public boolean isSwitchOnePressed() {
+    return !limitSwitchOne.get();
+  } 
+
+  public boolean isSwitchTwoPressed() {
+    return !limitSwitchTwo.get();
+  } 
+
+
+
 }

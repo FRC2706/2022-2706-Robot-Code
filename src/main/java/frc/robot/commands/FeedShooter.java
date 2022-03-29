@@ -43,7 +43,7 @@ public class FeedShooter extends CommandBase {
             /** Start here for two cargo  **/
             // Feed until cargo is aligned at the second switch
             case 6:
-                if (SwitchSubsystem.getInstance().getSecondSwitch()) {
+                if (SwitchSubsystem.getInstance().isSwitchTwoPressed()) {
                     feedingState--;
                 } else {
                     IndexerSubSystem.getInstance().setTargetRPM(feedingSpeedRPM.get());
@@ -57,7 +57,7 @@ public class FeedShooter extends CommandBase {
             
             // Feed cargo into shooter until second switch is unpressed
             case 4: 
-                if (SwitchSubsystem.getInstance().getSecondSwitch()) {
+                if (SwitchSubsystem.getInstance().isSwitchTwoPressed()) {
                     IndexerSubSystem.getInstance().setTargetRPM(feedingSpeedRPM.get());
                 } else {
                     IndexerSubSystem.getInstance().stop();
@@ -68,7 +68,7 @@ public class FeedShooter extends CommandBase {
             /** Start here for one cargo  **/
             // Move cargo until it hits the second switch
             case 3:
-                if (SwitchSubsystem.getInstance().getSecondSwitch()) {
+                if (SwitchSubsystem.getInstance().isSwitchTwoPressed()) {
                     feedingState--;
                 } else {
                     IndexerSubSystem.getInstance().setTargetRPM(feedingSpeedRPM.get());
@@ -83,7 +83,7 @@ public class FeedShooter extends CommandBase {
             
             // Feed cargo until switch is unpressed, then stop this command
             case 1:
-                if (SwitchSubsystem.getInstance().getSecondSwitch()) {
+                if (SwitchSubsystem.getInstance().isSwitchTwoPressed()) {
                     IndexerSubSystem.getInstance().setTargetRPM(feedingSpeedRPM.get());
                 } else {
                     IndexerSubSystem.getInstance().stop();
