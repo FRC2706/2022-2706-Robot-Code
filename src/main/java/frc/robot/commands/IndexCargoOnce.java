@@ -45,7 +45,7 @@ public class IndexCargoOnce extends CommandBase {
         switch (numCargoAtBeginning) {
             case 0:
                 if (reachedFirstLimitSwitch == false) {
-                    if (SwitchSubsystem.getInstance().getFirstSwitch()) {
+                    if (SwitchSubsystem.getInstance().isSwitchOnePressed()) {
                         reachedFirstLimitSwitch = true;
                         IndexerSubSystem.getInstance().numCargo++; 
                         IndexerSubSystem.getInstance().setIndexerPosition();
@@ -72,7 +72,7 @@ public class IndexCargoOnce extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        if (SwitchSubsystem.getInstance().getSecondSwitch()) {
+        if (SwitchSubsystem.getInstance().isSwitchTwoPressed()) {
             return true;
         }
         else if (numCargoAtBeginning == 0 && IndexerSubSystem.getInstance().isAtTargetPosition()) {

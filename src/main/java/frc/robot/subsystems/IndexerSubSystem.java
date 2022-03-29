@@ -15,7 +15,8 @@ import frc.robot.config.FluidConstant;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IndexerSubSystem extends SubsystemBase {
-  
+  private final int allowablePositionError = 1;
+
   public static FluidConstant<Double> INDEXER_RPM = new FluidConstant<>
   ("Indexer_PRM",700.).registerToTable(Config.constantsTable);
 
@@ -30,6 +31,10 @@ public class IndexerSubSystem extends SubsystemBase {
   public boolean m_bForShooterGoodSensors= false;
   public boolean m_bForIntakeGoodSensors = false;
   private static final IndexerSubSystem INSTANCE_INDEXER = new IndexerSubSystem();
+
+  public int numCargo = 0;
+  private double targetPosition;
+  
 
   /** Creates a new IndexerSubSystem. */
   private IndexerSubSystem() {
@@ -202,5 +207,9 @@ public class IndexerSubSystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public boolean isAtTargetPosition() {
+    return Math.abs(m_encoder.getPosition() - targetPosition) < allowablePositionError;
   }
 }
