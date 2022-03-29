@@ -71,11 +71,11 @@ public boolean isStateChanged(){
   }
 
   public boolean isSwitchOnePressed() {
-    return !limitSwitchOne.get();
+    return limitSwitchOne.get();
   } 
 
   public boolean isSwitchTwoPressed() {
-    return !limitSwitchTwo.get();
+    return limitSwitchTwo.get();
   } 
 
 

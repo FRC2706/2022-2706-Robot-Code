@@ -22,8 +22,9 @@ public class DetectCargoAtIndexer extends CommandBase {
     /** Creates a new DetectCargoAtIndexer. */
     public DetectCargoAtIndexer() {
         addRequirements(IndexerSubSystem.getInstance(), ColorSensorSubsystem.getInstance());
-
-        m_indexCommand = new WaitCommand(waitTimeBeforeIndex).andThen(new IndexCargoOnce());
+        
+        // m_indexCommand = new WaitCommand(waitTimeBeforeIndex).andThen(new IndexCargoOnce());
+        m_indexCommand = new IndexCargoOnce();
     }
 
     // Called when the command is initially scheduled.
