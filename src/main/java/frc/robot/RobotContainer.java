@@ -39,6 +39,7 @@ import frc.robot.commands.ramseteAuto.PassThroughWaypoint;
 import frc.robot.commands.ramseteAuto.PoseScaled;
 import frc.robot.commands.ramseteAuto.RamseteCommandMerge;
 import frc.robot.commands.ramseteAuto.TranslationScaled;
+import frc.robot.commands.ramseteAuto.VisionDriverAiming;
 import frc.robot.commands.ramseteAuto.VisionPose;
 import frc.robot.commands.ramseteAuto.VisionPose.VisionType;
 //import frc.robot.commands.ramseteAuto.ReadPath;
@@ -70,6 +71,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...    
   private Joystick driverStick;
   private Joystick controlStick;
+  private Joystick testingStick;
   private Command driveCommand;
   private Command sensitiveDriving;
 
@@ -126,6 +128,7 @@ public class RobotContainer {
     private void configureButtonBindings() {
         driverStick = new Joystick(0);
         controlStick = new Joystick(1);
+        testingStick = new Joystick(2);
       
         driveCommand = new ArcadeDriveWithJoystick(driverStick, Config.LEFT_CONTROL_STICK_Y, Config.INVERT_FIRST_AXIS, Config.RIGHT_CONTROL_STICK_X, Config.INVERT_SECOND_AXIS, true);
         DriveBaseHolder.getInstance().setDefaultCommand(driveCommand);
@@ -205,7 +208,29 @@ public class RobotContainer {
             // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
 
 
+            // Testing stick so I don't mess up the current button mapping. 
+            // To use index 2, switch the active joystick into index 2 on the driverstation
             
+            // Lift and lower intake commands
+            new JoystickButton(testingStick, XboxController.Button.kY.value).whenPressed(intakeUp);
+            new JoystickButton(testingStick, XboxController.Button.kB.value).whenPressed(intakeDownFloat);
+
+            // Spin intake rollers
+            new JoystickButton(testingStick, XboxController.Button.kRightBumper.value).whenHeld(new RunCommand(IntakeCargoSubsystem.getInstance()::start),true);
+            new JoystickButton(testingStick, XboxController.Button.kBack.value).whenPressed(new InstantCommand(IntakeCargoSubsystem.getInstance()::stop),true);
+
+            // Spin up shooter
+            new JoystickButton(testingStick, XboxController.Button.kX.value).whenPressed(new RunCommand(() -> ShooterSubsystem.getInstance().setTargetRPM(1000), ShooterSubsystem.getInstance()));
+            new JoystickButton(testingStick, XboxController.Button.kStart.value).whenPressed(new InstantCommand(ShooterSubsystem.getInstance()::stop, ShooterSubsystem.getInstance()));
+
+            // Feed shooter
+            new JoystickButton(testingStick, XboxController.Button.kA.value).whenHeld(new FeedShooter(), true);
+
+            // Vision Driver Aid CARGO
+            new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(new VisionDriverAiming(driverStick, VisionCtrlNetTable.yawToCargo));
+            // Vision Driver Aid HUB
+            new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(new VisionDriverAiming(driverStick, VisionCtrlNetTable.yawToHub));
+
             break;
             }
            case 2: //Beetle

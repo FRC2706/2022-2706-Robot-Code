@@ -10,6 +10,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import frc.robot.commands.DetectCargoAtIndexer;
 import frc.robot.config.Config;
 import frc.robot.config.FluidConstant;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -53,6 +55,8 @@ public class IndexerSubSystem extends SubsystemBase {
   {
     m_indexer = new CANSparkMax(Config.INDEXER_MOTOR, MotorType.kBrushless);
 
+    IndexerSubSystem.INSTANCE_INDEXER.setDefaultCommand(new DetectCargoAtIndexer());
+    
     if ( m_indexer != null )
     {      
       m_bForIntakeGoodSensors = true;

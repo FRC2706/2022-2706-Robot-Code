@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.config.Config;
 import frc.robot.config.FluidConstant;
 import frc.robot.subsystems.IndexerSubSystem;
@@ -88,6 +89,8 @@ public class FeedShooter extends CommandBase {
                 } else {
                     IndexerSubSystem.getInstance().stop();
                     IndexerSubSystem.getInstance().numCargo = 0;
+
+                    new InstantCommand(ShooterSubsystem.getInstance()::stop).schedule();
                     this.cancel();
                 }
         }
