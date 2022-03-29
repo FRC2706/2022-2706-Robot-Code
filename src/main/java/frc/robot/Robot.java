@@ -21,6 +21,7 @@ import frc.robot.nettables.ControlCtrlNetTable;
 import frc.robot.nettables.VisionCtrlNetTable;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.DriveBaseNeo;
 import frc.robot.subsystems.DriveBase2020;
 import frc.robot.subsystems.DriveBaseHolder;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -301,7 +302,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        ArmSubsystem.getInstance().stopMotor();
+       // ArmSubsystem.getInstance().stopMotor();
     }
 
     /**

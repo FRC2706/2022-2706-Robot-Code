@@ -10,6 +10,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.math.trajectory.constraint.TrajectoryConstraint;
 import frc.robot.Robot;
+import frc.robot.subsystems.DriveBaseNeo;
 import frc.robot.subsystems.DriveBase2020;
 import frc.robot.subsystems.DriveBasePre2020;
 import frc.robot.subsystems.DriveBase;
@@ -87,6 +88,8 @@ public class Config {
     // Static Constants
     private static Class<? extends DriveBase> Pre2020DriveBase = DriveBasePre2020.class.asSubclass(DriveBase.class);
     private static Class<? extends DriveBase> Post2020DriveBase = DriveBase2020.class.asSubclass(DriveBase.class);
+    private static Class<? extends DriveBase> Post2020DriveNeo = DriveBaseNeo.class.asSubclass(DriveBase.class);
+
     public static Class<? extends DriveBase> DRIVEBASE_CLASS = robotSpecific(Post2020DriveBase, Post2020DriveBase, Post2020DriveBase, Post2020DriveBase, Pre2020DriveBase, Pre2020DriveBase, Pre2020DriveBase, Pre2020DriveBase, Pre2020DriveBase);
     public static int RIGHT_FRONT_MOTOR = robotSpecific(2, 3, 1, 3, 2);
     public static int RIGHT_REAR_MOTOR = robotSpecific(4, 2, -1, 9, 4);
