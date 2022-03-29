@@ -93,7 +93,7 @@ public class Config {
     public static int LEFT_FRONT_MOTOR = robotSpecific(1, 6, -1, 5, 1);//6
     public static int LEFT_REAR_MOTOR = robotSpecific(3, 5, 2, 7, 3);
     public static int INTAKE_MOTOR = robotSpecific(6, 8, -1, -1, -1);
-    public static int SHOOTER_MOTOR = robotSpecific(5, 1, 5, -1, 16); //Beetle prototype on Beetle:5
+    public static int SHOOTER_MOTOR = robotSpecific(5, 11, 5, -1, 16); //Beetle prototype on Beetle:5
     public static int CLIMBER_TALON = robotSpecific(10, -1, -1, -1, 16);
     public static int AGITATOR_MOTOR = robotSpecific(9, -1, -1, -1);
     public static int INDEXER_MOTOR = robotSpecific(6, 7, 7, -1); //Beetle prototype on Beetle:7
@@ -113,8 +113,8 @@ public class Config {
     public static int INTAKE_PNEUMATIC_FLOAT_CHANNEL_1 = robotSpecific(-1, 5, -1, -1);
     public static int INTAKE_PNEUMATIC_FLOAT_CHANNEL_2 = robotSpecific(-1, 2, -1, -1); //not used
     
-    public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
-    public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
+    public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, false, false, true);
+    public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, false, false, true);
     
     // Invert talons to consider forward as forward (same practice for all objects)
     public static boolean LEFT_FRONT_INVERTED = robotSpecific(false, false, false, false);
