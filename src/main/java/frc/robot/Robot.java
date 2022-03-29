@@ -19,7 +19,7 @@ import frc.robot.commands.ramseteAuto.VisionPose.VisionType;
 import frc.robot.config.Config;
 import frc.robot.nettables.ControlCtrlNetTable;
 import frc.robot.nettables.VisionCtrlNetTable;
-import frc.robot.subsystems.ArmSubsystem;
+//import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.DriveBase2020;
 import frc.robot.subsystems.DriveBaseHolder;
@@ -301,7 +301,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousPeriodic() {
-        ArmSubsystem.getInstance().stopMotor();
+       // ArmSubsystem.getInstance().stopMotor();
     }
 
     /**
