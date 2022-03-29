@@ -83,14 +83,14 @@ public class AutoRoutines {
                 // if using odometry: middle red cargo
                 //drive forward first --> pick up 2nd cargo --> shoot both cargo
                 // TrajectoryConfig config = new TrajectoryConfig(1.0, 1.0);
-                Command wait1s2 = new WaitCommand(1);
-                Command delayIndexer2 = wait1s2.andThen( new IndexerForShooter());
-                Command autoShoot22 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer2);
+                Command wait1s3 = new WaitCommand(1);
+                Command delayIndexer3 = wait1s3.andThen( new IndexerForShooter());
+                Command autoShoot3 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer3);
 
                 Trajectory traj = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.0,0.0, new Rotation2d())), Config.trajectoryConfig);
                 RamseteCommandMerge ramsete3 = new RamseteCommandMerge(traj, "Trajectory-Red-O2");
                 return new SequentialCommandGroup (
-                    autoShoot22,
+                    autoShoot3,
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj.getInitialPose())),
                     ramsete3);
             case 4:
