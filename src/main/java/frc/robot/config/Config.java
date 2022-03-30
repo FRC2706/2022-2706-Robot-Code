@@ -113,8 +113,8 @@ public class Config {
     public static int INTAKE_PNEUMATIC_FLOAT_CHANNEL_1 = robotSpecific(-1, 5, -1, -1);
     public static int INTAKE_PNEUMATIC_FLOAT_CHANNEL_2 = robotSpecific(-1, 2, -1, -1); //not used
     
-    public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, false, false, true);
-    public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, false, false, true);
+    public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
+    public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
     
     // Invert talons to consider forward as forward (same practice for all objects)
     public static boolean LEFT_FRONT_INVERTED = robotSpecific(false, false, false, false);
@@ -149,7 +149,8 @@ public class Config {
     public static int shooterAnalogSensor = robotSpecific(8, -1, -1, -1);
 
     //8 or 9
-    public static int INDEXER_SWITCH = robotSpecific(-1,2,8,-1);//Beetle prototype
+    public static int INDEXER_SWITCH_END = robotSpecific(-1,2,8,-1);//Beetle prototype
+    public static int INDEXER_SWITCH_MIDDLE = robotSpecific(-1,3,8,-1);
     public static int FEEDER_SWITCH_INPUT = robotSpecific(9, -1, -1, -1);
     public static int FEEDER_SWITCH_OUTPUT = robotSpecific(8, -1, -1, -1);
     public static int FEEDER_MAX_BALLS = 3;
