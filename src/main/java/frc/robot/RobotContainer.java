@@ -227,9 +227,12 @@ public class RobotContainer {
             new JoystickButton(testingStick, XboxController.Button.kA.value).whenHeld(new FeedShooter(), true);
 
             // Vision Driver Aid CARGO
-            new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(new VisionDriverAiming(driverStick, VisionCtrlNetTable.yawToCargo));
-            // Vision Driver Aid HUB
-            new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(new VisionDriverAiming(driverStick, VisionCtrlNetTable.yawToHub));
+            new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(new VisionDriverAiming(driverStick, VisionCtrlNetTable.yawToCargo, false));
+            // *** Vision Driver Aid HUB
+            new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(new VisionDriverAiming(driverStick, VisionCtrlNetTable.yawToHub, false));
+
+            // *** Indexer and Intake at the same time
+            new JoystickButton(testingStick, XboxController.Button.kBack.value).whenHeld(new IntakeAndIndexer());
 
             break;
             }

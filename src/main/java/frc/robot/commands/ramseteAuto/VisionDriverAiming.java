@@ -8,7 +8,11 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -26,14 +30,23 @@ public class VisionDriverAiming extends CommandBase {
     // Angles in degrees
     private final double allowableYawError = 2.0;
     private final double allowableYawChangeToEnd = 2.0;
-    private PIDController m_pidController = new PIDController(0.046, 0, 0.05);
+    private PIDController m_pidController;
+    private final double allowableVisionErrorMedian = 6.0;
+    private final double allowableVisionErrorPredicted = 2.0;
+    private final double clampPIDOutput = 0.5;
 
     /** Create all the fields */
     private final Supplier<Double> m_forwardVal;
     private final Supplier<Double> m_visionYaw;
+    private final boolean m_runInAuto;
     private double m_targetYaw; 
-    private CircularBuffer m_headingsBuffer = new CircularBuffer(4); 
     
+    private CircularBuffer m_headingsBuffer = new CircularBuffer(4);
+    private MedianFilter m_filterVisionYaw = new MedianFilter(8);
+    private double m_prevVisionYaw = 0;
+    private double m_prevHeading = 0;
+    
+    private NetworkTableEntry rotateValVision;
 
     /**
      * Vision Aiming
@@ -47,11 +60,18 @@ public class VisionDriverAiming extends CommandBase {
      * @param driveJoystick Driver Joystick from RobotContainer
      * @param visionYawSupplier Supplier to get yaw from vision
      */
-    public VisionDriverAiming (Joystick driveJoystick, Supplier<Double> visionYawSupplier) { 
+    public VisionDriverAiming (Joystick driveJoystick, Supplier<Double> visionYawSupplier, boolean runInAuto) { 
 
         m_forwardVal = () -> sign(Config.removeJoystickDeadband(driveJoystick.getRawAxis(Config.LEFT_CONTROL_STICK_Y)), Config.INVERT_FIRST_AXIS);
 
         m_visionYaw = visionYawSupplier;
+        m_runInAuto = runInAuto;
+        
+        m_pidController = new PIDController(0.014, 0.00001, 0.004);
+        m_pidController.setIntegratorRange(0.2, 0.2);
+
+        var table = NetworkTableInstance.getDefault().getTable("MergeVisionPipelinePi21");
+        rotateValVision = table.getEntry("YawToTarget");
 
         addRequirements(DriveBaseHolder.getInstance());
     }
@@ -60,18 +80,36 @@ public class VisionDriverAiming extends CommandBase {
     public void initialize() {
         DriveBaseHolder.getInstance().setDriveMode(DriveBase.DriveMode.OpenLoopVoltage);
         DriveBaseHolder.getInstance().setNeutralMode(NeutralMode.Brake);
+        m_prevHeading = -999;
+        m_filterVisionYaw.reset();
+        m_pidController.reset();
     }
 
     @Override
     public void execute() {
         double heading = DriveBaseHolder.getInstance().getOdometryHeading().getDegrees();
-        double visionYaw = m_visionYaw.get();
+        double visionYaw = rotateValVision.getDouble(-99);
 
+        // Update the setpoint if vision check goes well
         if (visionYaw != -99) {
-            m_targetYaw = visionYaw + heading;
+            double medianYaw = m_filterVisionYaw.calculate(visionYaw);
+
+            boolean predictedYawCheck = true;
+            if (m_prevHeading != -999) {
+                predictedYawCheck = Math.abs(heading - m_prevHeading + m_prevVisionYaw - visionYaw) < allowableVisionErrorPredicted;
+            }
+            if (Math.abs(medianYaw-visionYaw) < allowableVisionErrorMedian && predictedYawCheck) {
+                // Update the setpoint/target
+                m_targetYaw = visionYaw + heading;
+
+                m_prevHeading = heading;
+                m_prevVisionYaw = visionYaw;
+            }
+            
         }
 
         double rotateValPid = m_pidController.calculate(heading, m_targetYaw);
+        rotateValPid = MathUtil.clamp(rotateValPid, -clampPIDOutput, clampPIDOutput);
 
         DriveBaseHolder.getInstance().arcadeDrive(m_forwardVal.get(), rotateValPid, false);
 
@@ -84,16 +122,25 @@ public class VisionDriverAiming extends CommandBase {
     }
 
     /**
-     * Both condition must be true to end command:
+     * When run in auto both conditions must be true to end command:
      *  - Yaw from vision is less than allowableYawError
      *  - The heading has changed less than allowableYawChangeToEnd in 0.08 seconds.
+     * 
+     * When run in telelop. Use the whileHeld to cancel this command when button is released.
      */
     @Override
     public boolean isFinished() {
-        double changeInHeading = m_headingsBuffer.get(0) - m_headingsBuffer.get(3);
+        if (m_runInAuto) {
+            double changeInHeading = m_headingsBuffer.get(0) - m_headingsBuffer.get(3);
 
-        if (Math.abs(m_visionYaw.get()) < allowableYawError && Math.abs(changeInHeading) < allowableYawChangeToEnd) {
-            return true;
+            double visionYaw = rotateValVision.getDouble(-99);
+            boolean visionAligned = false;
+            if (visionYaw != -99) 
+                visionAligned = Math.abs(visionYaw) < allowableYawError;
+
+            if (visionAligned && Math.abs(changeInHeading) < allowableYawChangeToEnd) {
+                return true;
+            }
         }
         return false;
     }

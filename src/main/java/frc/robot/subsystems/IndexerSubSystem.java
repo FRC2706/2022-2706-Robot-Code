@@ -54,8 +54,6 @@ public class IndexerSubSystem extends SubsystemBase {
   private void initializeSubsystem() 
   {
     m_indexer = new CANSparkMax(Config.INDEXER_MOTOR, MotorType.kBrushless);
-
-    IndexerSubSystem.INSTANCE_INDEXER.setDefaultCommand(new DetectCargoAtIndexer());
     
     if ( m_indexer != null )
     {      

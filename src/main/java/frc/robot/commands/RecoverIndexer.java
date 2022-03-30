@@ -60,6 +60,6 @@ public class RecoverIndexer extends CommandBase {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return switchSubsystem.isSwitchTwoPressed() || timer.hasElapsed(TIMEOUT);
+        return switchSubsystem.isSwitchTwoPressed() || switchSubsystem.isSwitchOnePressed() || timer.hasElapsed(TIMEOUT);
     }
 }
