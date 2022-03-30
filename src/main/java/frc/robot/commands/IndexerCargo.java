@@ -15,19 +15,21 @@ public class IndexerCargo extends CommandBase {
 
   private IndexerSubSystem indexer;
   private ColorSensorSubsystem colorSensor;
+  private SwitchSubsystem switchDetector;
   public boolean switchDetected;
   public boolean colorSensorDetected;
   public boolean colorSensorFirstDetected = false;
   public int counter = 0;
   public int nColorSensorDetectedCount = 0;
-  public boolean bFirstSwitchDetected;
+  public int numCargo = 0;
 
   /** Creates a new IndexerCargo. */
   public IndexerCargo() {
 
     indexer = IndexerSubSystem.getInstance();
     colorSensor = ColorSensorSubsystem.getInstance();
-    
+    switchDetector = new SwitchSubsystem(Config.INDEXER_SWITCH_END);
+
     // Use addRequirements() here to declare subsystem dependencies.
     if ( indexer != null )
     {
@@ -37,6 +39,11 @@ public class IndexerCargo extends CommandBase {
     if(colorSensor != null)
     {
       addRequirements(colorSensor);
+    }
+
+    if(switchDetector != null)
+    {
+      addRequirements(switchDetector);
     }
   }
 
@@ -48,6 +55,12 @@ public class IndexerCargo extends CommandBase {
       indexer.setIndexerPosition();
 
     nColorSensorDetectedCount = 0;
+    
+    counter = 0;
+    numCargo = 0;
+    
+    switchDetected = false;
+    colorSensorDetected = false;
     colorSensorFirstDetected = false;
   }
     
@@ -57,10 +70,92 @@ public class IndexerCargo extends CommandBase {
     if (indexer == null)
       return;
 
-      //System.out.println("auto mode: "+ Robot.m_bAutoMode);
-      // System.out.println("indexer sensor: "+ indexer.m_bForIntakeGoodSensors);
+    // System.out.println("auto mode: "+ Robot.m_bAutoMode);
+    //System.out.println("indexer sensor: "+ indexer.m_bForIntakeGoodSensors);
+   //@todo: only consider one detection, ignore all of the following detections.
 
-    if (colorSensor != null )
+   switchDetected = switchDetector.getResult();
+   if (switchDetected == true) 
+   {
+     System.out.println("switch detected: "+switchDetected);
+     indexer.stop();
+   } 
+   else 
+   {
+     colorSensorDetected = colorSensor.isDetected();
+    //  if ( colorSensorDetected == true)
+    //  {
+    //    System.out.println("detected one cargo");
+    //  }
+
+     if (colorSensorDetected == true && colorSensorFirstDetected == false) 
+     {
+       colorSensorFirstDetected = true;
+       System.out.println("start shuffling the cargo "+numCargo);
+     }
+     
+     if (colorSensorFirstDetected == true) 
+     {
+       if(numCargo == 0)
+       {
+         indexer.runForIntake(14);
+       }
+       else 
+       {
+         indexer.runForIntake(6);
+       }
+       counter++;
+       
+        // TODO tune for 100
+       if (counter > 100) 
+       {
+          // At this time, the cargo should be in the indexer, and the indexer should stop
+
+          //reset for the next cargo 
+          colorSensorFirstDetected = false;
+          colorSensorDetected = false;
+          counter = 0;
+          indexer.setIndexerPosition();
+          indexer.stop();
+          numCargo++;
+          System.out.println("stop shuffling the cargo "+numCargo);
+        }
+      } 
+      else 
+      {
+        indexer.stop();
+        //numCargo = 0;
+      }
+    }
+   
+  }
+  
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) 
+  {
+    if ( indexer != null )
+      indexer.stop();
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
+
+}
+
+//for the case when the switch is at the end of the indexer, closer to shooter
+//  // Called every time the scheduler runs while the command is scheduled.
+//  @Override
+//  public void execute() {
+   
+
+//  }
+/*
+ if (colorSensor != null )
       colorSensorDetected = colorSensor.isDetected();
     else
       colorSensorFirstDetected = false;
@@ -115,77 +210,4 @@ public class IndexerCargo extends CommandBase {
     {
       indexer.stop();
     }
-  }
-  
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) 
-  {
-    if ( indexer != null )
-      indexer.stop();
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
-
-}
-
-//for the case when the switch is at the end of the indexer, closer to shooter
-//  // Called every time the scheduler runs while the command is scheduled.
-//  @Override
-//  public void execute() {
-   
-//    //@todo: only consider one detection, ignore all of the following detections.
-//    if(bFirstSwitchDetected == false)
-//    {
-//      switchDetected = switchDetector.isDetected();
-//      System.out.println("switch detected: "+switchDetected);
-//    }
-
-//    if (switchDetected == true) 
-//    {
-//      bFirstSwitchDetected = true;
-//      indexer.stop();
-//    } 
-//    else 
-//    {
-//      colorSensorDetected = colorSensor.isDetected();
-//      if ( colorSensorDetected == true)
-//      {
-//        System.out.println("detected one cargo");
-//      }
-
-//      if (colorSensorDetected == true && colorSensorFirstDetected == false) 
-//      {
-//        colorSensorFirstDetected = true;
-//        System.out.println("start shuffling the cargo");
-//      }
-     
-//      if (colorSensorFirstDetected == true) 
-//      {
-       
-//        indexer.runForIntake();
-//        counter++;
-       
-//        // TODO tune for 100
-//        if (counter > 200) {
-//          // At this time, the cargo should be in the indexer, and the indexer should stop
-
-//          //reset for the next cargo 
-//          colorSensorFirstDetected = false;
-//          colorSensorDetected = false;
-//          counter = 0;
-//          indexer.setIndexerPosition();
-//          System.out.println("stop shuffling the cargo");
-//          indexer.stop();
-
-//        }
-//      } else {
-//        indexer.stop();
-//      }
-//    }
-//  }
+    */
