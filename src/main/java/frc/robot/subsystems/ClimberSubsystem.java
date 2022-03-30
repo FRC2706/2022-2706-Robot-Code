@@ -1,98 +1,153 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems;
 
-
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.config.Config;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.config.FluidConstant;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ClimberSubsystem extends SubsystemBase {
+public class ClimberSubSystem extends SubsystemBase {
 
-    private WPI_TalonSRX m_climber;
+  //Instance Variables
+  private CANSparkMax m_climber;
+  private SparkMaxPIDController m_pidController;
+  private RelativeEncoder m_encoder;
+  public double kMaxOutput = 1;
+  public double kMinOutput = -1;
+  public double currentPosition = 0;
+  public boolean m_bGoodSensors = false;
+  private static final ClimberSubSystem INSTANCE_CLIMBER = new ClimberSubSystem();
 
-    private ClimberSubsystem() {
-
-        // Initialize the subsystem if the shooter exists
-        if (Config.CLIMBER_TALON != -1) {
-            initializeSubsystem();
-        }
-        else{
-            m_climber = null;
-        }
-    }
-
-    /**
-     * Initialization process for the shooter to be run on robots with this
-     * mechanism.
-     */
-    private void initializeSubsystem() {
-        m_climber = new WPI_TalonSRX(Config.CLIMBER_TALON);
-
-        m_climber.setInverted(true);
-    }
-
-
-    /**
-     * Run the climb motor ensuring that it is positive
-     */
-    public void climb() {
-        m_climber.set(1.0);
-        m_climber.set(ControlMode.PercentOutput, 0.05);
+  /** Creates a new ClimberSubSystem. */
+  private ClimberSubSystem() {
     
+    if (Config.CLIMBER_MOTOR != -1) {
+      initializeSubsystem();
     }
-    /**
-     * Stops the motor
-     */
-    public void stopClimberMotor() {
-        m_climber.set(ControlMode.PercentOutput, 0);
+    else
+    {
+      m_climber = null;
     }
 
+  }
 
+  private void initializeSubsystem() 
+  {
+    m_climber = new CANSparkMax(Config.CLIMBER_MOTOR, MotorType.kBrushless);
 
-    public boolean isActive() {
+    if ( m_climber != null )
+    {      
+      m_bGoodSensors = true;
+  
+      // Factory Default to prevent unexpected behaviour
+      m_climber.restoreFactoryDefaults();
+      m_climber.setInverted(false);
+
+      // PID controller for the Climber
+      m_pidController = m_climber.getPIDController();
+      if(m_pidController == null){
+        m_bGoodSensors = false;
+      }
+      m_encoder = m_climber.getEncoder();
+
+      REVLibError errorCode;
+         
+      //Set for intake slot 0
+      //Use smart position closed loop controller
+      errorCode = m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+      m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+      errorCode = m_pidController.setFF(0.0005);
+      m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+      errorCode = m_pidController.setP(0);
+      m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+      errorCode = m_pidController.setI(0);
+      m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+      errorCode = m_pidController.setD(0);
+      m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+      errorCode = m_pidController.setIZone(100);
+      m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+        
+      //Set max acceleration, velocity, and minimum velocity
+      errorCode = m_pidController.setSmartMotionMaxAccel(1000, 0);
+      m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+      errorCode = m_pidController.setSmartMotionMaxVelocity(1200, 0);
+      m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+      
+      // the following line cause the trouble: make m_bGoodSensors to false
+      //  errorCode = m_pidController.setSmartMotionMinOutputVelocity(-1, 0);
+      // m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+
+      //Set maximum current
+      m_climber.setSmartCurrentLimit(60);
+    }
+ }
+
+    public boolean isActive() 
+    {
         return m_climber != null;
     }
 
-    private static class ClimberHolder {
-        private static final ClimberSubsystem INSTANCE_CLIMBER = new ClimberSubsystem();
-    }
-
-    /**
-     * Returns the singleton instance for the ShooterSubsystem
+     /*
+     * Returns the singleton instance for the Climber Subsystem
      */
-    public static ClimberSubsystem getInstance() {
-        if(ClimberHolder.INSTANCE_CLIMBER.isActive()==true){
-            return ClimberHolder.INSTANCE_CLIMBER;
-        }
-        else{
-            return null;
-        }
+    public static ClimberSubSystem getInstance() {
+      if (INSTANCE_CLIMBER.isActive()) { 
+          return INSTANCE_CLIMBER;
+      }
+      else {
+          return null;
+      }
     }
 
-    /**
-     * Return the motor temperature (Celsius) as measured by the encoder
-     */
-    public double getTemperature() {
-        return m_climber.getTemperature();
+    public void setClimberPosition()
+    {
+      if( m_bGoodSensors == true )
+      { 
+        //Get the current motor position from encoder
+        currentPosition = m_encoder.getPosition();
+      }
     }
 
-    /**
-     * Return the motor current draw measured by the encoder
-     */
-    public double getSupplyCurrent() {
-        return m_climber.getSupplyCurrent();
+    //Run the climber
+    public void runForIntake( int increPosition) {
+
+      if( m_bGoodSensors == true )
+      {
+        //Use smartmotion to go from current position to new position
+        m_pidController.setReference(currentPosition + increPosition, ControlType.kSmartMotion, 0);
+
+        //use the finxed incrementalPosition
+        //m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0);
+
+        //Use arbitrary feed forward: 0.5 voltage
+        //note: arbitraryFF could be dependent on if there is already one cargo in the climber
+        //m_pidController.setReference(currentPosition + incrementalPosition, ControlType.kSmartMotion, 0, 0.5, com.revrobotics.SparkMaxPIDController.ArbFFUnits.kVoltage);
+      }
+      else
+      {
+        //a constant speed, then only for one cargo
+        //@todo: test this default speed
+        m_climber.set(0.1);
+      }
+
     }
 
-    public double getMotorOutputPercent() {
-        return m_climber.getMotorOutputPercent();
+    public void stop() 
+    {
+      m_climber.stopMotor();
     }
 
-    @Override
-    public void periodic() {
-        
-    }
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
 }
+
