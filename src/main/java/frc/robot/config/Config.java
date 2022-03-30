@@ -113,8 +113,8 @@ public class Config {
     public static int INTAKE_PNEUMATIC_FLOAT_CHANNEL_1 = robotSpecific(-1, 5, -1, -1);
     public static int INTAKE_PNEUMATIC_FLOAT_CHANNEL_2 = robotSpecific(-1, 2, -1, -1); //not used
     
-    public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, false, false, true);
-    public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, false, false, true);
+    public static boolean LEFT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
+    public static boolean RIGHT_SLAVE_ISVICTOR = robotSpecific(true, true, false, true);
     
     // Invert talons to consider forward as forward (same practice for all objects)
     public static boolean LEFT_FRONT_INVERTED = robotSpecific(false, false, false, false);
@@ -264,8 +264,8 @@ public class Config {
 
     // Ramsete Max Velocity and max acceleration
     //Beetle: old value = 1.5; new value = 1.838
-    public static double kMaxSpeedMetersPerSecond = robotSpecific(2.4,2.4,1.838,2.4);//2.4; // DS Video -> 3.0
-    public static double kMaxAccelerationMetersPerSecondSquared =  robotSpecific(2.4,2.4,1.838,2.4);//2.4; // DS Video -> 2.0 
+    public static double kMaxSpeedMetersPerSecond = robotSpecific(2.4,1.2,1.838,2.4);//2.4; // DS Video -> 3.0
+    public static double kMaxAccelerationMetersPerSecondSquared =  robotSpecific(2.4,1.2,1.838,2.4);//2.4; // DS Video -> 2.0 
 
     public static double kRamseteTransferSpeed = kMaxSpeedMetersPerSecond;
     public static double kRamseteTurnAroundSpeed = kMaxSpeedMetersPerSecond; 

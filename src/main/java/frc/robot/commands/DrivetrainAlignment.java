@@ -103,7 +103,7 @@ public class DrivetrainAlignment extends CommandBase {
     else
     {
       //read network table
-      m_deltaTheta = visionAngle.getDouble(-99);
+      m_deltaTheta = visionAngle.getDouble(-99)*(-1);
       System.out.println("DrivetrainAlignment: vision angle "+ m_deltaTheta);
 
       //@todo: Check invalid angle value

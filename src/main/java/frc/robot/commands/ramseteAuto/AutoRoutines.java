@@ -27,6 +27,7 @@ import frc.robot.commands.DrivetrainAlignment;
 import frc.robot.commands.IndexerCargo;
 import frc.robot.commands.IndexerForShooter;
 import frc.robot.commands.IntakeDown;
+import frc.robot.commands.KickerFloat;
 import frc.robot.commands.LowerArm;
 import frc.robot.commands.OuterGoalErrorLoop;
 import frc.robot.commands.RunIntakeCargo;
@@ -58,15 +59,38 @@ public class AutoRoutines {
    
             case 2:
             
-            Command wait1s = new WaitCommand(1);
-            Command delayIndexer = wait1s.andThen( new IndexerForShooter());
-            Command autoShoot2 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer);
+            // Command wait1s = new WaitCommand(1);
+            // Command delayIndexer = wait1s.andThen( new IndexerForShooter());
+            // Command autoShoot2 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer);
             
-            Command shooterWithTimeOut = new SequentialCommandGroup(autoShoot2, new WaitCommand(4));
-            //Command driveOnly = new DriveWithTime(1.5,0.5,0.5);
-            Command driveOnly = new DriveWithTime(2, 0.5, 0.5);
-            //return driveOnly;
-            return new SequentialCommandGroup(shooterWithTimeOut, driveOnly);
+            // Command shooterWithTimeOut = new SequentialCommandGroup(autoShoot2, new WaitCommand(4));
+            // //Command driveOnly = new DriveWithTime(1.5,0.5,0.5);
+            // Command driveOnly = new DriveWithTime(2, 0.5, 0.5);
+            // //return driveOnly;
+            // return new SequentialCommandGroup(shooterWithTimeOut, driveOnly);
+
+            Command wait1s3 = new WaitCommand(1);
+            Command delayIndexer3 = wait1s3.andThen( new IndexerForShooter());
+            Command autoShoot3 = new ParallelRaceGroup(new SpinUpShooterWithTime(2700, 4), delayIndexer3);
+            Command wait1s4 = new WaitCommand(1);
+            Command delayIndexer4 = wait1s4.andThen( new IndexerForShooter());
+            Command autoShoot4 = new ParallelRaceGroup(new SpinUpShooterWithTime(3600, 8), delayIndexer4);
+            Command intakeDown = new IntakeDown();
+            Command kicker = new ControlKicker(false);
+            Command kicker2 = new ControlKicker(true);
+            Command kickerfloat = new KickerFloat();
+
+            Trajectory traj = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.0,0.0, new Rotation2d())), Config.trajectoryConfig);
+            RamseteCommandMerge ramsete3 = new RamseteCommandMerge(traj, "Trajectory-Red-O2");
+            return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj.getInitialPose())),
+                new ParallelRaceGroup(kicker, new WaitCommand(0.5)),
+                autoShoot3,
+                new ParallelRaceGroup(intakeDown, new WaitCommand(0.5)),
+                new ParallelRaceGroup(ramsete3, new RunIntakeCargo(true, 4)),
+                new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
+                new ParallelRaceGroup(kicker2, new WaitCommand(0.5)),
+                autoShoot4.alongWith(new RunIntakeCargo(true, 4)),
+                kickerfloat);
             
             //     //description:
             //     //starting position: within tarmac and facing a blue cargo
@@ -82,10 +106,12 @@ public class AutoRoutines {
                 //starting position: within tarmac and facing a red cargo
                 // if using odometry: middle red cargo
                 //drive forward first --> pick up 2nd cargo --> shoot both cargo
-                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
+                RamseteCommandMerge ramsete7 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
+                //Command pickUpCargo = new RunIntakeCargo(true)
+
                 return new SequentialCommandGroup (
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
-                    ramsete3);
+                    ramsete7);
             case 4:
                 //description:
                 //starting position: within tarmac and facing a red blue
