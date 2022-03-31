@@ -145,7 +145,7 @@ public class ClimberSubSystem extends SubsystemBase {
       //}
       //else
       //{
-        m_climber.set(0.5);
+        m_climber.set(0.7);
       //}
     }
 
