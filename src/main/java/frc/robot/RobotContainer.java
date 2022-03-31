@@ -184,16 +184,19 @@ public class RobotContainer {
             //with kicker on: 2550, high goal
             //without kicker on: low goal 1850
             //tarmat A: closer: RMP = 3200
-            Command wait1sA = new WaitCommand(1);
+            //no kicker
+            //low goal
+            Command wait1sA = new WaitCommand(0.5);
             Command delayIndexerA = wait1sA.andThen( new IndexerForShooter());
-            //Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(3200, 0), delayIndexerA);
-            Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(1800, 0), delayIndexerA);
+            Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(1500, 0), delayIndexerA);
             new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(cmdShootA);
 
             // //tarmat B: farther: RPM = 3400
-            Command wait1sB = new WaitCommand(1);
+            //no kicker
+            //high goal
+            Command wait1sB = new WaitCommand(0.5);
             Command delayIndexerB = wait1sB.andThen( new IndexerForShooter());
-            Command cmdShootB = new ParallelCommandGroup(new SpinUpShooterWithTime(3500, 0), delayIndexerB);
+            Command cmdShootB = new ParallelCommandGroup(new SpinUpShooterWithTime(2750, 0), delayIndexerB);
             new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(cmdShootB);
 
             //kicker floating
@@ -203,8 +206,8 @@ public class RobotContainer {
             //test switch
             // Command readSwitch = new TestSwitch();
             // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
-
-
+            // Command updateFluidConstantPID = new InstantCommand(ShooterSubsystem.getInstance()::setPIDValues);
+            // new JoystickButton(driverStick, XboxController.Button.kY.value).whenPressed(updateFluidConstantPID);
             
             break;
             }

@@ -149,8 +149,7 @@ public class Config {
     public static int shooterAnalogSensor = robotSpecific(8, -1, -1, -1);
 
     //8 or 9
-    public static int INDEXER_SWITCH_END = robotSpecific(-1,2,8,-1);//Beetle prototype
-    public static int INDEXER_SWITCH_MIDDLE = robotSpecific(-1,3,8,-1);
+    public static int INDEXER_SWITCH = robotSpecific(-1,2,8,-1);//Beetle prototype
     public static int FEEDER_SWITCH_INPUT = robotSpecific(9, -1, -1, -1);
     public static int FEEDER_SWITCH_OUTPUT = robotSpecific(8, -1, -1, -1);
     public static int FEEDER_MAX_BALLS = 3;
@@ -247,7 +246,8 @@ public class Config {
 
     // Frc-characterization data
     // id0: CompBot 
-    // id1: PracBot - Previous: 3.24, 0.343 Parking Lot: 1.33, 2.89, 0.164 LargerSpace: 1.15, 2.84, 2
+    // id1: CompBot(Rapid React) - tuned on limited area of carpet in unit 105. 
+    //                             may need more tuning in the bigger competition carpet.
     // id2: Beetle - church parking lot 1.32, 4.65, 0.5; 
     //              - Turkish Center Carpet: 1.0251, 3.7758, 0.72224
     //              - Competition Carpet: 1.1848, 4.766, 1.2249 (forward/backward)
@@ -265,8 +265,8 @@ public class Config {
 
     // Ramsete Max Velocity and max acceleration
     //Beetle: old value = 1.5; new value = 1.838
-    public static double kMaxSpeedMetersPerSecond = robotSpecific(2.4,2.4,1.838,2.4);//2.4; // DS Video -> 3.0
-    public static double kMaxAccelerationMetersPerSecondSquared =  robotSpecific(2.4,2.4,1.838,2.4);//2.4; // DS Video -> 2.0 
+    public static double kMaxSpeedMetersPerSecond = robotSpecific(2.4,1.0,1.838,2.4);
+    public static double kMaxAccelerationMetersPerSecondSquared =  robotSpecific(2.4,1.0,1.838,2.4);
 
     public static double kRamseteTransferSpeed = kMaxSpeedMetersPerSecond;
     public static double kRamseteTurnAroundSpeed = kMaxSpeedMetersPerSecond; 
@@ -345,8 +345,8 @@ public class Config {
     public static double RAMSETE_VOLTAGE_COMPENSATION = 12;
 
     public static int DRIVETRAIN_SLOTID_ALIGNMENT = 2;
-    public static double ALIGNMENT_KF = 0.38;
-    public static double ALIGNMENT_KP = 4.0374;
+    public static double ALIGNMENT_KF = robotSpecific(0.0, 0.38, 0.38, 0.0);
+    public static double ALIGNMENT_KP = robotSpecific(0.0, 2.7, 2.3, 0.0);//sysId for RapidReact: 4.0374;
     public static double ALIGNMENT_KI = 0;
     public static double ALIGNMENT_KD = 0.03; 
     public static double ALIGNMENT_ALLOWABLE_PID_ERROR = 0; // <- never stop the P loop from running
