@@ -3,18 +3,17 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
+import javax.sound.sampled.SourceDataLine;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.config.Config;
-import frc.robot.subsystems.ColorSensorSubsystem;
-import frc.robot.subsystems.IndexerSubSystem;
-import frc.robot.subsystems.SwitchSubsystem;
+import frc.robot.subsystems.ClimberSubSystem;
 
-public class IndexerCargo extends CommandBase {
+public class ClimberMidBar extends CommandBase {
 
-  private IndexerSubSystem indexer;
-  private ColorSensorSubsystem colorSensor;
+  private ClimberSubSystem climber;
   public boolean switchDetected;
   public boolean colorSensorDetected;
   public boolean colorSensorFirstDetected = false;
@@ -23,20 +22,14 @@ public class IndexerCargo extends CommandBase {
   public boolean bFirstSwitchDetected;
 
   /** Creates a new IndexerCargo. */
-  public IndexerCargo() {
+  public ClimberMidBar() {
 
-    indexer = IndexerSubSystem.getInstance();
-    colorSensor = ColorSensorSubsystem.getInstance();
+    climber = ClimberSubSystem.getInstance();
     
     // Use addRequirements() here to declare subsystem dependencies.
-    if ( indexer != null )
+    if ( climber != null )
     {
-      addRequirements(indexer);
-    }
-
-    if(colorSensor != null)
-    {
-      addRequirements(colorSensor);
+      addRequirements(climber);
     }
   }
 
@@ -44,76 +37,24 @@ public class IndexerCargo extends CommandBase {
   @Override
   public void initialize() {
 
-    if ( indexer != null )
-      indexer.setIndexerPosition();
+    if (climber != null )
+      climber.setClimberPosition();
 
-    nColorSensorDetectedCount = 0;
-    colorSensorFirstDetected = false;
+    
   }
     
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (indexer == null)
+    if (climber == null){
       return;
 
       //System.out.println("auto mode: "+ Robot.m_bAutoMode);
       // System.out.println("indexer sensor: "+ indexer.m_bForIntakeGoodSensors);
-
-    if (colorSensor != null )
-      colorSensorDetected = colorSensor.isDetected();
-    else
-      colorSensorFirstDetected = false;
-    
-    if ( colorSensorDetected == true)
-    {
-     // System.out.println("detected one cargo");
     }
-
-    if (colorSensorDetected == true && colorSensorFirstDetected == false) 
-    {
-      colorSensorFirstDetected = true;
-      nColorSensorDetectedCount ++;
-//      System.out.println("start shuf  fling the cargo, detected time"+nColorSensorDetectedCount);
-    }
-      
-    if (colorSensorFirstDetected == true && nColorSensorDetectedCount < 3) 
-    {
-      if ( nColorSensorDetectedCount == 1)
-      {
-        //@todo: currently for auto mode pre-loaded one cargo
-        if(Robot.m_bAutoMode==true)
-        {
-          indexer.runForIntake(6);
-        }
-        else
-        {
-          indexer.runForIntake(14);
-        }
-      }
-      else if ( nColorSensorDetectedCount == 2)
-       indexer.runForIntake(6);
-
-       counter++;
-      // TODO tune for 100
-      //For one time position change: note this number depends how fast/smoothly the cargo is shuffled in
-      if (counter > 150)
-      {
-        // At this time, the cargo should be in the indexer, and the indexer should stop
-
-        //reset for the next cargo 
-        colorSensorFirstDetected = false;
-        colorSensorDetected = false;
-        counter = 0;
-
-        indexer.setIndexerPosition();
-        indexer.stop();
-  //      System.out.println("stop shuffling the cargo");
-      }
-    } 
-    else 
-    {
-      indexer.stop();
+    else{
+      climber.startClimber(14);
+        
     }
   }
   
@@ -122,8 +63,8 @@ public class IndexerCargo extends CommandBase {
   @Override
   public void end(boolean interrupted) 
   {
-    if ( indexer != null )
-      indexer.stop();
+    if ( climber != null )
+      climber.stop();
   }
 
   // Returns true when the command should end.

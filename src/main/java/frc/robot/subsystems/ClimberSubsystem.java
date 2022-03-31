@@ -16,10 +16,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubSystem extends SubsystemBase {
 
+  public static FluidConstant<Double> CLIMBER_RPM = new FluidConstant<>
+  ("Climber_PRM",700.).registerToTable(Config.constantsTable);
+
   //Instance Variables
   private CANSparkMax m_climber;
   private SparkMaxPIDController m_pidController;
   private RelativeEncoder m_encoder;
+  private double targetRPM = CLIMBER_RPM.getValue();
   public double kMaxOutput = 1;
   public double kMinOutput = -1;
   public double currentPosition = 0;
@@ -59,8 +63,7 @@ public class ClimberSubSystem extends SubsystemBase {
       m_encoder = m_climber.getEncoder();
 
       REVLibError errorCode;
-         
-      //Set for intake slot 0
+      
       //Use smart position closed loop controller
       errorCode = m_pidController.setOutputRange(kMinOutput, kMaxOutput);
       m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
@@ -90,7 +93,7 @@ public class ClimberSubSystem extends SubsystemBase {
     }
  }
 
-    public boolean isActive() 
+    public boolean isAvailable() 
     {
         return m_climber != null;
     }
@@ -99,12 +102,7 @@ public class ClimberSubSystem extends SubsystemBase {
      * Returns the singleton instance for the Climber Subsystem
      */
     public static ClimberSubSystem getInstance() {
-      if (INSTANCE_CLIMBER.isActive()) { 
-          return INSTANCE_CLIMBER;
-      }
-      else {
-          return null;
-      }
+      return INSTANCE_CLIMBER;
     }
 
     public void setClimberPosition()
@@ -117,7 +115,7 @@ public class ClimberSubSystem extends SubsystemBase {
     }
 
     //Run the climber
-    public void runForIntake( int increPosition) {
+    public void startClimber( int increPosition) {
 
       if( m_bGoodSensors == true )
       {
@@ -138,6 +136,17 @@ public class ClimberSubSystem extends SubsystemBase {
         m_climber.set(0.1);
       }
 
+    }
+
+    public void StartClimberRPM(){
+      if(m_bGoodSensors == true)
+      {
+        m_pidController.setReference(targetRPM, ControlType.kVelocity, 1);
+      }
+      else
+      {
+        m_climber.set(0.2);
+      }
     }
 
     public void stop() 
