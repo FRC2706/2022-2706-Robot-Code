@@ -204,8 +204,12 @@ public class RobotContainer {
             // Command readSwitch = new TestSwitch();
             // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
 
-
+            Command RPMClimb = new ClimberRPM();
+            new JoystickButton(controlStick,XboxController.Axis.kRightTrigger.value).whenHeld(RPMClimb);
             
+            //Command positionClimb = new ClimberPosition();
+            //new JoystickButton(controlStick, XboxController.Axis.kRightTrigger.value).whenPressed(positionClimb);
+
             break;
             }
            case 2: //Beetle

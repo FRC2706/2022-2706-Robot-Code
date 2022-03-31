@@ -11,7 +11,7 @@ import frc.robot.Robot;
 import frc.robot.config.Config;
 import frc.robot.subsystems.ClimberSubSystem;
 
-public class ClimberMidBarRPM extends CommandBase {
+public class ClimberPosition extends CommandBase {
 
   private ClimberSubSystem climber;
   public boolean switchDetected;
@@ -22,7 +22,7 @@ public class ClimberMidBarRPM extends CommandBase {
   public boolean bFirstSwitchDetected;
 
   /** Creates a new IndexerCargo. */
-  public ClimberMidBarRPM() {
+  public ClimberPosition() {
 
     climber = ClimberSubSystem.getInstance();
     
@@ -35,7 +35,13 @@ public class ClimberMidBarRPM extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+
+    if (climber != null )
+      climber.setClimberPosition();
+
+    
+  }
     
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -47,7 +53,8 @@ public class ClimberMidBarRPM extends CommandBase {
       // System.out.println("indexer sensor: "+ indexer.m_bForIntakeGoodSensors);
     }
     else{
-      climber.StartClimberRPM();
+      climber.startClimber(14);
+        
     }
   }
   
