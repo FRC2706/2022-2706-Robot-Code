@@ -17,19 +17,42 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IndexerSubSystem extends SubsystemBase {
   
   public static FluidConstant<Double> INDEXER_RPM = new FluidConstant<>
-  ("Indexer_PRM",700.).registerToTable(Config.constantsTable);
+  ("Indexer_PRM",2000.).registerToTable(Config.constantsTable);
 
   //Instance Variables
   private CANSparkMax m_indexer;
   private SparkMaxPIDController m_pidController;
   private RelativeEncoder m_encoder;
-  private double targetRPM = INDEXER_RPM.getValue();//700;//1000;
+  private double targetRPM = INDEXER_RPM.getValue();//700;
   public double kMaxOutput = 1;
   public double kMinOutput = -1;
   public double currentPosition = 0;
   public boolean m_bForShooterGoodSensors= false;
   public boolean m_bForIntakeGoodSensors = false;
   private static final IndexerSubSystem INSTANCE_INDEXER = new IndexerSubSystem();
+
+
+  //@todo: put these values as constant configs for competition
+    //       or make them configurable from the network table (network listener for debug)
+    // PID values (currently set for protobot's shooter)
+    public static FluidConstant<Double> P_INDEXERSUBSYSTEM = new FluidConstant<>
+            ("P_IndexerSubsystem", 3.5e-4).registerToTable(Config.constantsTable);
+
+    public static FluidConstant<Double> I_INDEXSUBSYSTEM = new FluidConstant<>
+            ("I_IndexerSubsystem", 3.7e-7).registerToTable(Config.constantsTable);
+
+    public static FluidConstant<Double> D_INDEXERSUBSYSTEM = new FluidConstant<>
+            ("D_IndexerSubsystem", 0.013).registerToTable(Config.constantsTable);
+
+    public static FluidConstant<Double> F_INDEXERSUBSYSTEM = new FluidConstant<>
+            ("F_IndexerSubsystem", 0.000175).registerToTable(Config.constantsTable);
+
+    public static FluidConstant<Double> IZONE_INDEXERSUBSYSTEM = new FluidConstant<>
+            ("IZONE_IndexerSubsystem", 150.0).registerToTable(Config.constantsTable);
+
+    public static FluidConstant<Double> TARGET_RPM = new FluidConstant<>
+            ("TARGET_RPM_IndexerSubsystem", 2000.0).registerToTable(Config.constantsTable);
+    //note: during the test to find a good RPM, use TARGET_RPM in setTargetRPM(int inputRPM).
 
   /** Creates a new IndexerSubSystem. */
   private IndexerSubSystem() {
