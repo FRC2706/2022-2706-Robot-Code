@@ -148,7 +148,8 @@ public class Config {
 
     public static int shooterAnalogSensor = robotSpecific(8, -1, -1, -1);
 
-    //8 or 9
+    public static int INDEXER_SWITCH_END = robotSpecific(-1,2,8,-1);//Beetle prototype
+    public static int INDEXER_SWITCH_MIDDLE = robotSpecific(-1,3,8,-1);
     public static int INDEXER_SWITCH = robotSpecific(-1,2,8,-1);//Beetle prototype
     public static int FEEDER_SWITCH_INPUT = robotSpecific(9, -1, -1, -1);
     public static int FEEDER_SWITCH_OUTPUT = robotSpecific(8, -1, -1, -1);
@@ -338,7 +339,7 @@ public class Config {
     // id2: (Beetle) based on 75% output
     public static int DRIVETRAIN_SLOTID_RAMSETE = 1;
     public static double RAMSETE_KF = robotSpecific(0.0, 0.0, 0.38, 0.0);
-    public static double RAMSETE_KP = robotSpecific(0.03, 0.0207, 0.0434, 0.05); //0.0884//0.0105
+    public static double RAMSETE_KP = robotSpecific(0.03, 0.0207, 0.0434, 0.05); //rapid: 2.381
     public static double RAMSETE_KI = 0;
     public static double RAMSETE_KD = 0; //maybe set to some value
     public static double RAMSETE_ALLOWABLE_PID_ERROR = 0; // <- never stop the P loop from running
