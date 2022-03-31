@@ -27,8 +27,8 @@ import frc.robot.commands.DrivetrainAlignment;
 import frc.robot.commands.IndexerCargo;
 import frc.robot.commands.IndexerForShooter;
 import frc.robot.commands.IntakeDown;
+import frc.robot.commands.IntakeUp;
 import frc.robot.commands.KickerFloat;
-import frc.robot.commands.LowerArm;
 import frc.robot.commands.OuterGoalErrorLoop;
 import frc.robot.commands.RunIntakeCargo;
 import frc.robot.commands.ControlKicker;
@@ -51,95 +51,110 @@ public class AutoRoutines {
                 return null;
 
             case 1:
-            //low goal
-                Command wait1sA = new WaitCommand(1);
-                Command delayIndexerA = wait1sA.andThen( new IndexerForShooter());
-                Command autoShoot = new ParallelCommandGroup(new SpinUpShooterWithTime(1800, 0), delayIndexerA);
-                return autoShoot;
-   
+                //steps: low goal -> taxi
+                Command wait1s1 = new WaitCommand(1);
+                Command delayIndexer1 = wait1s1.andThen( new IndexerForShooter());
+                Command autoShootlow1 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer1);
+                Trajectory traj1 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(0.75,0.0, new Rotation2d())), Config.trajectoryConfig);
+                RamseteCommandMerge ramsete1 = new RamseteCommandMerge(traj1, "Trajectory-Red-O1");
+                return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj1.getInitialPose())),
+                                                   autoShootlow1,
+                                                   new ParallelRaceGroup(ramsete1));
+            
             case 2:
-            
-            // Command wait1s = new WaitCommand(1);
-            // Command delayIndexer = wait1s.andThen( new IndexerForShooter());
-            // Command autoShoot2 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer);
-            
-            // Command shooterWithTimeOut = new SequentialCommandGroup(autoShoot2, new WaitCommand(4));
-            // //Command driveOnly = new DriveWithTime(1.5,0.5,0.5);
-            // Command driveOnly = new DriveWithTime(2, 0.5, 0.5);
-            // //return driveOnly;
-            // return new SequentialCommandGroup(shooterWithTimeOut, driveOnly);
+                //steps: low goal -> taxi -> intake one cargo -> high goal -> stow intake
+                Command wait1s2 = new WaitCommand(1);
+                Command delayIndexer2 = wait1s2.andThen( new IndexerForShooter());
+                Command autoShootlow2 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer2);
+                Command wait1s22 = new WaitCommand(1);
+                Command delayIndexer22 = wait1s22.andThen( new IndexerForShooter());
+                Command autoShoothigh2 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 8), delayIndexer22);
+                Command intakeDown2 = new IntakeDown();
+                Command intakeUp2 = new IntakeUp();
+                Trajectory traj2 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(0.75,0.0, new Rotation2d())), Config.trajectoryConfig);
+                RamseteCommandMerge ramsete2 = new RamseteCommandMerge(traj2, "Trajectory-Red-O2");
+                
+                return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj2.getInitialPose())),
+                                                    autoShootlow2,
+                                                    new ParallelRaceGroup(intakeDown2, new WaitCommand(0.5)),
+                                                    new ParallelRaceGroup(ramsete2, new RunIntakeCargo(true, 4)),
+                                                    new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
+                                                    autoShoothigh2.alongWith(new RunIntakeCargo(true, 4)),
+                                                    intakeUp2);
 
-            Command wait1s3 = new WaitCommand(1);
-            Command delayIndexer3 = wait1s3.andThen( new IndexerForShooter());
-            Command autoShoot3 = new ParallelRaceGroup(new SpinUpShooterWithTime(2700, 4), delayIndexer3);
-            Command wait1s4 = new WaitCommand(1);
-            Command delayIndexer4 = wait1s4.andThen( new IndexerForShooter());
-            Command autoShoot4 = new ParallelRaceGroup(new SpinUpShooterWithTime(3600, 8), delayIndexer4);
-            Command intakeDown = new IntakeDown();
-            Command kicker = new ControlKicker(false);
-            Command kicker2 = new ControlKicker(true);
-            Command kickerfloat = new KickerFloat();
-
-            Trajectory traj = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.0,0.0, new Rotation2d())), Config.trajectoryConfig);
-            RamseteCommandMerge ramsete3 = new RamseteCommandMerge(traj, "Trajectory-Red-O2");
-            return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj.getInitialPose())),
-                new ParallelRaceGroup(kicker, new WaitCommand(0.5)),
-                autoShoot3,
-                new ParallelRaceGroup(intakeDown, new WaitCommand(0.5)),
-                new ParallelRaceGroup(ramsete3, new RunIntakeCargo(true, 4)),
-                new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
-                new ParallelRaceGroup(kicker2, new WaitCommand(0.5)),
-                autoShoot4.alongWith(new RunIntakeCargo(true, 4)),
-                kickerfloat);
-            
-            //     //description:
-            //     //starting position: within tarmac and facing a blue cargo
-            //     // if using odometry: middle blue cargo
-            //     //shoot first --> drive forward --> pick up a cargo --> shoot it again
-            //     //testing blue option 2
-            //     RamseteCommandMerge ramsete2 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
-            //     return new SequentialCommandGroup (
-            //         new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
-            //         ramsete2);
             case 3:
+                //steps: kicker up -> high goal -> taxi -> kicker down -> 
+                //       intake one cargo -> high goal -> stow intake
+                Command wait1s3 = new WaitCommand(1);
+                Command delayIndexer3 = wait1s3.andThen( new IndexerForShooter());
+                Command autoShoot3 = new ParallelRaceGroup(new SpinUpShooterWithTime(2750, 4), delayIndexer3);
+                Command wait1s4 = new WaitCommand(1);
+                Command delayIndexer4 = wait1s4.andThen( new IndexerForShooter());
+                Command autoShoot4 = new ParallelRaceGroup(new SpinUpShooterWithTime(3100, 8), delayIndexer4);
+                Command intakeDown = new IntakeDown();
+                Command intakeUp = new IntakeUp();
+                Command kicker = new ControlKicker(false);
+                Command kicker2 = new ControlKicker(true);
+                Command kickerfloat = new KickerFloat();
+
+                Trajectory traj = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(0.65,0.0, new Rotation2d())), Config.trajectoryConfig);
+                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(traj, "Trajectory-Red-O2");
+                return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj.getInitialPose())),
+                                                  new ParallelRaceGroup(kicker, new WaitCommand(0.5)),
+                                                  autoShoot3,
+                                                  new ParallelRaceGroup(intakeDown, new WaitCommand(0.5)),
+                                                  new ParallelRaceGroup(ramsete3, new RunIntakeCargo(true, 4)),
+                                                  new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
+                                                  new ParallelRaceGroup(kicker2, new WaitCommand(0.5)),
+                                                  autoShoot4.alongWith(new RunIntakeCargo(true, 4)),
+                                                  kickerfloat,
+                                                  intakeUp);
+           
+        case 4:
                 //description:
                 //starting position: within tarmac and facing a red cargo
                 // if using odometry: middle red cargo
                 //drive forward first --> pick up 2nd cargo --> shoot both cargo
-                RamseteCommandMerge ramsete7 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
-                //Command pickUpCargo = new RunIntakeCargo(true)
+                // RamseteCommandMerge ramsete7 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
+                // //Command pickUpCargo = new RunIntakeCargo(true)
 
-                return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
-                    ramsete7);
-            case 4:
+                // return new SequentialCommandGroup (
+                //     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
+                //     ramsete7);
+
+                RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectoryBlue3O1P1, "Trajectory-Blue3-O1P1");
+                    return new SequentialCommandGroup (
+                        new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlue3O1P1.getInitialPose())),
+                        ramsete4);
+            case 5:
                 //description:
                 //starting position: within tarmac and facing a red blue
                 // if using odometry: middle blue cargo
                 //drive forward first --> pick up 2nd cargo --> shoot both cargo
-                RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
+                RamseteCommandMerge ramsete5 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
                 return new SequentialCommandGroup (
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
-                    ramsete4);
+                    ramsete5);
 
-            case 5:
+            case 6:
                 //an example
-                //testing blue option 2
-                RamseteCommandMerge ramsete5 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
+                //testing blue option 
+                RamseteCommandMerge ramsete6 = new RamseteCommandMerge(Robot.trajectoryBlueO2, "Trajectory-Blue-O2");
 
                 Command wait1s5 = new WaitCommand(1);
                 Command delayIndexer5 = wait1s5.andThen( new IndexerForShooter());
                 Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(3400, 5), delayIndexer5);
 
                 //@todo: add ending to IndexerCargo
-                Command intake = new ParallelRaceGroup(new RunIntakeCargo(true, 5), new IndexerCargo(), ramsete5);
+                Command intake = new ParallelRaceGroup(new RunIntakeCargo(true, 5), new IndexerCargo(), ramsete6);
 
-                return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
-                    new IntakeDown(),
-                    intake,
-                    shooter
-                    );
+                // return new SequentialCommandGroup (
+                //     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlueO2.getInitialPose())),
+                //     new IntakeDown(),
+                //     intake,
+                //     shooter
+                //     );
+                return null;
                 
             default:
                 return null;

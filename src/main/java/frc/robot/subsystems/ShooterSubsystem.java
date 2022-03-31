@@ -25,21 +25,21 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //@todo: put these values as constant configs for competition
     //       or make them configurable from the network table (network listener for debug)
-    // PID values (currently set for protobot's shooter)
+    // tuned PIDF values for the competition robot (Rapid React)
     public static FluidConstant<Double> P_SHOOTERSUBSYSTEM = new FluidConstant<>
-            ("P_ShooterSubsystem", 6.5e-5).registerToTable(Config.constantsTable);
+            ("P_ShooterSubsystem", 3.5e-4).registerToTable(Config.constantsTable);
 
     public static FluidConstant<Double> I_SHOOTERSUBSYSTEM = new FluidConstant<>
-            ("I_ShooterSubsystem", 1.0e-6).registerToTable(Config.constantsTable);
+            ("I_ShooterSubsystem", 3.7e-7).registerToTable(Config.constantsTable);
 
     public static FluidConstant<Double> D_SHOOTERSUBSYSTEM = new FluidConstant<>
-            ("D_ShooterSubsystem", 4.0e-6).registerToTable(Config.constantsTable);
+            ("D_ShooterSubsystem", 0.013).registerToTable(Config.constantsTable);
 
     public static FluidConstant<Double> F_SHOOTERSUBSYSTEM = new FluidConstant<>
             ("F_ShooterSubsystem", 0.000175).registerToTable(Config.constantsTable);
 
     public static FluidConstant<Double> IZONE_SHOOTERSUBSYSTEM = new FluidConstant<>
-            ("IZONE_ShooterSubsystem", 200.0).registerToTable(Config.constantsTable);
+            ("IZONE_ShooterSubsystem", 150.0).registerToTable(Config.constantsTable);
 
     public static FluidConstant<Double> TARGET_RPM = new FluidConstant<>
             ("TARGET_RPM_ShooterSubsystem", 2000.0).registerToTable(Config.constantsTable);
@@ -188,5 +188,23 @@ public class ShooterSubsystem extends SubsystemBase {
     public boolean isAtTargetRPM() {
         double errorRPM = targetRPM - getMeasuredRPM();
         return (Math.abs(errorRPM) < RPM_TOLERANCE);
+    }
+
+    public void setPIDValues()
+    {
+        REVLibError errorCode = m_pidController.setFF(F_SHOOTERSUBSYSTEM.get());
+        m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+
+        errorCode = m_pidController.setP(P_SHOOTERSUBSYSTEM.get());
+        m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+
+            errorCode = m_pidController.setI(I_SHOOTERSUBSYSTEM.get());
+            m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+
+            errorCode = m_pidController.setD(D_SHOOTERSUBSYSTEM.get());
+            m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
+
+            errorCode = m_pidController.setIZone(IZONE_SHOOTERSUBSYSTEM.get());
+            m_bGoodSensors = m_bGoodSensors && (errorCode == REVLibError.kOk);
     }
 }
