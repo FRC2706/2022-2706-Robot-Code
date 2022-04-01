@@ -206,9 +206,16 @@ public class RobotContainer {
             //test switch
             // Command readSwitch = new TestSwitch();
             // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
-            // Command updateFluidConstantPID = new InstantCommand(ShooterSubsystem.getInstance()::setPIDValues);
-            // new JoystickButton(driverStick, XboxController.Button.kY.value).whenPressed(updateFluidConstantPID);
-            
+
+            //Command RPMClimb = new ClimberRPM();
+            //new JoystickButton(controlStick,XboxController.Axis.kRightTrigger.value).whenHeld(RPMClimb);
+
+            Command RPMClimb = new ClimberRPM();
+            new JoystickButton(driverStick,XboxController.Button.kB.value).whenHeld(RPMClimb);              
+              
+            //Command positionClimb = new ClimberPosition();
+            //new JoystickButton(controlStick, XboxController.Axis.kRightTrigger.value).whenPressed(positionClimb);
+
             break;
             }
            case 2: //Beetle

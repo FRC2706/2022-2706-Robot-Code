@@ -70,6 +70,7 @@ public class IndexerCargo extends CommandBase {
     if (indexer == null)
       return;
 
+
     // System.out.println("auto mode: "+ Robot.m_bAutoMode);
     //System.out.println("indexer sensor: "+ indexer.m_bForIntakeGoodSensors);
    //@todo: only consider one detection, ignore all of the following detections.

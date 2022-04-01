@@ -94,7 +94,7 @@ public class Config {
     public static int LEFT_REAR_MOTOR = robotSpecific(3, 5, 2, 7, 3);
     public static int INTAKE_MOTOR = robotSpecific(6, 8, -1, -1, -1);
     public static int SHOOTER_MOTOR = robotSpecific(5, 11, 5, -1, 16); //Beetle prototype on Beetle:5
-    public static int CLIMBER_TALON = robotSpecific(10, -1, -1, -1, 16);
+    public static int CLIMBER_MOTOR = robotSpecific(10, -1, -1, -1, 16);
     public static int AGITATOR_MOTOR = robotSpecific(9, -1, -1, -1);
     public static int INDEXER_MOTOR = robotSpecific(6, 7, 7, -1); //Beetle prototype on Beetle:7
     public static int RIGHT_MASTER = robotSpecific(RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR);
@@ -133,7 +133,7 @@ public class Config {
     public static boolean MOTOR_CURRENT_LIMIT = true;   //Enable or disable motor current limiting.
 
     public static int TALON_5_PLYBOY = robotSpecific(-1, -1, -1, -1, -1, 5);
-    public static int PIGEON_ID = robotSpecific(CLIMBER_TALON, 27, 27, 27, LEFT_REAR_MOTOR, TALON_5_PLYBOY);
+    public static int PIGEON_ID = robotSpecific(CLIMBER_MOTOR, 27, 27, 27, LEFT_REAR_MOTOR, TALON_5_PLYBOY);
     
     public static int ANALOG_SELECTOR_ONE = robotSpecific(0, 0, -1, -1, -1, 0);
     public static int ANALOG_SELECTOR_TWO = robotSpecific(0, -1, -1, -1, -1, 0);
