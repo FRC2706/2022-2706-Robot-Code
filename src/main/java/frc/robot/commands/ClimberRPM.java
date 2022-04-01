@@ -3,28 +3,17 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-import javax.sound.sampled.SourceDataLine;
-
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.config.Config;
-import frc.robot.subsystems.ClimberSubSystem;
+import frc.robot.subsystems.ClimberSubsystem;
 
 public class ClimberRPM extends CommandBase {
 
-  private ClimberSubSystem climber;
-  public boolean switchDetected;
-  public boolean colorSensorDetected;
-  public boolean colorSensorFirstDetected = false;
-  public int counter = 0;
-  public int nColorSensorDetectedCount = 0;
-  public boolean bFirstSwitchDetected;
+  private ClimberSubsystem climber;
 
   /** Creates a new IndexerCargo. */
   public ClimberRPM() {
 
-    climber = ClimberSubSystem.getInstance();
+    climber = ClimberSubsystem.getInstance();
     
     // Use addRequirements() here to declare subsystem dependencies.
     if ( climber != null )

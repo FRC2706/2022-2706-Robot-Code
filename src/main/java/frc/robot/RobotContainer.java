@@ -145,23 +145,7 @@ public class RobotContainer {
             }
  
             case 1:
-            {
-
-            //=================
-            //up and down intake
-            //===================
-            //intake one cargo
-
-            //cmdIntakeOneCargo = new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(true, 0)); 
-            //new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenHeld(cmdIntakeOneCargo);
-
-             //intake two cargo
-            // cmdIntakeTwoCargo = new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(true, 0)); 
-            // new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(cmdIntakeTwoCargo);
-             
-            Command intakeReverse = new RunIntakeCargo(false, 0);
-            new JoystickButton(controlStick, XboxController.Button.kBack.value).whenHeld(intakeReverse);
-             
+            {            
             //============
             //intake
             //=========
@@ -176,6 +160,10 @@ public class RobotContainer {
                                          new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(true, 0))); 
             new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenPressed(intakeDownFloat);
  
+            //intake reverse (use it only when it is needed.)
+            Command intakeReverse = new RunIntakeCargo(false, 0);
+            new JoystickButton(controlStick, XboxController.Button.kBack.value).whenHeld(intakeReverse);
+
             //=============
             //shooter
             //=================================
@@ -219,7 +207,7 @@ public class RobotContainer {
             //new JoystickButton(controlStick,XboxController.Axis.kRightTrigger.value).whenHeld(RPMClimb);
 
             Command RPMClimb = new ClimberRPM();
-            new JoystickButton(driverStick,XboxController.Button.kB.value).whenHeld(RPMClimb);              
+            new JoystickButton(driverStick,XboxController.Button.kA.value).whenHeld(RPMClimb);              
               
             //Command positionClimb = new ClimberPosition();
             //new JoystickButton(controlStick, XboxController.Axis.kRightTrigger.value).whenPressed(positionClimb);
