@@ -122,7 +122,7 @@ public class Config {
     public static boolean LEFT_REAR_INVERTED = robotSpecific(false, true, false, false);
     public static boolean RIGHT_REAR_INVERTED = robotSpecific(false, false, false, true);
     public static boolean DRIVETRAIN_LEFT_SENSORPHASE = robotSpecific(false, true, true, true);
-    public static boolean DRIVETRAIN_RIGHT_SENSORPHASE = robotSpecific(false, true, true, true);
+    public static boolean DRIVETRAIN_RIGHT_SENSORPHASE = robotSpecific(false, false, true, true);
 
     public static boolean DRIVETRAIN_INVERT_DIFFERENTIALDRIVE = robotSpecific(false, false, false, false);
 
@@ -266,7 +266,7 @@ public class Config {
 
     // Ramsete Max Velocity and max acceleration
     //Beetle: old value = 1.5; new value = 1.838
-    public static double kMaxSpeedMetersPerSecond = robotSpecific(2.4,1.0,1.838,2.4);
+    public static double kMaxSpeedMetersPerSecond = robotSpecific(2.4,1.2,1.838,2.4);
     public static double kMaxAccelerationMetersPerSecondSquared =  robotSpecific(2.4,1.0,1.838,2.4);
 
     public static double kRamseteTransferSpeed = kMaxSpeedMetersPerSecond;

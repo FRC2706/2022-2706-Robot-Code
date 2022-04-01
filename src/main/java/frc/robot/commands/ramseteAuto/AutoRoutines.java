@@ -55,11 +55,13 @@ public class AutoRoutines {
                 Command wait1s1 = new WaitCommand(1);
                 Command delayIndexer1 = wait1s1.andThen( new IndexerForShooter());
                 Command autoShootlow1 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer1);
-                Trajectory traj1 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(0.75,0.0, new Rotation2d())), Config.trajectoryConfig);
+                Command kicker1 = new ControlKicker(true);
+                Trajectory traj1 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.0,0.0, new Rotation2d())), Config.trajectoryConfig);
                 RamseteCommandMerge ramsete1 = new RamseteCommandMerge(traj1, "Trajectory-Red-O1");
                 return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj1.getInitialPose())),
-                                                   autoShootlow1,
-                                                   new ParallelRaceGroup(ramsete1));
+                                                    new ParallelRaceGroup(kicker1, new WaitCommand(0.5)),                                   
+                                                    autoShootlow1,
+                                                    new ParallelRaceGroup(ramsete1));
             
             case 2:
                 //steps: low goal -> taxi -> intake one cargo -> high goal -> stow intake
@@ -68,13 +70,15 @@ public class AutoRoutines {
                 Command autoShootlow2 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer2);
                 Command wait1s22 = new WaitCommand(1);
                 Command delayIndexer22 = wait1s22.andThen( new IndexerForShooter());
-                Command autoShoothigh2 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 8), delayIndexer22);
+                Command autoShoothigh2 = new ParallelRaceGroup(new SpinUpShooterWithTime(3100, 8), delayIndexer22);
                 Command intakeDown2 = new IntakeDown();
                 Command intakeUp2 = new IntakeUp();
-                Trajectory traj2 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(0.75,0.0, new Rotation2d())), Config.trajectoryConfig);
+                Command kicker3 = new ControlKicker(true);
+                Trajectory traj2 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.3,0.0, Rotation2d.fromDegrees(-4))), Config.trajectoryConfig);
                 RamseteCommandMerge ramsete2 = new RamseteCommandMerge(traj2, "Trajectory-Red-O2");
                 
                 return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj2.getInitialPose())),
+                                                    new ParallelRaceGroup(kicker3, new WaitCommand(0.5)),
                                                     autoShootlow2,
                                                     new ParallelRaceGroup(intakeDown2, new WaitCommand(0.5)),
                                                     new ParallelRaceGroup(ramsete2, new RunIntakeCargo(true, 4)),
@@ -122,10 +126,29 @@ public class AutoRoutines {
                 //     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
                 //     ramsete7);
 
-                RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectoryBlue3O1P1, "Trajectory-Blue3-O1P1");
-                    return new SequentialCommandGroup (
-                        new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlue3O1P1.getInitialPose())),
-                        ramsete4);
+                // RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectoryBlue3O1P1, "Trajectory-Blue3-O1P1");
+                //     return new SequentialCommandGroup (
+                //         new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryBlue3O1P1.getInitialPose())),
+                //         ramsete4);
+
+                //steps: low goal -> taxi -> intake one cargo -> high goal -> stow intake
+                Command wait1s7 = new WaitCommand(1.5);
+                Command delayIndexer7 = wait1s7.andThen( new IndexerForShooter());
+                Command autoShoothigh3 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 8), delayIndexer7);
+                Command intakeDown3 = new IntakeDown();
+                Command intakeUp3 = new IntakeUp();
+                Command kicker4 = new ControlKicker(true);
+                Trajectory traj3 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.3,0.0, Rotation2d.fromDegrees(-4))), Config.trajectoryConfig);
+                RamseteCommandMerge ramsete4 = new RamseteCommandMerge(traj3, "Trajectory-Red-O2");
+                
+                return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj3.getInitialPose())),
+                                                    new ParallelRaceGroup(kicker4, new WaitCommand(0.5)),
+                                                    new ParallelRaceGroup(intakeDown3, new WaitCommand(0.5)),
+                                                    new ParallelRaceGroup(ramsete4, new RunIntakeCargo(true, 4)),
+                                                    new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
+                                                    autoShoothigh3.alongWith(new RunIntakeCargo(true, 4)),
+                                                    intakeUp3);
+
             case 5:
                 //description:
                 //starting position: within tarmac and facing a red blue
