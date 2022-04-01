@@ -14,7 +14,7 @@ import frc.robot.config.Config;
 import frc.robot.config.FluidConstant;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class ClimberSubSystem extends SubsystemBase {
+public class ClimberSubsystem extends SubsystemBase {
 
   public static FluidConstant<Double> CLIMBER_RPM = new FluidConstant<>
   ("Climber_PRM",700.).registerToTable(Config.constantsTable);
@@ -28,10 +28,10 @@ public class ClimberSubSystem extends SubsystemBase {
   public double kMinOutput = -1;
   public double currentPosition = 0;
   public boolean m_bGoodSensors = false;
-  private static final ClimberSubSystem INSTANCE_CLIMBER = new ClimberSubSystem();
+  private static final ClimberSubsystem INSTANCE_CLIMBER = new ClimberSubsystem();
 
   /** Creates a new ClimberSubSystem. */
-  private ClimberSubSystem() {
+  private ClimberSubsystem() {
     
     if (Config.CLIMBER_MOTOR != -1) {
       initializeSubsystem();
@@ -101,8 +101,11 @@ public class ClimberSubSystem extends SubsystemBase {
      /*
      * Returns the singleton instance for the Climber Subsystem
      */
-    public static ClimberSubSystem getInstance() {
-      return INSTANCE_CLIMBER;
+    public static ClimberSubsystem getInstance() {
+      if ( INSTANCE_CLIMBER.isAvailable() == true)
+        return INSTANCE_CLIMBER;
+      else
+        return null;
     }
 
     public void setClimberPosition()
@@ -145,7 +148,7 @@ public class ClimberSubSystem extends SubsystemBase {
       //}
       //else
       //{
-        m_climber.set(0.7);
+        m_climber.set(0.1);
       //}
     }
 
