@@ -88,9 +88,10 @@ public class shooterPneumaticSubsystem extends SubsystemBase {
     doubleSolenoidFloat.set(Value.kForward);
   }
 
-  public void setToFloatReverse()
+  public void setFloatMode()
   {
     doubleSolenoidFloat.set(Value.kReverse);
+    doubleSolenoidShooter.set(Value.kForward);
   }
 
   public void stopShooterPneumatic()

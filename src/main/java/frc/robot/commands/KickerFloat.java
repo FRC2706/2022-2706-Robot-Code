@@ -25,7 +25,7 @@ public class KickerFloat extends CommandBase {
   @Override
   public void initialize() {
     if ( kickerSubSystem != null )
-      kickerSubSystem.setToFloatReverse();
+      kickerSubSystem.setFloatMode();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
