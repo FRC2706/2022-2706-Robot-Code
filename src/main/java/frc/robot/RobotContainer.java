@@ -151,12 +151,13 @@ public class RobotContainer {
             //up and down intake
             //===================
             //intake one cargo
-            cmdIntakeOneCargo = new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(true, 0)); 
-            new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenHeld(cmdIntakeOneCargo);
+
+            //cmdIntakeOneCargo = new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(true, 0)); 
+            //new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenHeld(cmdIntakeOneCargo);
 
              //intake two cargo
-            cmdIntakeTwoCargo = new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(true, 0)); 
-            new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(cmdIntakeTwoCargo);
+            // cmdIntakeTwoCargo = new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(true, 0)); 
+            // new JoystickButton(controlStick, XboxController.Button.kLeftBumper.value).whenHeld(cmdIntakeTwoCargo);
              
             Command intakeReverse = new RunIntakeCargo(false, 0);
             new JoystickButton(controlStick, XboxController.Button.kBack.value).whenHeld(intakeReverse);
@@ -166,13 +167,14 @@ public class RobotContainer {
             //=========
             //intake up
             intakeUp = new IntakeUp(); 
-            new JoystickButton(controlStick, XboxController.Button.kY.value).whenPressed(intakeUp);
+            new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenReleased(intakeUp);
                 
             //intake down
             Command intakeDownFloat = new SequentialCommandGroup(
-                                         new ParallelRaceGroup(new IntakeDown(), new WaitCommand(1)),
-                                         new IntakeFloat(false)); 
-            new JoystickButton(controlStick, XboxController.Button.kA.value).whenPressed(intakeDownFloat);
+                                         new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.5)),
+                                         new ParallelRaceGroup(new IntakeFloat(false), new WaitCommand(0.5)),
+                                         new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(true, 0))); 
+            new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenPressed(intakeDownFloat);
  
             //=============
             //shooter
@@ -188,8 +190,14 @@ public class RobotContainer {
             //low goal
             Command wait1sA = new WaitCommand(0.5);
             Command delayIndexerA = wait1sA.andThen( new IndexerForShooter());
-            Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(1500, 0), delayIndexerA);
+            Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(1800, 0), delayIndexerA);
             new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(cmdShootA);
+            //.whenHeld(cmdShootA);
+            //left trigger: 2
+            //right trigger: 3
+            //if(controlStick.getRawAxis(2) > 0.5);
+            //new JoystickButton(controlStick, XboxController.Axis.kRightTrigger.value);
+
 
             // //tarmat B: farther: RPM = 3400
             //no kicker
