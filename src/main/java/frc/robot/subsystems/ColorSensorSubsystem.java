@@ -19,10 +19,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ColorSensorSubsystem extends SubsystemBase {
   private final int AVERAGE_NUMBER = 10;
-  private final int RED_THRESHOLD = 250;
-  private final int RED_PROXIMITY_THRESHOLD = 110;
-  private final int BLUE_THRESHOLD = 200;
-  private final int BLUE_PROXIMITY_THRESHOLD = 110;
+  private final int RED_THRESHOLD = 500;
+  private final int RED_PROXIMITY_THRESHOLD = 275;
+  private final int BLUE_THRESHOLD = 450;
+  private final int BLUE_PROXIMITY_THRESHOLD = 275;
   
   private NetworkTableEntry redValue, blueValue, irValue, proximityValue; 
   private NetworkTableEntry detectRed, detectBlue;
