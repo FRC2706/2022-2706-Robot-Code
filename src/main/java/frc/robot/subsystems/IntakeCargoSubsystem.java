@@ -49,8 +49,14 @@ public class IntakeCargoSubsystem extends SubsystemBase {
 
       //@todo: need testing
       m_intake.setInverted(Config.INVERT_ARM_TALON);
-    }
 
+      //Current limiting for drivetrain master motors.
+      if (Config.MOTOR_CURRENT_LIMIT == true) {
+        m_intake.configPeakCurrentLimit(Config.INTAKE_PEAK_CURRENT_AMPS, Config.CAN_TIMEOUT_LONG);
+        m_intake.configPeakCurrentDuration(Config.INTAKE_PEAK_TIME_MS, Config.CAN_TIMEOUT_LONG);
+        m_intake.configContinuousCurrentLimit(Config.INTAKE_CONTIN_CURRENT_AMPS, Config.CAN_TIMEOUT_LONG);
+      }
+    }
     //m_intake.configAllowableClosedloopError(0, Config.ARM_ALLOWABLE_CLOSED_LOOP_ERROR_TICKS, Config.CAN_TIMEOUT_SHORT);
 
     /*
