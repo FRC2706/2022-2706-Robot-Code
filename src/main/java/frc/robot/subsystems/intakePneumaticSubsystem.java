@@ -83,17 +83,10 @@ public class intakePneumaticSubsystem extends SubsystemBase {
   }
 
   //Does not work
-  public void setFloatForward()
-  {
-   // intakeFloat.set(Value.kForward);
-  }
-
-   //Works
-  public void setFloatReverse()
+  public void setFloat()
   {
     intakeFloat.set(Value.kReverse);
-  }
-
+    intakeUpDown.set(Value.kForward);  }
 
   public void stopFloat()
   {

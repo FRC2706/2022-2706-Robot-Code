@@ -62,9 +62,19 @@ public class Robot extends TimedRobot {
     String trajectoryJSON = "./paths/scaled3.wpilib.json";
     public static Trajectory trajectoryRead = new Trajectory();
 
+    String testExample = "./paths/TestExample.json";
+    public static Trajectory trajectoryTestExample = new Trajectory();
+
     String blue3Option1p1 = "./paths/Blue3Option1P1.json";
     public static Trajectory trajectoryBlue3O1P1 = new Trajectory();
 
+    String blue3Option1p2 = "./paths/Blue3Option1P2.json";
+    public static Trajectory trajectoryBlue3O1P2 = new Trajectory();
+
+    String blue3Option1p3 = "./paths/Blue3Option1P3.json";
+    public static Trajectory trajectoryBlue3O1P3 = new Trajectory();
+
+    /*
     String blue3Option1p2 = "./paths/Blue3Option1P2.json";
     public static Trajectory trajectoryBlue3O1P2 = new Trajectory();
 
@@ -97,7 +107,7 @@ public class Robot extends TimedRobot {
 
     String blueOption8P2 = "./paths/8BluePath2.wpilib.json";
     public static Trajectory trajectoryBlue8P2 = new Trajectory();
-
+    */
 
     /**
      * Determines if the robot is in a real match.
@@ -172,42 +182,17 @@ public class Robot extends TimedRobot {
             Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
             trajectoryRead = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
             
+            Path PathTestExample = Filesystem.getDeployDirectory().toPath().resolve(testExample);
+            trajectoryTestExample = TrajectoryUtil.fromPathweaverJson(PathTestExample);
+
             Path PathB3O1P1 = Filesystem.getDeployDirectory().toPath().resolve(blue3Option1p1);
             trajectoryBlue3O1P1 = TrajectoryUtil.fromPathweaverJson(PathB3O1P1);
 
             Path PathB3O1P2 = Filesystem.getDeployDirectory().toPath().resolve(blue3Option1p2);
             trajectoryBlue3O1P2 = TrajectoryUtil.fromPathweaverJson(PathB3O1P2);
 
-            Path PathB3O2 = Filesystem.getDeployDirectory().toPath().resolve(blueOption2);
-            trajectoryBlueO2 = TrajectoryUtil.fromPathweaverJson(PathB3O2);
-
-            Path PathB3O3 = Filesystem.getDeployDirectory().toPath().resolve(blueOption3);
-            trajectoryBlueO3 = TrajectoryUtil.fromPathweaverJson(PathB3O3);
-
-            Path PathR3O1 = Filesystem.getDeployDirectory().toPath().resolve(redOption1);
-            trajectoryRedO1 = TrajectoryUtil.fromPathweaverJson(PathR3O1);
-
-            Path PathR3O2 = Filesystem.getDeployDirectory().toPath().resolve(redOption2);
-            trajectoryRedO2 = TrajectoryUtil.fromPathweaverJson(PathR3O2);
-
-            Path PathR3O3 = Filesystem.getDeployDirectory().toPath().resolve(redOption3);
-            trajectoryRedO3 = TrajectoryUtil.fromPathweaverJson(PathR3O3);
-
-            Path PathB4O1P1 = Filesystem.getDeployDirectory().toPath().resolve(blueOption4P1);
-            trajectoryBlue4OP1 = TrajectoryUtil.fromPathweaverJson(PathB4O1P1);
-
-            Path PathB4O1P2 = Filesystem.getDeployDirectory().toPath().resolve(blueOption4P2);
-            trajectoryBlue4OP2 = TrajectoryUtil.fromPathweaverJson(PathB4O1P2);
-
-            Path PathB4O1P3 = Filesystem.getDeployDirectory().toPath().resolve(blueOption4P3);
-            trajectoryBlue4OP3 = TrajectoryUtil.fromPathweaverJson(PathB4O1P3);
-
-            Path PathB8P1 = Filesystem.getDeployDirectory().toPath().resolve(blueOption8P1);
-            trajectoryBlue8P1 = TrajectoryUtil.fromPathweaverJson(PathB8P1);
-
-            Path PathB8P2 = Filesystem.getDeployDirectory().toPath().resolve(blueOption8P2);
-            trajectoryBlue8P2 = TrajectoryUtil.fromPathweaverJson(PathB8P2);
-          
+            Path PathB3O1P3 = Filesystem.getDeployDirectory().toPath().resolve(blue3Option1p3);
+            trajectoryBlue3O1P3 = TrajectoryUtil.fromPathweaverJson(PathB3O1P3);
 
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());

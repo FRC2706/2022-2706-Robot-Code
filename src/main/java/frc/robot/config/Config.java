@@ -94,7 +94,7 @@ public class Config {
     public static int LEFT_REAR_MOTOR = robotSpecific(3, 5, 2, 7, 3);
     public static int INTAKE_MOTOR = robotSpecific(6, 8, -1, -1, -1);
     public static int SHOOTER_MOTOR = robotSpecific(5, 11, 5, -1, 16); //Beetle prototype on Beetle:5
-    public static int CLIMBER_MOTOR = robotSpecific(10, -1, -1, -1, 16);
+    public static int CLIMBER_MOTOR = robotSpecific(10, 4, -1, -1, 16);
     public static int AGITATOR_MOTOR = robotSpecific(9, -1, -1, -1);
     public static int INDEXER_MOTOR = robotSpecific(6, 7, 7, -1); //Beetle prototype on Beetle:7
     public static int RIGHT_MASTER = robotSpecific(RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR);
