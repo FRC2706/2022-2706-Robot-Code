@@ -403,6 +403,9 @@ public class Config {
 
     public static FluidConstant<Integer> FEEDERSUBSYSTEM_IZONE = new FluidConstant<>("FeederSubsystemIZONE", 120)
                 .registerToTable(Config.constantsTable);
+
+    public static double DRIVETRAIN_SENSITIVE_FORWARD_SPEED = 0.5;
+    public static double DRIVETRAIN_SENSITIVE_ROTATE_SPEED = 0.2;
     
     //Sensor ports of analog inputs on Beetle
     public static final int MINIROBOT_MB1043_ANALOG_PORT = 4;
