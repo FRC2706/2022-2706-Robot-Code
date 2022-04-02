@@ -179,7 +179,8 @@ public class RobotContainer {
             Command wait1sA = new WaitCommand(0.5);
             Command delayIndexerA = wait1sA.andThen( new IndexerForShooter());
             Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(1800, 0), delayIndexerA);
-            Command kickerShootA = new SequentialCommandGroup(new ControlKicker(false),cmdShootA);
+            Command kickerDownA = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
+            Command kickerShootA = new SequentialCommandGroup(kickerDownA, cmdShootA);
             new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(kickerShootA);
             //.whenHeld(cmdShootA);
             //left trigger: 2
@@ -194,14 +195,16 @@ public class RobotContainer {
             Command wait1sB = new WaitCommand(0.5);
             Command delayIndexerB = wait1sB.andThen( new IndexerForShooter());
             Command cmdShootB = new ParallelCommandGroup(new SpinUpShooterWithTime(2920, 0), delayIndexerB);
-            Command kickerShootB = new SequentialCommandGroup(new ControlKicker(false),cmdShootB);
+            Command kickerDownB = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
+            Command kickerShootB = new SequentialCommandGroup(kickerDownB, cmdShootB);
             new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(kickerShootB);
 
             //high goal position C
             Command wait1sC= new WaitCommand(0.5);
             Command delayIndexerC = wait1sC.andThen( new IndexerForShooter());
             Command cmdShootC = new ParallelCommandGroup(new SpinUpShooterWithTime(3050, 0), delayIndexerC);
-            Command kickerShootC = new SequentialCommandGroup(new ControlKicker(false),cmdShootC);
+            Command kickerDownC = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
+            Command kickerShootC = new SequentialCommandGroup(kickerDownC,cmdShootC);
             new JoystickButton(controlStick, XboxController.Button.kA.value).whenHeld(kickerShootC);
 
             //kicker floating
