@@ -141,14 +141,14 @@ public class ClimberSubsystem extends SubsystemBase {
 
     }
 
-    public void StartClimberRPM(){
+    public void StartClimberRPM(double percentOutput){
       //if(m_bGoodSensors == true)
       //{
       //  m_pidController.setReference(targetRPM, ControlType.kVelocity, 1);
       //}
       //else
       //{
-        m_climber.set(0.1);
+        m_climber.set(percentOutput);
       //}
     }
 

@@ -9,11 +9,13 @@ import frc.robot.config.Config;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IndexerSubSystem;
 import frc.robot.subsystems.SwitchSubsystem;
+import frc.robot.subsystems.Bling;
 
 public class IndexerOneCargo extends CommandBase {
 
   private IndexerSubSystem indexer;
   private SwitchSubsystem switchDetector;
+  private Bling bling;
   private final int TARGET_RPM = 1000;
 
   /** Creates a new IndexerOneCargo. */
@@ -21,6 +23,7 @@ public class IndexerOneCargo extends CommandBase {
 
     indexer = IndexerSubSystem.getInstance();
     switchDetector = new SwitchSubsystem(Config.INDEXER_SWITCH_MIDDLE);
+    bling = Bling.getINSTANCE();
 
     // Use addRequirements() here to declare subsystem dependencies.
     if ( indexer != null )
@@ -28,6 +31,9 @@ public class IndexerOneCargo extends CommandBase {
 
     if (switchDetector != null)
       addRequirements(switchDetector);
+
+    if (bling != null)
+      addRequirements(bling);
   }
 
   // Called when the command is initially scheduled.
@@ -50,6 +56,7 @@ public class IndexerOneCargo extends CommandBase {
 
     if( bSwitchDetected == true)
     {
+      bling.setStrobe();
       indexer.stop();
     }
     else

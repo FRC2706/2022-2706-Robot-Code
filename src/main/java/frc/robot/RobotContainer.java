@@ -156,7 +156,7 @@ public class RobotContainer {
             //intake down
             Command intakeDownFloat = new SequentialCommandGroup(
                                          new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.5)),
-                                         new ParallelRaceGroup(new IntakeFloat(false), new WaitCommand(0.5)),
+                                         new ParallelRaceGroup(new IntakeFloat(), new WaitCommand(0.5)),
                                          new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(true, 0))); 
             new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenPressed(intakeDownFloat);
  
@@ -175,11 +175,13 @@ public class RobotContainer {
             //without kicker on: low goal 1850
             //tarmat A: closer: RMP = 3200
             //no kicker
-            //low goal
+            //low goal inside tarmac
             Command wait1sA = new WaitCommand(0.5);
             Command delayIndexerA = wait1sA.andThen( new IndexerForShooter());
             Command cmdShootA = new ParallelCommandGroup(new SpinUpShooterWithTime(1800, 0), delayIndexerA);
-            new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(cmdShootA);
+            Command kickerDownA = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
+            Command kickerShootA = new SequentialCommandGroup(kickerDownA, cmdShootA);
+            new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(kickerShootA);
             //.whenHeld(cmdShootA);
             //left trigger: 2
             //right trigger: 3
@@ -189,11 +191,21 @@ public class RobotContainer {
 
             // //tarmat B: farther: RPM = 3400
             //no kicker
-            //high goal
+            //high goal position B
             Command wait1sB = new WaitCommand(0.5);
             Command delayIndexerB = wait1sB.andThen( new IndexerForShooter());
-            Command cmdShootB = new ParallelCommandGroup(new SpinUpShooterWithTime(2750, 0), delayIndexerB);
-            new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(cmdShootB);
+            Command cmdShootB = new ParallelCommandGroup(new SpinUpShooterWithTime(2920, 0), delayIndexerB);
+            Command kickerDownB = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
+            Command kickerShootB = new SequentialCommandGroup(kickerDownB, cmdShootB);
+            new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(kickerShootB);
+
+            //high goal position C
+            Command wait1sC= new WaitCommand(0.5);
+            Command delayIndexerC = wait1sC.andThen( new IndexerForShooter());
+            Command cmdShootC = new ParallelCommandGroup(new SpinUpShooterWithTime(3050, 0), delayIndexerC);
+            Command kickerDownC = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
+            Command kickerShootC = new SequentialCommandGroup(kickerDownC,cmdShootC);
+            new JoystickButton(controlStick, XboxController.Button.kA.value).whenHeld(kickerShootC);
 
             //kicker floating
             Command kickerFloat = new KickerFloat();
@@ -206,8 +218,12 @@ public class RobotContainer {
             //Command RPMClimb = new ClimberRPM();
             //new JoystickButton(controlStick,XboxController.Axis.kRightTrigger.value).whenHeld(RPMClimb);
 
-            Command RPMClimb = new ClimberRPM();
-            new JoystickButton(driverStick,XboxController.Button.kA.value).whenHeld(RPMClimb);              
+            // Command climbTrigger = new ClimberRPM(() -> controlStick.getRawAxis(XboxController.Axis.kLeftTrigger.value));
+            Command slowClimb = new ClimberRPM(0.1);
+            Command fastClimb = new ClimberRPM(0.8);
+            
+            new JoystickButton(controlStick, XboxController.Button.kLeftStick.value).whenHeld(slowClimb);
+            new JoystickButton(controlStick, XboxController.Button.kRightStick.value).whenHeld(fastClimb);
               
             //Command positionClimb = new ClimberPosition();
             //new JoystickButton(controlStick, XboxController.Axis.kRightTrigger.value).whenPressed(positionClimb);

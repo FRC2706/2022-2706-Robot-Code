@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.Bling;
 
 public class SpinUpShooterWithTime extends CommandBase {
 
@@ -13,6 +14,8 @@ public class SpinUpShooterWithTime extends CommandBase {
     
     private Timer timer;
     private boolean m_bUseTimer;
+    
+    private Bling bling;
 
     //Only when inputTimeout > 0, we will use the timer.
     public SpinUpShooterWithTime(int RPM, int inputTimeout) {
@@ -33,6 +36,12 @@ public class SpinUpShooterWithTime extends CommandBase {
         if (shooterSubsystem != null) 
         {
             addRequirements(shooterSubsystem);
+        }
+
+        bling = Bling.getINSTANCE();
+        if (bling != null)
+        {
+            addRequirements(bling);
         }
     }
 
@@ -68,10 +77,11 @@ public class SpinUpShooterWithTime extends CommandBase {
             
             //stop the shooter
             shooterSubsystem.stop();
+            bling.setPurple();
         }
 
         if( m_bUseTimer == true )
-          timer.stop();
+          timer.stop();     
     }
 
     // Returns true when the command should end.

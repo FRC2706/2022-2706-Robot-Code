@@ -13,12 +13,8 @@ import frc.robot.subsystems.intakePneumaticSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class IntakeFloat extends CommandBase{//extends InstantCommand {
   intakePneumaticSubsystem intakePneumatic;
-  boolean m_bForward;
 
-  public IntakeFloat(boolean bForward) {
-
-    m_bForward = bForward;
-
+  public IntakeFloat() {
     intakePneumatic = intakePneumaticSubsystem.getInstance();
     // Use addRequirements() here to declare subsystem dependencies.
     if(intakePneumatic != null)
@@ -31,10 +27,8 @@ public class IntakeFloat extends CommandBase{//extends InstantCommand {
   public void initialize() {
     if ( intakePneumatic != null )
     {
-      if(m_bForward == true)
-       intakePneumatic.setFloatForward();
-      else
-       intakePneumatic.setFloatReverse();
+      intakePneumatic.setFloat();
+     
     }
     
   }
