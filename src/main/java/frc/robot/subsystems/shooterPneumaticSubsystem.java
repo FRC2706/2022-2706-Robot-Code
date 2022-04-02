@@ -70,14 +70,14 @@ public class shooterPneumaticSubsystem extends SubsystemBase {
       return null;
   }
 
-  public void moveUp()
+  public void moveDown()
   {
     doubleSolenoidFloat.set(Value.kForward);
     doubleSolenoidShooter.set(Value.kReverse);
 
   }
 
-  public void moveDown()
+  public void moveUp()
   {
     doubleSolenoidFloat.set(Value.kForward);
     doubleSolenoidShooter.set(Value.kForward);
