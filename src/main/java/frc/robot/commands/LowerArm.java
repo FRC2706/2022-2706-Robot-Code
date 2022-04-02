@@ -81,7 +81,7 @@ public class LowerArm extends CommandBase {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        System.out.println("interrupted : " + interrupted + " state " + state);
+        // System.out.println("interrupted : " + interrupted + " state " + state);
     }
 
     // Returns true when the command should end.

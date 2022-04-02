@@ -78,7 +78,7 @@ public class IndexerCargo extends CommandBase {
    switchDetected = switchDetector.getResult();
    if (switchDetected == true) 
    {
-     System.out.println("switch detected: "+switchDetected);
+    //  System.out.println("switch detected: "+switchDetected);
      indexer.stop();
    } 
    else 

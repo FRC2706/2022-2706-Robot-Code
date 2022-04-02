@@ -72,12 +72,12 @@ public class SimpleCsvLogger {
     public int init(String loggingDataIdentifier, String[] data_fields, String[] units_fields) {
 
         if (log_open) {
-            System.out.println("Warning - log is already open!");
+            // System.out.println("Warning - log is already open!");
             return 0;
         }
 
         log_open = false;
-        System.out.println("Initalizing Log file...");
+        // System.out.println("Initalizing Log file...");
         try {
             // Reset state variables
             log_write_index = 0;
@@ -106,12 +106,12 @@ public class SimpleCsvLogger {
         }
         // Catch ALL the errors!!!
         catch (IOException e) {
-            System.out.println("Error initializing log file: " + e.getMessage());
-            System.out.println("toString: " + e.toString());
+            // System.out.println("Error initializing log file: " + e.getMessage());
+            // System.out.println("toString: " + e.toString());
 
             return -1;
         }
-        System.out.println("done!");
+        // System.out.println("done!");
         log_open = true;
         return 0;
 
@@ -150,7 +150,7 @@ public class SimpleCsvLogger {
         }
         // Catch ALL the errors!!!
         catch (IOException e) {
-            System.out.println("Error writing to log file: " + e.getMessage());
+            // System.out.println("Error writing to log file: " + e.getMessage());
             return -1;
         }
 
@@ -168,7 +168,7 @@ public class SimpleCsvLogger {
      */
     public int forceSync() {
         if (log_open == false) {
-            System.out.println("Error - Log is not yet opened, cannot sync!");
+            // System.out.println("Error - Log is not yet opened, cannot sync!");
             return -1;
         }
         try {
@@ -176,7 +176,7 @@ public class SimpleCsvLogger {
         }
         // Catch ALL the errors!!!
         catch (IOException e) {
-            System.out.println("Error flushing IO stream file: " + e.getMessage());
+            // System.out.println("Error flushing IO stream file: " + e.getMessage());
             return -1;
         }
 
@@ -193,7 +193,7 @@ public class SimpleCsvLogger {
     public int close() {
 
         if (log_open == false) {
-            System.out.println("Warning - Log is not yet opened, nothing to close.");
+            // System.out.println("Warning - Log is not yet opened, nothing to close.");
             return 0;
         }
 
@@ -203,7 +203,7 @@ public class SimpleCsvLogger {
         }
         // Catch ALL the errors!!!
         catch (IOException e) {
-            System.out.println("Error Closing Log File: " + e.getMessage());
+            // System.out.println("Error Closing Log File: " + e.getMessage());
             return -1;
         }
         return 0;
