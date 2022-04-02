@@ -73,9 +73,7 @@ public class RobotContainer {
   private Command driveCommand;
   private Command sensitiveDriving;
 
-  private AnalogSelectorSubsystem analogSelectorOne;
-  private AnalogSelectorSubsystem analogSelectorTwo;
- 
+  
   private Command intakeDown;
   private Command intakeUp;
 
@@ -88,6 +86,7 @@ public class RobotContainer {
   private Command cmdDriveTrainAlignment;
   private Command cmdTurnToOuterPort;
  
+  private AnalogSelectorSubsystem analogSelectorOne;
   
   private Logger logger = Logger.getLogger("RobotContainer");
   private final double AUTO_DRIVE_TIME = 1.0;
@@ -95,8 +94,6 @@ public class RobotContainer {
   private final double AUTO_RIGHT_MOTOR_SPEED = 0.2;
   
 
-  NetworkTable selectorTable = NetworkTableInstance.getDefault().getTable("selectorTable");
-  private NetworkTableEntry tableAnalogSelectorOne, tableAnalogSelectorTwo;
 
 
     /**
@@ -312,15 +309,12 @@ public class RobotContainer {
         int selectHardCodedPath = 1;
         int selectorOne = 0;
 
-        tableAnalogSelectorOne = selectorTable.getEntry("AnalogSelectorOne");
-        tableAnalogSelectorTwo = selectorTable.getEntry("AnalogSelectorTwo");
-
+        
         analogSelectorOne = AnalogSelectorSubsystem.getInstance();
         
         if (analogSelectorOne != null){
             selectorOne = analogSelectorOne.getIndex();
             System.out.println("SELECTOR SWITCH NOT NULL AND ID " + selectorOne);
-            tableAnalogSelectorOne.setValue(selectorOne);
         }
         else
         {

@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
@@ -64,6 +67,9 @@ public class AnalogSelectorSubsystem extends SubsystemBase {
       new Range(MODE_ELEVEN_LOW_VOLTAGE, MODE_ELEVEN_HIGH_VOLTAGE),
       new Range(MODE_TWELVE_LOW_VOLTAGE, MODE_TWELVE_HIGH_VOLTAGE),
   };
+
+  private NetworkTableEntry tableAnalogSelectorOne;
+  private NetworkTable selectorTable = NetworkTableInstance.getDefault().getTable("selectorTable");
   
   
   /** Creates a new AnalogSelectorSubsystem. */
@@ -86,6 +92,8 @@ public class AnalogSelectorSubsystem extends SubsystemBase {
   public void initializeSubsystem()
   {
     analogInput = new AnalogInput(Config.ANALOG_SELECTOR_PORT);
+
+    tableAnalogSelectorOne = selectorTable.getEntry("AnalogSelectorOne");
   }
 
   public boolean isActive()
@@ -118,6 +126,8 @@ public class AnalogSelectorSubsystem extends SubsystemBase {
             break;
         }
     }
+
+    tableAnalogSelectorOne.setValue(index-1);
 
     return index - 1;
 }
