@@ -132,9 +132,9 @@ public class Config {
     public static int CONTIN_CURRENT_AMPS = 40;         //Current to mantain once current limit is triggered 
     public static boolean MOTOR_CURRENT_LIMIT = true;   //Enable or disable motor current limiting.
 
-    public static int INTAKE_PEAK_CURRENT_AMPS = 30;           //Peak current threshold to trigger the current limit
+    public static int INTAKE_PEAK_CURRENT_AMPS = 50;           //Peak current threshold to trigger the current limit
     public static int INTAKE_PEAK_TIME_MS = 50;                //Time after current exceeds peak current to trigger current limit
-    public static int INTAKE_CONTIN_CURRENT_AMPS = 15;         //Current to mantain once current limit is triggered 
+    public static int INTAKE_CONTIN_CURRENT_AMPS = 40;         //Current to mantain once current limit is triggered 
     public static boolean INTAKE_MOTOR_CURRENT_LIMIT = true;   //Enable or disable motor current limiting.
 
     public static int TALON_5_PLYBOY = robotSpecific(-1, -1, -1, -1, -1, 5);
