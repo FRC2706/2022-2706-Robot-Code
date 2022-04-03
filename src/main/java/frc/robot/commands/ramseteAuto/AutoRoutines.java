@@ -55,7 +55,7 @@ public class AutoRoutines {
                 Command wait1s1 = new WaitCommand(1);
                 Command delayIndexer1 = wait1s1.andThen( new IndexerForShooter());
                 Command autoShootlow1 = new ParallelRaceGroup(new SpinUpShooterWithTime(1800, 4), delayIndexer1);
-                Command kicker1 = new ControlKicker(true);
+                Command kicker1 = new ControlKicker(false);
                 Trajectory traj1 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.0,0.0, new Rotation2d())), Config.trajectoryConfig);
                 RamseteCommandMerge ramsete1 = new RamseteCommandMerge(traj1, "Trajectory-Red-O1");
                 return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj1.getInitialPose())),
@@ -73,7 +73,7 @@ public class AutoRoutines {
                 Command autoShoothigh2 = new ParallelRaceGroup(new SpinUpShooterWithTime(3100, 8), delayIndexer22);
                 Command intakeDown2 = new IntakeDown();
                 Command intakeUp2 = new IntakeUp();
-                Command kicker3 = new ControlKicker(true);
+                Command kicker3 = new ControlKicker(false);
                 Trajectory traj2 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.3,0.0, Rotation2d.fromDegrees(-4))), Config.trajectoryConfig);
                 RamseteCommandMerge ramsete2 = new RamseteCommandMerge(traj2, "Trajectory-Red-O2");
                 
@@ -137,7 +137,7 @@ public class AutoRoutines {
                 Command autoShoothigh3 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 8), delayIndexer7);
                 Command intakeDown3 = new IntakeDown();
                 Command intakeUp3 = new IntakeUp();
-                Command kicker4 = new ControlKicker(true);
+                Command kicker4 = new ControlKicker(false);
                 Trajectory traj3 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.3,0.0, Rotation2d.fromDegrees(-4))), Config.trajectoryConfig);
                 RamseteCommandMerge ramsete4 = new RamseteCommandMerge(traj3, "Trajectory-Red-O2");
                 
