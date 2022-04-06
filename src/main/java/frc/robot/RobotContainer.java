@@ -202,7 +202,7 @@ public class RobotContainer {
             //high goal position C
             Command wait1sC= new WaitCommand(0.5);
             Command delayIndexerC = wait1sC.andThen( new IndexerForShooter());
-            Command cmdShootC = new ParallelCommandGroup(new SpinUpShooterWithTime(3050, 0), delayIndexerC);
+            Command cmdShootC = new ParallelCommandGroup(new SpinUpShooterWithTime(3180, 0), delayIndexerC);
             Command kickerDownC = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
             Command kickerShootC = new SequentialCommandGroup(kickerDownC,cmdShootC);
             new JoystickButton(controlStick, XboxController.Button.kA.value).whenHeld(kickerShootC);
@@ -211,6 +211,11 @@ public class RobotContainer {
             Command kickerFloat = new KickerFloat();
             new JoystickButton(controlStick, XboxController.Button.kStart.value).whenPressed(kickerFloat);
  
+            //alignment
+            Command alignmentTest = new DrivetrainAlignment(true);
+            new JoystickButton(controlStick, XboxController.Button.kY.value).whenPressed(alignmentTest);
+ 
+
             //test switch
             // Command readSwitch = new TestSwitch();
             // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
@@ -333,7 +338,7 @@ public class RobotContainer {
         // Testing forced numbers
         int selectFolder = 1;
         //@todo: hard coded here. Remove this line will use analog selector.
-        //selectorOne = 0;
+        selectorOne = 4;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
