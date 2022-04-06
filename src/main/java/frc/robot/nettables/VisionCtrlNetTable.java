@@ -42,7 +42,7 @@ public class VisionCtrlNetTable {
 
         visionHubTable = inst.getTable(Config.VISION_TABLE_NAME_HUB);
         distanceToHub = () -> visionHubTable.getEntry(Config.DISTANCE_HUB).getDouble(-1);
-        yawToHub = () -> visionCargoTable.getEntry(Config.YAW_HUB).getDouble(-99);
+        yawToHub = () -> visionHubTable.getEntry(Config.YAW_HUB).getDouble(-99);
 
         visionCargoTable = inst.getTable(Config.VISION_TABLE_NAME_CARGO);
         distanceToCargo = () -> visionCargoTable.getEntry(Config.DISTANCE_CARGO).getDouble(-1);

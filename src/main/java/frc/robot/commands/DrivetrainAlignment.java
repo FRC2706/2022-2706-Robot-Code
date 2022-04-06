@@ -103,7 +103,7 @@ public class DrivetrainAlignment extends CommandBase {
     else
     {
       //read network table
-      m_deltaTheta = visionAngle.getDouble(-99)*(-1);
+      m_deltaTheta = visionAngle.getDouble(-99);
       System.out.println("DrivetrainAlignment: vision angle "+ m_deltaTheta);
 
       //@todo: Check invalid angle value
@@ -251,15 +251,19 @@ public class DrivetrainAlignment extends CommandBase {
     //m_distance = Math.signum(m_deltaTheta)*(0.00205*Math.abs(m_deltaTheta)+0.0601);
 
     //use the trend polynomial (Beetle in basement)
-    m_distance = Math.signum(m_deltaTheta)*(0.0592 + 0.00209*Math.abs(m_deltaTheta) - 0.000000171*m_deltaTheta*m_deltaTheta);
+    //m_distance = Math.signum(m_deltaTheta)*(0.0592 + 0.00209*Math.abs(m_deltaTheta) - 0.000000171*m_deltaTheta*m_deltaTheta);
 
     //Beetle on competition carpet
     //m_distance =  Math.signum(m_deltaTheta)*(0.00309*Math.abs(m_deltaTheta)+0.0068);
 
-    m_targetDeltaPositionMeter = m_distance;
+    //rapid react on the carpet 105
+    //0.0968 + 0.0115x + -1.91E-04x^2 + 1.32E-06x^3
+    m_distance = 0.0968 + 0.0115*Math.signum(m_deltaTheta)*m_deltaTheta -1.91E-04*m_deltaTheta*m_deltaTheta
+                 + 1.32E-06*Math.signum(m_deltaTheta)*Math.pow(m_deltaTheta,3);
+    m_targetDeltaPositionMeter = m_distance*Math.signum(m_deltaTheta)*(-1);
   }
 
-  /*
+  /* 
    * This method maps deltaTheta to distance
    */
   public void calcDeltaDegree()
