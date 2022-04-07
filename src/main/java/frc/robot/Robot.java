@@ -199,9 +199,9 @@ public class Robot extends TimedRobot {
         }
 
         DriveBaseHolder.init();
-        m_robotContainer = new RobotContainer();
         //create a vision control table
         visionControlNetTable = new VisionCtrlNetTable();
+        m_robotContainer = new RobotContainer();
         //create a control system control table
         controlCtrlNetTable = new ControlCtrlNetTable();
         //set to false
