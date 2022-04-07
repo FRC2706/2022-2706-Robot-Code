@@ -19,7 +19,7 @@ public class VisionDriverAid extends CommandBase {
   final double clampPID = 0.5;
   public static final FluidConstant<Double> KP = new FluidConstant<>("VisionDriverAidKP", 0.014)
             .registerToTable(Config.constantsTable);
-  public static final FluidConstant<Double> KD = new FluidConstant<>("VisionDriverAidKD", 0.0)
+  public static final FluidConstant<Double> KD = new FluidConstant<>("VisionDriverAidKD", 0.0014)
             .registerToTable(Config.constantsTable);
   double targetYaw;
   Supplier<Double> m_forwardVal;
