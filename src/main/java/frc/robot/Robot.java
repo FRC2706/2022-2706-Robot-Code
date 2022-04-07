@@ -65,14 +65,14 @@ public class Robot extends TimedRobot {
     String testExample = "./paths/TestExample.json";
     public static Trajectory trajectoryTestExample = new Trajectory();
 
-    String blue3Option1p1 = "./paths/output/4BallClimberSideHPStationP1.wpilib.json";
-    public static Trajectory trajectory4BallClimberSideHPStationP1 = new Trajectory();
+    String fourballStationSideP1 = "./paths/output/4BallStationSideHPStationP1.wpilib.json";
+    public static Trajectory trajectoryfourballStationSideP1 = new Trajectory();
 
-    String blue3Option1p2 = "./paths/output/4BallClimberSideHPStationP2.wpilib.json";
-    public static Trajectory trajectory4BallClimberSideHPStationP2 = new Trajectory();
+    String fourballStationSideP2 = "./paths/output/4BallStationSideHPStationP2.wpilib.json";
+    public static Trajectory trajectoryfourballStationSideP2 = new Trajectory();
 
-    String blue3Option1p3 = "./paths/output/4BallClimberSideHPStationP3.wpilib.json";
-    public static Trajectory trajectory4BallClimberSideHPStationP3 = new Trajectory();
+    String fourballStationSideP3 = "./paths/output/4BallStationSideHPStationP3.wpilib.json";
+    public static Trajectory trajectoryfourballStationSideP3 = new Trajectory();
 
     /*
     String blue3Option1p2 = "./paths/Blue3Option1P2.json";
@@ -185,14 +185,14 @@ public class Robot extends TimedRobot {
             Path PathTestExample = Filesystem.getDeployDirectory().toPath().resolve(testExample);
             trajectoryTestExample = TrajectoryUtil.fromPathweaverJson(PathTestExample);
 
-            Path PathB3O1P1 = Filesystem.getDeployDirectory().toPath().resolve(blue3Option1p1);
-            trajectory4BallClimberSideHPStationP1 = TrajectoryUtil.fromPathweaverJson(PathB3O1P1);
+            Path PathB3O1P1 = Filesystem.getDeployDirectory().toPath().resolve(fourballStationSideP1);
+            trajectoryfourballStationSideP1 = TrajectoryUtil.fromPathweaverJson(PathB3O1P1);
 
-            Path PathB3O1P2 = Filesystem.getDeployDirectory().toPath().resolve(blue3Option1p2);
-            trajectory4BallClimberSideHPStationP2 = TrajectoryUtil.fromPathweaverJson(PathB3O1P2);
+            Path PathB3O1P2 = Filesystem.getDeployDirectory().toPath().resolve(fourballStationSideP2);
+            trajectoryfourballStationSideP2 = TrajectoryUtil.fromPathweaverJson(PathB3O1P2);
 
-            Path PathB3O1P3 = Filesystem.getDeployDirectory().toPath().resolve(blue3Option1p3);
-            trajectory4BallClimberSideHPStationP3 = TrajectoryUtil.fromPathweaverJson(PathB3O1P3);
+            Path PathB3O1P3 = Filesystem.getDeployDirectory().toPath().resolve(fourballStationSideP3);
+            trajectoryfourballStationSideP3 = TrajectoryUtil.fromPathweaverJson(PathB3O1P3);
 
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());

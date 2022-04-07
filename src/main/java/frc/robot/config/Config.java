@@ -229,7 +229,7 @@ public class Config {
     // Vision Table Constants
     //@todo: double check names of network table entry
     public static String VISION_TABLE_NAME_CARGO = "MergeVisionPipelinePi20";
-    public static String DISTANCE_CARGO         = "DistanceToPowerCell";
+    public static String DISTANCE_CARGO         = "DistanceToCargo";
     public static String YAW_CARGO              = "CargoCentroid1Yaw";
     public static String YAW_TO_DIAMOND         = "YawToTarget";
 
