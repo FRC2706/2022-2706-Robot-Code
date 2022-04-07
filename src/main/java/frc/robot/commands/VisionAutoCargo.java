@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -24,7 +23,9 @@ public class VisionAutoCargo extends CommandBase {
   /** Creates a new VisionAutoAid. */
   final double clampPID = 0.5;
   final double FORWARD_SPEED = 0.2;
-  final int CYCLES_NO_VISON = 20;
+  final double distancePastVision = 1.0;
+  final double visionDistanceRangeLow = 2.0;
+  final double visionDistanceRangeHigh = 3.0;
 
   final Timer m_timer;
 
@@ -37,6 +38,8 @@ public class VisionAutoCargo extends CommandBase {
   Supplier<Double> m_visionDistance;
   PIDController m_pid;
   double m_timeoutSeconds;
+  boolean withinRange;
+  double startingEncoderValue;
 
   int noVisionCount; 
 
@@ -69,7 +72,8 @@ public class VisionAutoCargo extends CommandBase {
     intakeDownAndSpin.schedule();
     m_timer.reset();
     m_timer.start();
-
+    withinRange = false;
+    startingEncoderValue = DriveBaseHolder.getInstance().getLeftPosition();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -77,14 +81,17 @@ public class VisionAutoCargo extends CommandBase {
   public void execute() {
     double heading = DriveBaseHolder.getInstance().getOdometryHeading().getDegrees();
     double visionYaw = m_rotateVal.get();
+    double visionDistance = m_visionDistance.get();
 
     if(visionYaw != -99){
       targetYaw = heading + visionYaw;
     }
-    if (m_visionDistance.get() == -99) {
-      noVisionCount++;
-    } else {
-      noVisionCount = 0;
+
+    if (withinRange == false) {
+      if (visionDistance <= visionDistanceRangeHigh && visionDistance >= visionDistanceRangeLow) {
+        withinRange = true;
+        startingEncoderValue = DriveBaseHolder.getInstance().getLeftPosition();
+      }
     }
 
     double rotateValue = m_pid.calculate(heading, targetYaw);
@@ -104,7 +111,10 @@ public class VisionAutoCargo extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return noVisionCount > CYCLES_NO_VISON || m_timer.hasElapsed(m_timeoutSeconds);
+    if (withinRange && Math.abs(DriveBaseHolder.getInstance().getLeftPosition() - startingEncoderValue) > distancePastVision ) 
+      return true;
+    
+    return m_timer.hasElapsed(m_timeoutSeconds);
   }
 
 }
