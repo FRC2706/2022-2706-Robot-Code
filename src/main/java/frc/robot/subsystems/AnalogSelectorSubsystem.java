@@ -5,8 +5,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.config.Config;
+import frc.robot.config.FluidConstant;
 
 public class AnalogSelectorSubsystem extends SubsystemBase {
 
@@ -64,6 +66,9 @@ public class AnalogSelectorSubsystem extends SubsystemBase {
       new Range(MODE_ELEVEN_LOW_VOLTAGE, MODE_ELEVEN_HIGH_VOLTAGE),
       new Range(MODE_TWELVE_LOW_VOLTAGE, MODE_TWELVE_HIGH_VOLTAGE),
   };
+
+  public static FluidConstant<Double> ANALOG_SELECTOR_INDEX = new FluidConstant<>
+  ("Analog_Selector_Index",4.).registerToTable(Config.constantsTable);
   
   
   /** Creates a new AnalogSelectorSubsystem. */
@@ -118,7 +123,6 @@ public class AnalogSelectorSubsystem extends SubsystemBase {
             break;
         }
     }
-
     return index - 1;
 }
 
@@ -154,5 +158,7 @@ public static class Range {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("AnalogSwitch", getIndex());
+
   }
 }

@@ -74,7 +74,7 @@ public class Bling extends SubsystemBase {
     // - max brightness
     // - half speed
     // - 64 LEDs
-    RainbowAnimation rainbowAnim = new RainbowAnimation(1, 0.8, 64);
+    RainbowAnimation rainbowAnim = new RainbowAnimation(1, 0.9, 64);
 
     candle.animate(rainbowAnim);
 
@@ -82,7 +82,7 @@ public class Bling extends SubsystemBase {
 
   public void setStrobe()
   {
-    StrobeAnimation strobeAnimation = new StrobeAnimation(138, 43, 226, 0, 0.8, 64);
+    StrobeAnimation strobeAnimation = new StrobeAnimation(138, 43, 226, 0, 0.9, 64);
     candle.animate(strobeAnimation);
   }
 
