@@ -26,6 +26,7 @@ public class VisionAutoCargo extends CommandBase {
   final double FORWARD_SPEED = 0.2;
   final int CYCLES_NO_VISON = 20;
 
+  final Timer m_timer;
 
   public static final FluidConstant<Double> KP = new FluidConstant<>("VisionDriverAidKP", 0.014)
             .registerToTable(Config.constantsTable);
@@ -35,22 +36,26 @@ public class VisionAutoCargo extends CommandBase {
   Supplier<Double> m_rotateVal;
   Supplier<Double> m_visionDistance;
   PIDController m_pid;
+  double m_timeoutSeconds;
 
   int noVisionCount; 
 
   Command intakeDownAndSpin;
    
-  public VisionAutoCargo(Supplier<Double> rotateVal, Supplier<Double> visionDistance) {
+  public VisionAutoCargo(Supplier<Double> rotateVal, Supplier<Double> visionDistance, double timeoutSeconds) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(DriveBaseHolder.getInstance());
     m_rotateVal = rotateVal;
     m_visionDistance = visionDistance;
     m_pid = new PIDController(0, 0, 0);
+    m_timeoutSeconds = timeoutSeconds;
 
     intakeDownAndSpin = new SequentialCommandGroup(
       new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.5)),
       new ParallelRaceGroup(new IntakeFloat(), new WaitCommand(0.06)),
       new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(true, 0)));
+
+    m_timer = new Timer();
   }
    
 
@@ -62,6 +67,8 @@ public class VisionAutoCargo extends CommandBase {
     noVisionCount = 0;
 
     intakeDownAndSpin.schedule();
+    m_timer.reset();
+    m_timer.start();
 
   }
 
@@ -91,12 +98,13 @@ public class VisionAutoCargo extends CommandBase {
   public void end(boolean interrupted) {
     DriveBaseHolder.getInstance().stopMotors();
     intakeDownAndSpin.cancel();
+    m_timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return noVisionCount > CYCLES_NO_VISON;
+    return noVisionCount > CYCLES_NO_VISON || m_timer.hasElapsed(m_timeoutSeconds);
   }
 
 }

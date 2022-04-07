@@ -233,7 +233,7 @@ public class RobotContainer {
             Command visionDriverAid = new VisionDriverAid(driverStick, VisionCtrlNetTable.yawToHub);
             new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenHeld(visionDriverAid);
               
-            Command visionAutoAidTesting = new VisionAutoCargo(VisionCtrlNetTable.yawToCargo, VisionCtrlNetTable.distanceToCargo);
+            Command visionAutoAidTesting = new VisionAutoCargo(VisionCtrlNetTable.yawToCargo, VisionCtrlNetTable.distanceToCargo, 7);
             new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(visionAutoAidTesting);
 
             //Command positionClimb = new ClimberPosition();
