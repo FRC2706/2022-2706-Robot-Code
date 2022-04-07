@@ -11,8 +11,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.CircularBuffer;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -45,8 +43,6 @@ public class VisionDriverAiming extends CommandBase {
     private MedianFilter m_filterVisionYaw = new MedianFilter(8);
     private double m_prevVisionYaw = 0;
     private double m_prevHeading = 0;
-    
-    private NetworkTableEntry rotateValVision;
 
     /**
      * Vision Aiming
@@ -70,9 +66,6 @@ public class VisionDriverAiming extends CommandBase {
         m_pidController = new PIDController(0.014, 0.00001, 0.004);
         m_pidController.setIntegratorRange(0.2, 0.2);
 
-        var table = NetworkTableInstance.getDefault().getTable("MergeVisionPipelinePi21");
-        rotateValVision = table.getEntry("YawToTarget");
-
         addRequirements(DriveBaseHolder.getInstance());
     }
 
@@ -88,7 +81,7 @@ public class VisionDriverAiming extends CommandBase {
     @Override
     public void execute() {
         double heading = DriveBaseHolder.getInstance().getOdometryHeading().getDegrees();
-        double visionYaw = rotateValVision.getDouble(-99);
+        double visionYaw = m_visionYaw.get();
 
         // Update the setpoint if vision check goes well
         if (visionYaw != -99) {
@@ -133,7 +126,7 @@ public class VisionDriverAiming extends CommandBase {
         if (m_runInAuto) {
             double changeInHeading = m_headingsBuffer.get(0) - m_headingsBuffer.get(3);
 
-            double visionYaw = rotateValVision.getDouble(-99);
+            double visionYaw = m_visionYaw.get();
             boolean visionAligned = false;
             if (visionYaw != -99) 
                 visionAligned = Math.abs(visionYaw) < allowableYawError;

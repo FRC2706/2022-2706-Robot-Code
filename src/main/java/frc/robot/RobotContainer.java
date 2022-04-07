@@ -375,5 +375,20 @@ public class RobotContainer {
         return currentInstance;
     }
     
-    
+    // Num must be > 2.
+    public Command multipleDriveTrainAlignments(int num) {
+        Command command = new ParallelRaceGroup(
+                                    new DrivetrainAlignment(true),
+                                    new WaitCommand(0.2));
+
+        for (int i = 0; i <= num-2; i++) {
+            command.andThen(new ParallelRaceGroup(
+                                    new DrivetrainAlignment(true),
+                                    new WaitCommand(0.2)));
+        }
+        command.andThen(new DrivetrainAlignment(true));
+        command.andThen(new InstantCommand(DriveBaseHolder.getInstance()::stopMotors));
+        return command;
+    } 
+
 }
