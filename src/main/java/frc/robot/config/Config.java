@@ -230,8 +230,8 @@ public class Config {
     //@todo: double check names of network table entry
     public static String VISION_TABLE_NAME_CARGO = "MergeVisionPipelinePi20";
     public static String DISTANCE_CARGO         = "DistanceToPowerCell";
-    public static String YAW_CARGO              = "YawToPowerCell";
-    public static String YAW_TO_DIAMOND         = "YawToDiamond";
+    public static String YAW_CARGO              = "CargoCentroid1Yaw";
+    public static String YAW_TO_DIAMOND         = "YawToTarget";
 
     public static String VISION_TABLE_NAME_HUB  = "MergeVisionPipelinePi21";
     public static String DISTANCE_HUB           = "AverageDistance";
