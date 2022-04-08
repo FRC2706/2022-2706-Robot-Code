@@ -229,6 +229,9 @@ public class RobotContainer {
             
             new JoystickButton(controlStick, XboxController.Button.kLeftStick.value).whenHeld(slowClimb);
             new JoystickButton(controlStick, XboxController.Button.kRightStick.value).whenHeld(fastClimb);
+
+            Command visionDriverAid = new VisionDriverAid(driverStick, VisionCtrlNetTable.yawToHub);
+            new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenHeld(visionDriverAid);
               
             //Command positionClimb = new ClimberPosition();
             //new JoystickButton(controlStick, XboxController.Axis.kRightTrigger.value).whenPressed(positionClimb);

@@ -65,14 +65,14 @@ public class Robot extends TimedRobot {
     String testExample = "./paths/TestExample.json";
     public static Trajectory trajectoryTestExample = new Trajectory();
 
-    String blue3Option1p1 = "./paths/output/4BallClimberSideHPStationP1.wpilib.json";
-    public static Trajectory trajectory4BallClimberSideHPStationP1 = new Trajectory();
+    String threeballStationSideP1 = "./paths/output/3BallStationSideHPStationP1.wpilib.json";
+    public static Trajectory trajectorythreeballStationSideP1 = new Trajectory();
 
-    String blue3Option1p2 = "./paths/output/4BallClimberSideHPStationP2.wpilib.json";
-    public static Trajectory trajectory4BallClimberSideHPStationP2 = new Trajectory();
+    String threeballStationSideP2 = "./paths/output/3BallStationSideHPStationP2.wpilib.json";
+    public static Trajectory trajectorythreeballStationSideP2 = new Trajectory();
 
-    String blue3Option1p3 = "./paths/output/4BallClimberSideHPStationP3.wpilib.json";
-    public static Trajectory trajectory4BallClimberSideHPStationP3 = new Trajectory();
+    String threeballStationSideP3 = "./paths/output/3BallStationSideHPStationP3.wpilib.json";
+    public static Trajectory trajectorythreeballStationSideP3 = new Trajectory();
 
     /*
     String blue3Option1p2 = "./paths/Blue3Option1P2.json";
@@ -185,23 +185,23 @@ public class Robot extends TimedRobot {
             Path PathTestExample = Filesystem.getDeployDirectory().toPath().resolve(testExample);
             trajectoryTestExample = TrajectoryUtil.fromPathweaverJson(PathTestExample);
 
-            Path PathB3O1P1 = Filesystem.getDeployDirectory().toPath().resolve(blue3Option1p1);
-            trajectory4BallClimberSideHPStationP1 = TrajectoryUtil.fromPathweaverJson(PathB3O1P1);
+            Path pathThreeballStationSideP1 = Filesystem.getDeployDirectory().toPath().resolve(threeballStationSideP1);
+            trajectorythreeballStationSideP1 = TrajectoryUtil.fromPathweaverJson(pathThreeballStationSideP1);
 
-            Path PathB3O1P2 = Filesystem.getDeployDirectory().toPath().resolve(blue3Option1p2);
-            trajectory4BallClimberSideHPStationP2 = TrajectoryUtil.fromPathweaverJson(PathB3O1P2);
+            Path pathThreeballStationSideP2 = Filesystem.getDeployDirectory().toPath().resolve(threeballStationSideP2);
+            trajectorythreeballStationSideP2 = TrajectoryUtil.fromPathweaverJson(pathThreeballStationSideP2);
 
-            Path PathB3O1P3 = Filesystem.getDeployDirectory().toPath().resolve(blue3Option1p3);
-            trajectory4BallClimberSideHPStationP3 = TrajectoryUtil.fromPathweaverJson(PathB3O1P3);
+            Path pathThreeballStationSideP3 = Filesystem.getDeployDirectory().toPath().resolve(threeballStationSideP3);
+            trajectorythreeballStationSideP3 = TrajectoryUtil.fromPathweaverJson(pathThreeballStationSideP3);
 
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
         }
 
         DriveBaseHolder.init();
-        m_robotContainer = new RobotContainer();
         //create a vision control table
         visionControlNetTable = new VisionCtrlNetTable();
+        m_robotContainer = new RobotContainer();
         //create a control system control table
         controlCtrlNetTable = new ControlCtrlNetTable();
         //set to false
