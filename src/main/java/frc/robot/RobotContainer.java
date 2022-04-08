@@ -77,7 +77,8 @@ public class RobotContainer {
   private AnalogSelectorSubsystem analogSelectorTwo;
  
   private Command intakeDown;
-  private Command intakeUp;
+  private Command intakeUpOneCargo;
+  private Command intakeUpTwoCargo;
 
   private Command cmdIntakeOneCargo;
   private Command cmdIntakeTwoCargo;
@@ -149,17 +150,28 @@ public class RobotContainer {
             //============
             //intake
             //=========
-            //intake up
-            intakeUp = new IntakeUp(); 
-            new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenReleased(intakeUp);
+            //intake up for two cargo
+            intakeUpTwoCargo = new IntakeUp(); 
+            new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenReleased(intakeUpTwoCargo);
                 
-            //intake down
-            Command intakeDownFloat = new SequentialCommandGroup(
+            //intake two cargo
+            Command intakeTwoCargo = new SequentialCommandGroup(
+                                         new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.5)),
+                                         new ParallelRaceGroup(new IntakeFloat(), new WaitCommand(0.5)),
+                                         new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(true, 0))); 
+            new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenPressed(intakeTwoCargo);
+ 
+            //intake up for one cargo
+            intakeUpOneCargo = new IntakeUp();
+            new JoystickButton(controlStick, XboxController.Button.kY.value).whenReleased(intakeUpOneCargo);
+
+            //intake one cargo
+            Command intakeOneCargo = new SequentialCommandGroup(
                                          new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.5)),
                                          new ParallelRaceGroup(new IntakeFloat(), new WaitCommand(0.5)),
                                          new ParallelCommandGroup(new IndexerOneCargo(), new RunIntakeCargo(true, 0))); 
-            new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenPressed(intakeDownFloat);
- 
+            new JoystickButton(controlStick, XboxController.Button.kY.value).whenPressed(intakeOneCargo);    
+
             //intake reverse (use it only when it is needed.)
             Command intakeReverse = new RunIntakeCargo(false, 0);
             new JoystickButton(controlStick, XboxController.Button.kBack.value).whenHeld(intakeReverse);
@@ -199,13 +211,13 @@ public class RobotContainer {
             Command kickerShootB = new SequentialCommandGroup(kickerDownB, cmdShootB);
             new JoystickButton(controlStick, XboxController.Button.kB.value).whenHeld(kickerShootB);
 
-            //high goal position C
-            Command wait1sC= new WaitCommand(0.5);
-            Command delayIndexerC = wait1sC.andThen( new IndexerForShooter());
-            Command cmdShootC = new ParallelCommandGroup(new SpinUpShooterWithTime(3180, 0), delayIndexerC);
-            Command kickerDownC = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
-            Command kickerShootC = new SequentialCommandGroup(kickerDownC,cmdShootC);
-            new JoystickButton(controlStick, XboxController.Button.kA.value).whenHeld(kickerShootC);
+            //automatic shooting obtained from the calculated RPMs within a certain range of distances to the hub
+            Command wait1sAutomatic = new WaitCommand(0.5);
+            Command delayIndexerAutomatic = wait1sAutomatic.andThen( new IndexerForShooter());
+            Command cmdShootAutomatic = new ParallelCommandGroup(new AutomaticShooter(true), delayIndexerAutomatic);
+            Command kickerDownAutomatic = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
+            Command automaticShooter = new SequentialCommandGroup(kickerDownAutomatic, cmdShootAutomatic);
+            new JoystickButton(controlStick, XboxController.Button.kA.value).whenHeld(automaticShooter);
 
             //kicker floating
             Command kickerFloat = new KickerFloat();
@@ -213,7 +225,7 @@ public class RobotContainer {
  
             //alignment
             Command alignmentTest = new DrivetrainAlignment(true);
-            new JoystickButton(controlStick, XboxController.Button.kY.value).whenPressed(alignmentTest);
+            new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(alignmentTest);
  
 
             //test switch
@@ -326,22 +338,28 @@ public class RobotContainer {
         analogSelectorOne = AnalogSelectorSubsystem.getInstance();
         
         if (analogSelectorOne != null){
+            //If analog selector is damaged, use the second selectorOne line to change selector value using fluidConstant.
             selectorOne = analogSelectorOne.getIndex();
-            System.out.println("SELECTOR SWITCH NOT NULL AND ID " + selectorOne);
+            //If selectorOne is -1, use the fluidConstant value instead.
+            if(selectorOne == -1)
+            {
+                selectorOne = (AnalogSelectorSubsystem.ANALOG_SELECTOR_INDEX.getValue()).intValue();
+            }
             tableAnalogSelectorOne.setValue(selectorOne);
         }
         else
         {
-            selectorOne = selectHardCodedPath;
+            //Otherwise, keep using the first selectorOne line by using the analog selector
+            selectorOne = (AnalogSelectorSubsystem.ANALOG_SELECTOR_INDEX.getValue()).intValue();
         }
         
+        System.out.println("SELECTOR ID " + selectorOne);
         logger.info("Selectors: " + selectorOne);
-
 
         // Testing forced numbers
         int selectFolder = 1;
         //@todo: hard coded here. Remove this line will use analog selector.
-        selectorOne = 4;
+        //selectorOne = 0;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 

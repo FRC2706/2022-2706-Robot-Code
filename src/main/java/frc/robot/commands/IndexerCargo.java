@@ -10,12 +10,15 @@ import frc.robot.config.Config;
 import frc.robot.subsystems.ColorSensorSubsystem;
 import frc.robot.subsystems.IndexerSubSystem;
 import frc.robot.subsystems.SwitchSubsystem;
+import frc.robot.subsystems.Bling;
+
 
 public class IndexerCargo extends CommandBase {
 
   private IndexerSubSystem indexer;
   private ColorSensorSubsystem colorSensor;
   private SwitchSubsystem switchDetector;
+  private Bling bling;
   public boolean switchDetected;
   public boolean colorSensorDetected;
   public boolean colorSensorFirstDetected = false;
@@ -29,6 +32,7 @@ public class IndexerCargo extends CommandBase {
     indexer = IndexerSubSystem.getInstance();
     colorSensor = ColorSensorSubsystem.getInstance();
     switchDetector = new SwitchSubsystem(Config.INDEXER_SWITCH_END);
+    bling = Bling.getINSTANCE();
 
     // Use addRequirements() here to declare subsystem dependencies.
     if ( indexer != null )
@@ -44,6 +48,11 @@ public class IndexerCargo extends CommandBase {
     if(switchDetector != null)
     {
       addRequirements(switchDetector);
+    }
+
+    if(bling != null)
+    {
+      addRequirements(bling);
     }
   }
 
@@ -78,6 +87,7 @@ public class IndexerCargo extends CommandBase {
    switchDetected = switchDetector.getResult();
    if (switchDetected == true) 
    {
+     bling.setStrobe();
     //  System.out.println("switch detected: "+switchDetected);
      indexer.stop();
    } 
@@ -92,18 +102,19 @@ public class IndexerCargo extends CommandBase {
      if (colorSensorDetected == true && colorSensorFirstDetected == false) 
      {
        colorSensorFirstDetected = true;
-       System.out.println("start shuffling the cargo "+numCargo);
+       //System.out.println("start shuffling the cargo "+numCargo);
      }
      
      if (colorSensorFirstDetected == true) 
      {
+       bling.setRainbow();
        if(numCargo == 0)
        {
-         indexer.runForIntake(14);
+         indexer.runForIntake(11);
        }
        else 
        {
-         indexer.runForIntake(6);
+         indexer.runForIntake(4);
        }
        counter++;
        
@@ -119,7 +130,7 @@ public class IndexerCargo extends CommandBase {
           indexer.setIndexerPosition();
           indexer.stop();
           numCargo++;
-          System.out.println("stop shuffling the cargo "+numCargo);
+          //System.out.println("stop shuffling the cargo "+numCargo);
         }
       } 
       else 
