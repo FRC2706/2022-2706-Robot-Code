@@ -162,6 +162,7 @@ public class RobotContainer {
             new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenPressed(intakeTwoCargo);
  
             //intake up for one cargo
+            //Backup
             intakeUpOneCargo = new IntakeUp();
             new JoystickButton(controlStick, XboxController.Button.kY.value).whenReleased(intakeUpOneCargo);
 
@@ -194,12 +195,6 @@ public class RobotContainer {
             Command kickerDownA = new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.5));
             Command kickerShootA = new SequentialCommandGroup(kickerDownA, cmdShootA);
             new JoystickButton(controlStick, XboxController.Button.kX.value).whenHeld(kickerShootA);
-            //.whenHeld(cmdShootA);
-            //left trigger: 2
-            //right trigger: 3
-            //if(controlStick.getRawAxis(2) > 0.5);
-            //new JoystickButton(controlStick, XboxController.Axis.kRightTrigger.value);
-
 
             // //tarmat B: farther: RPM = 3400
             //no kicker
@@ -222,18 +217,6 @@ public class RobotContainer {
             //kicker floating
             Command kickerFloat = new KickerFloat();
             new JoystickButton(controlStick, XboxController.Button.kStart.value).whenPressed(kickerFloat);
- 
-            //alignment
-            Command alignmentTest = new DrivetrainAlignment(true);
-            new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(alignmentTest);
- 
-
-            //test switch
-            // Command readSwitch = new TestSwitch();
-            // new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
-
-            //Command RPMClimb = new ClimberRPM();
-            //new JoystickButton(controlStick,XboxController.Axis.kRightTrigger.value).whenHeld(RPMClimb);
 
             // Command climbTrigger = new ClimberRPM(() -> controlStick.getRawAxis(XboxController.Axis.kLeftTrigger.value));
             Command slowClimb = new ClimberRPM(0.1);
@@ -245,8 +228,9 @@ public class RobotContainer {
             Command visionDriverAid = new VisionDriverAid(driverStick, VisionCtrlNetTable.yawToHub);
             new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenHeld(visionDriverAid);
               
-            //Command positionClimb = new ClimberPosition();
-            //new JoystickButton(controlStick, XboxController.Axis.kRightTrigger.value).whenPressed(positionClimb);
+            //auto alignment
+            Command autoAlignment = new DrivetrainAlignment(true);
+            new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(autoAlignment);
 
             break;
             }
