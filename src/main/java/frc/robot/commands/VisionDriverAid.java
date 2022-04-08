@@ -33,6 +33,7 @@ public class VisionDriverAid extends CommandBase {
   PIDController m_pid;
   Command shooter;
   Command feed;
+  Command shooterAuto;
 
   public VisionDriverAid(Joystick driveJoystick, Supplier<Double> rotateVal) {
     m_forwardVal = ()-> sign(Config.removeJoystickDeadband(driveJoystick.getRawAxis(Config.LEFT_CONTROL_STICK_Y)), Config.INVERT_FIRST_AXIS);
@@ -40,8 +41,9 @@ public class VisionDriverAid extends CommandBase {
     addRequirements(DriveBaseHolder.getInstance());
     m_rotateVal = rotateVal;
     m_pid = new PIDController(0, 0, 0);
-    shooter = new SpinUpShooterWithTime(3350, 0);
-    feed = new ParallelRaceGroup(new IndexerForShooter(), new WaitCommand(1.5)).andThen(new InstantCommand(shooter :: cancel));
+    shooter = new SpinUpShooterWithTime(2000, 0);
+    shooterAuto = new AutomaticShooter(true);
+    feed = new WaitCommand(0.3).andThen(new ParallelRaceGroup(new IndexerForShooter(), new WaitCommand(1.5)).andThen(new InstantCommand(shooterAuto :: cancel)));
   }
    
 
@@ -65,18 +67,18 @@ public class VisionDriverAid extends CommandBase {
 
     double rotateValue = m_pid.calculate(heading, targetYaw);
     rotateValue = MathUtil.clamp(rotateValue, -clampPID, clampPID);
-    DriveBaseHolder.getInstance().arcadeDrive(m_forwardVal.get(),rotateValue, false);
+    double xSpeed = m_forwardVal.get();
+    DriveBaseHolder.getInstance().arcadeDrive(Math.copySign(xSpeed * xSpeed, xSpeed),rotateValue, false);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     if(interrupted == false){
+      shooterAuto.schedule();
       feed.schedule();        
     }
-    else{
-      shooter.cancel();
-    }
+    shooter.cancel();
   }
 
   // Returns true when the command should end.
