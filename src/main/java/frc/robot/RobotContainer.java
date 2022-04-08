@@ -311,9 +311,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() {
-        //Note: if there is not selector,
-        //      selectorOne will be forced to selectHardCodedPath
-        int selectHardCodedPath = 1;
         int selectorOne = 0;
 
         tableAnalogSelectorOne = selectorTable.getEntry("AnalogSelectorOne");
@@ -322,22 +319,23 @@ public class RobotContainer {
         analogSelectorOne = AnalogSelectorSubsystem.getInstance();
         
         if (analogSelectorOne != null){
-            //If analog selector is damaged, use the second selectorOne line to change selector value using fluidConstant.
+            //Get value from selector
             selectorOne = analogSelectorOne.getIndex();
             //If selectorOne is -1, use the fluidConstant value instead.
             if(selectorOne == -1)
             {
                 selectorOne = (AnalogSelectorSubsystem.ANALOG_SELECTOR_INDEX.getValue()).intValue();
             }
-            tableAnalogSelectorOne.setValue(selectorOne);
+            
         }
         else
         {
-            //Otherwise, keep using the first selectorOne line by using the analog selector
+            //If selector is damaged, get value from network table fluid constant
             selectorOne = (AnalogSelectorSubsystem.ANALOG_SELECTOR_INDEX.getValue()).intValue();
         }
         
-        System.out.println("SELECTOR ID " + selectorOne);
+        tableAnalogSelectorOne.setValue(selectorOne);
+        //System.out.println("SELECTOR ID " + selectorOne);
         logger.info("Selectors: " + selectorOne);
 
         // Testing forced numbers
