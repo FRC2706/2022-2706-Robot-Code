@@ -64,7 +64,7 @@ public class AutoRoutines {
                                                     autoShootlow1,
                                                     new ParallelRaceGroup(ramsete1));
             
-            case 2:
+            case 2: //Starting position: the second cargo is close to the climb area.
                 //steps: low goal -> taxi -> intake one cargo -> high goal -> stow intake
                 Command wait1s2 = new WaitCommand(1);
                 Command delayIndexer2 = wait1s2.andThen( new IndexerForShooter());
@@ -87,8 +87,8 @@ public class AutoRoutines {
                                                     autoShoothigh2.alongWith(new RunIntakeCargo(true, 4)),
                                                     intakeUp2);
 
-            case 3:
-                // CASE 3 -> Drive to Middle Ball, Shoot 2
+            case 3: //Starting position: the second cargo is in the middle of the field.
+                // CASE 3 -> Drive to Middle Ball, Shoot 2 high goals. 
                 Command ramseteCase3_P1 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP1, "3BallStationSideHPStationP1");
 
                 Command shootHighGoal3_1 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 3), new WaitCommand(1.0).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
@@ -106,24 +106,8 @@ public class AutoRoutines {
                     new ParallelRaceGroup(new IntakeUp(), new WaitCommand(0.1)));
 
 
-        case 4:
-                //description:
-                //starting position: within tarmac and facing a red cargo
-                // if using odometry: middle red cargo
-                //drive forward first --> pick up 2nd cargo --> shoot both cargo
-                // RamseteCommandMerge ramsete7 = new RamseteCommandMerge(Robot.trajectoryRedO2, "Trajectory-Red-O2");
-                // //Command pickUpCargo = new RunIntakeCargo(true)
-
-                // return new SequentialCommandGroup (
-                //     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryRedO2.getInitialPose())),
-                //     ramsete7);
-
-                // RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectory4BallClimberSideHPStationP1, "Trajectory-Blue3-O1P1");
-                //     return new SequentialCommandGroup (
-                //         new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectory4BallClimberSideHPStationP1.getInitialPose())),
-                //         ramsete4);
-
-                //steps: low goal -> taxi -> intake one cargo -> high goal -> stow intake
+        case 4:  //Starting position: the second cargo is close to the climb area.
+                //steps: taxi -> intake one cargo -> 2 high goals -> stow intake
                 Command wait1s7 = new WaitCommand(1.5);
                 Command delayIndexer7 = wait1s7.andThen( new IndexerForShooter());
                 Command autoShoothigh3 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 8), delayIndexer7);
@@ -141,7 +125,7 @@ public class AutoRoutines {
                                                     autoShoothigh3.alongWith(new RunIntakeCargo(true, 4)),
                                                     intakeUp3);
 
-            case 5:
+            case 5: //Starting position: the second cargo is in the middle of the field.
                 // CASE 5 - 3BallAuto -> Drive to Middle Ball, Shoot 2, Drive to 1 meter away from HP, get 1 ball, drive towards hub, shoot 1
 
                 Command ramseteCase5_P1 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP1, "3BallStationSideHPStationP1");
