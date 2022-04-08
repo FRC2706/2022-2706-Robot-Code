@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.config.Config;
+import frc.robot.subsystems.Bling;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.shooterPneumaticSubsystem;
 
@@ -26,6 +27,8 @@ public class AutomaticShooter extends CommandBase {
   private Timer timer;
   private int timeout = 5; //sec
   private boolean m_bUseTimer = false;
+
+  private Bling bling;
 
   //todo: can be configured in config file as well
   //todo: measure the radius for the shooting wheel
@@ -60,6 +63,8 @@ public class AutomaticShooter extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     shooterSubsystem = ShooterSubsystem.getInstance();
 
+    bling = Bling.getINSTANCE();
+
     //@todo: add deflector subsystem later
     //deflectorSubsystem = shooterPneumaticSubsystem.getInstance();
     deflectorSubsystem = null;
@@ -71,6 +76,10 @@ public class AutomaticShooter extends CommandBase {
     if (deflectorSubsystem != null)
     {
       addRequirements(deflectorSubsystem);
+    }
+    if(bling != null)
+    {
+      addRequirements(bling);
     }
 
     if( m_bUseTimer == true )
@@ -153,6 +162,7 @@ public class AutomaticShooter extends CommandBase {
       //stop the shooter
       //shooterSubsystem.setTargetRPM(0); 
       shooterSubsystem.stop();  
+      bling.setPurple();
     }
 
     if( m_bUseTimer == true)
@@ -207,18 +217,24 @@ public class AutomaticShooter extends CommandBase {
       shooterAngle = SHOOTER_ANGLE_DEG;
     }
 
+    /* Option 1: Calculate RPM
     double targetV  = initVelocity();
     targetRPM       = (int) velocityToRPM (targetV);  
 
     tableTargetV.setValue(targetV);
-
-    //validate the targetRPM
-    //@todo: hard coded here for now
-    targetRPM = 0;
+    */
 
     //option2: map the distance to the target RPM
     //From test relationships between the distance and RPM, obtain a formula that represents said relationship
-    //targetRPM = 0; //f(targetDistance, m_bDeflector, m_bHighGoal)
+    //Use this formula to check when distance >7 and <11
+    if(targetDistance >= 7 && targetDistance <= 11)
+    {
+      targetRPM = (int) (140*targetDistance+1725); //f(targetDistance, m_bDeflector, m_bHighGoal)
+    }
+    else
+    {
+      targetRPM = 0;
+    }
   }
 
   /**
@@ -243,14 +259,14 @@ public class AutomaticShooter extends CommandBase {
     {
       //todo: Use vision and network tables to get targetDistance
       targetDistance = visionDistance.getDouble(-1.0);
-      System.out.println("targetDistance from vision: "+targetDistance);
+      //System.out.println("targetDistance from vision: "+targetDistance);
       //@todo: Double check if the target distance is valid or not.
       //Note: Unit is feet, we have to convert to meter
 
     }
 
     //@todo: validate the targetDistance
-    if(targetDistance > 5 || targetDistance < 0.5)
+    if(targetDistance > 20 || targetDistance < 0.5)
     {
       targetDistance = -1;
     }

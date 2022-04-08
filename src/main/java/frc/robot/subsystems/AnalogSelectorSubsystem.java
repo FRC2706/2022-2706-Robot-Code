@@ -158,7 +158,9 @@ public static class Range {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("AnalogSwitch", getIndex());
+
+    //for testing only
+    // SmartDashboard.putNumber("AnalogSwitch", getIndex());
 
   }
 }

@@ -102,7 +102,7 @@ public class IndexerCargo extends CommandBase {
      if (colorSensorDetected == true && colorSensorFirstDetected == false) 
      {
        colorSensorFirstDetected = true;
-       System.out.println("start shuffling the cargo "+numCargo);
+       //System.out.println("start shuffling the cargo "+numCargo);
      }
      
      if (colorSensorFirstDetected == true) 
@@ -130,7 +130,7 @@ public class IndexerCargo extends CommandBase {
           indexer.setIndexerPosition();
           indexer.stop();
           numCargo++;
-          System.out.println("stop shuffling the cargo "+numCargo);
+          //System.out.println("stop shuffling the cargo "+numCargo);
         }
       } 
       else 
