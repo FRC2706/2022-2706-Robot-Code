@@ -9,9 +9,15 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.config.Config;
 import frc.robot.config.FluidConstant;
+import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.DriveBaseHolder;
 
 public class VisionDriverAid extends CommandBase {
@@ -19,12 +25,14 @@ public class VisionDriverAid extends CommandBase {
   final double clampPID = 0.5;
   public static final FluidConstant<Double> KP = new FluidConstant<>("VisionDriverAidKP", 0.014)
             .registerToTable(Config.constantsTable);
-  public static final FluidConstant<Double> KD = new FluidConstant<>("VisionDriverAidKD", 0.0)
+  public static final FluidConstant<Double> KD = new FluidConstant<>("VisionDriverAidKD", 0.0014)
             .registerToTable(Config.constantsTable);
   double targetYaw;
   Supplier<Double> m_forwardVal;
   Supplier<Double> m_rotateVal;
   PIDController m_pid;
+  Command shooter;
+  Command feed;
 
   public VisionDriverAid(Joystick driveJoystick, Supplier<Double> rotateVal) {
     m_forwardVal = ()-> sign(Config.removeJoystickDeadband(driveJoystick.getRawAxis(Config.LEFT_CONTROL_STICK_Y)), Config.INVERT_FIRST_AXIS);
@@ -32,12 +40,15 @@ public class VisionDriverAid extends CommandBase {
     addRequirements(DriveBaseHolder.getInstance());
     m_rotateVal = rotateVal;
     m_pid = new PIDController(0, 0, 0);
+    shooter = new SpinUpShooterWithTime(3350, 0);
+    feed = new ParallelRaceGroup(new IndexerForShooter(), new WaitCommand(1.5)).andThen(new InstantCommand(shooter :: cancel));
   }
    
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    shooter.schedule();
     m_pid.setPID(KP.get(), 0, KD.get());
     targetYaw = DriveBaseHolder.getInstance().getOdometryHeading().getDegrees();
   }
@@ -59,11 +70,23 @@ public class VisionDriverAid extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    if(interrupted == false){
+      feed.schedule();        
+    }
+    else{
+      shooter.cancel();
+    }
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    double[] velocities = DriveBaseHolder.getInstance().getMeasuredMetersPerSecond();
+    boolean notMoving = Math.abs(velocities[0])<0.2 && Math.abs(velocities[1])<0.2;
+    if(Math.abs(m_rotateVal.get())<3 && notMoving == true){
+      return true;
+    }
     return false;
   }
 
