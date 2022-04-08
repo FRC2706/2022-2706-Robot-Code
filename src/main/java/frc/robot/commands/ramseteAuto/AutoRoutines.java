@@ -38,7 +38,6 @@ import frc.robot.config.Config;
 import frc.robot.nettables.VisionCtrlNetTable;
 import frc.robot.subsystems.DriveBaseHolder;
 import frc.robot.commands.SpinUpShooterWithTime;
-import frc.robot.commands.VisionAutoCargo;
 import frc.robot.Robot;
 
 
@@ -88,34 +87,25 @@ public class AutoRoutines {
                                                     autoShoothigh2.alongWith(new RunIntakeCargo(true, 4)),
                                                     intakeUp2);
 
-            case 5:
-                //steps: kicker up -> high goal -> taxi -> kicker down -> 
-                //       intake one cargo -> high goal -> stow intake
-                Command wait1s3 = new WaitCommand(1);
-                Command delayIndexer3 = wait1s3.andThen( new IndexerForShooter());
-                Command autoShoot3 = new ParallelRaceGroup(new SpinUpShooterWithTime(2750, 4), delayIndexer3);
-                Command wait1s4 = new WaitCommand(1);
-                Command delayIndexer4 = wait1s4.andThen( new IndexerForShooter());
-                Command autoShoot4 = new ParallelRaceGroup(new SpinUpShooterWithTime(3100, 8), delayIndexer4);
-                Command intakeDown = new IntakeDown();
-                Command intakeUp = new IntakeUp();
-                Command kicker = new ControlKicker(false);
-                Command kicker2 = new ControlKicker(true);
-                Command kickerfloat = new KickerFloat();
+            case 3:
+                // CASE 3 -> Drive to Middle Ball, Shoot 2
+                Command ramseteCase3_P1 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP1, "3BallStationSideHPStationP1");
 
-                Trajectory traj = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(0.65,0.0, new Rotation2d())), Config.trajectoryConfig);
-                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(traj, "Trajectory-Red-O2");
-                return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj.getInitialPose())),
-                                                  new ParallelRaceGroup(kicker, new WaitCommand(0.5)),
-                                                  autoShoot3,
-                                                  new ParallelRaceGroup(intakeDown, new WaitCommand(0.5)),
-                                                  new ParallelRaceGroup(ramsete3, new RunIntakeCargo(true, 4)),
-                                                  new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
-                                                  new ParallelRaceGroup(kicker2, new WaitCommand(0.5)),
-                                                  autoShoot4.alongWith(new RunIntakeCargo(true, 4)),
-                                                  kickerfloat,
-                                                  intakeUp);
-           
+                Command shootHighGoal3_1 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 3), new WaitCommand(1.0).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
+                
+                return new SequentialCommandGroup (
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectorythreeballStationSideP1.getInitialPose())),
+                    new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
+                    new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.06)),
+                    new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.2)),
+                    new ParallelRaceGroup(ramseteCase3_P1, new RunIntakeCargo(true, 12), new IntakeFloat()),
+                    new WaitCommand(0.5), // Wait command to let robot stop moving before auto aligning
+                    new DrivetrainAlignment(true),
+                    new DrivetrainAlignment(true),
+                    shootHighGoal3_1,
+                    new ParallelRaceGroup(new IntakeUp(), new WaitCommand(0.1)));
+
+
         case 4:
                 //description:
                 //starting position: within tarmac and facing a red cargo
@@ -151,28 +141,35 @@ public class AutoRoutines {
                                                     autoShoothigh3.alongWith(new RunIntakeCargo(true, 4)),
                                                     intakeUp3);
 
-            case 3:
-                Command ramseteCase3P1 = new RamseteCommandMerge(Robot.trajectoryfourballStationSideP1, "4BallStationSideHPStationP1");
-                Command ramseteCase3P2 = new RamseteCommandMerge(Robot.trajectoryfourballStationSideP2, "4BallStationSideHPStationP2");
-                Command ramseteCase3P3 = new RamseteCommandMerge(Robot.trajectoryfourballStationSideP3, "4BallStationSideHPStationP3");
+            case 5:
+                // CASE 5 - 3BallAuto -> Drive to Middle Ball, Shoot 2, Drive to 1 meter away from HP, get 1 ball, drive towards hub, shoot 1
 
-                Command shootHighGoal1 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 3), new WaitCommand(1.0).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
-                Command shootHighGoal2 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 3), new WaitCommand(1.0).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
+                Command ramseteCase5_P1 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP1, "3BallStationSideHPStationP1");
+                Command ramseteCase5_P2 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP2, "3BallStationSideHPStationP2");
+                Command ramseteCase5_P3 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP3, "3BallStationSideHPStationP3");
+
+                Command shootHighGoal5_1 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 3), new WaitCommand(1.0).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
+                Command shootHighGoal5_2 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 3), new WaitCommand(1.0).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
 
                 return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryfourballStationSideP1.getInitialPose())),
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectorythreeballStationSideP1.getInitialPose())),
                     new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
                     new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.06)),
                     new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.2)),
-                    new ParallelRaceGroup(ramseteCase3P1, new RunIntakeCargo(true, 12), new IntakeFloat()),
+                    new ParallelRaceGroup(ramseteCase5_P1, new RunIntakeCargo(true, 12), new IntakeFloat()),
+                    new WaitCommand(0.2).alongWith(new InstantCommand(DriveBaseHolder.getInstance()::stopMotors)),
                     new DrivetrainAlignment(true),
-                    shootHighGoal1,
-                    // new ParallelRaceGroup(new IntakeUp(), new WaitCommand(0.1)),
-                    ramseteCase3P2,
-                    new VisionAutoCargo(VisionCtrlNetTable.yawToCargo, VisionCtrlNetTable.distanceToCargo, 4),
-                    ramseteCase3P3,
                     new DrivetrainAlignment(true),
-                    shootHighGoal2
+                    shootHighGoal5_1,
+                    new ParallelRaceGroup(new IntakeUp(), new WaitCommand(0.1)),
+                    ramseteCase5_P2,
+                    new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.5)),
+                    new ParallelRaceGroup(new RunIntakeCargo(true, 4), new WaitCommand(3), new IntakeFloat()),
+                    new ParallelRaceGroup(ramseteCase5_P3),
+                    new WaitCommand(0.2).alongWith(new InstantCommand(DriveBaseHolder.getInstance()::stopMotors)),
+                    new DrivetrainAlignment(true),
+                    new DrivetrainAlignment(true),
+                    shootHighGoal5_2
                 );
     
             case 6:
@@ -193,30 +190,30 @@ public class AutoRoutines {
                 return null;
             case 1:
                 //testing red option 2
-                RamseteCommandMerge ramsete1 = new RamseteCommandMerge(Robot.trajectoryfourballStationSideP1, "Trajectory-Red-O2");
+                RamseteCommandMerge ramsete1 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP1, "Trajectory-Red-O2");
                 return new SequentialCommandGroup (
                     //Shoot first 
                     //new SpinUpShooterWithTime(2000, 0)
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryfourballStationSideP1.getInitialPose())),
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectorythreeballStationSideP1.getInitialPose())),
                     ramsete1);
                     //new ParallelCommandGroup(ramsete1, new RunIntakeCargo(2),
                    // new SpinUpShooterWithTime(2500, 0));
                     
             case 2:
                 //testing blue option 2
-                RamseteCommandMerge ramsete2 = new RamseteCommandMerge(Robot.trajectoryfourballStationSideP1, "Trajectory-Blue-O2");
+                RamseteCommandMerge ramsete2 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP1, "Trajectory-Blue-O2");
                 return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryfourballStationSideP1.getInitialPose())),
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectorythreeballStationSideP1.getInitialPose())),
                     ramsete2);
             case 3:
-                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectoryfourballStationSideP1, "Trajectory-Red-O2");
+                RamseteCommandMerge ramsete3 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP1, "Trajectory-Red-O2");
                 return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryfourballStationSideP1.getInitialPose())),
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectorythreeballStationSideP1.getInitialPose())),
                     ramsete3);
             case 4:
-                RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectoryfourballStationSideP1, "Trajectory-Blue-O2");
+                RamseteCommandMerge ramsete4 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP1, "Trajectory-Blue-O2");
                 return new SequentialCommandGroup (
-                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectoryfourballStationSideP1.getInitialPose())),
+                    new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectorythreeballStationSideP1.getInitialPose())),
                     ramsete4);
             default:
                 return null;
