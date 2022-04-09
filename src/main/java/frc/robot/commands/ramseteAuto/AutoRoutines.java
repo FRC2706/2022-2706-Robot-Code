@@ -32,6 +32,7 @@ import frc.robot.commands.IntakeUp;
 import frc.robot.commands.KickerFloat;
 import frc.robot.commands.OuterGoalErrorLoop;
 import frc.robot.commands.RunIntakeCargo;
+import frc.robot.commands.AutomaticShooter;
 import frc.robot.commands.ControlKicker;
 import frc.robot.commands.ramseteAuto.VisionPose.VisionType;
 import frc.robot.config.Config;
@@ -132,27 +133,22 @@ public class AutoRoutines {
                 Command ramseteCase5_P2 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP2, "3BallStationSideHPStationP2");
                 Command ramseteCase5_P3 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP3, "3BallStationSideHPStationP3");
 
-                Command shootHighGoal5_1 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 3), new WaitCommand(1.0).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
-                Command shootHighGoal5_2 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 3), new WaitCommand(1.0).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
+                Command shootHighGoal5_1 = new ParallelRaceGroup(new WaitCommand(1.1), new SpinUpShooterWithTime(3365, 5), new WaitCommand(0.45).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
+                Command shootHighGoal5_2 = new ParallelRaceGroup(new WaitCommand(1.5), new AutomaticShooter(true), new WaitCommand(0.4).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
 
                 return new SequentialCommandGroup (
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectorythreeballStationSideP1.getInitialPose())),
                     new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
                     new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.06)),
-                    new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.2)),
-                    new ParallelRaceGroup(ramseteCase5_P1, new RunIntakeCargo(true, 12), new IntakeFloat()),
-                    new WaitCommand(0.2).alongWith(new InstantCommand(DriveBaseHolder.getInstance()::stopMotors)),
-                    new DrivetrainAlignment(true),
-                    new DrivetrainAlignment(true),
+                    new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.1)),
+                    new WaitCommand(0.4),
+                    new ParallelRaceGroup(ramseteCase5_P1, new RunIntakeCargo(true, 12), new WaitCommand(0.15).andThen(new IntakeFloat()), new SpinUpShooterWithTime(2000, 5)),
+                    new ParallelRaceGroup(new WaitCommand(0.15), new RunCommand(DriveBaseHolder.getInstance()::stopMotors)),
                     shootHighGoal5_1,
-                    new ParallelRaceGroup(new IntakeUp(), new WaitCommand(0.1)),
-                    ramseteCase5_P2,
-                    new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.5)),
-                    new ParallelRaceGroup(new RunIntakeCargo(true, 4), new WaitCommand(3), new IntakeFloat()),
-                    new ParallelRaceGroup(ramseteCase5_P3),
-                    new WaitCommand(0.2).alongWith(new InstantCommand(DriveBaseHolder.getInstance()::stopMotors)),
-                    new DrivetrainAlignment(true),
-                    new DrivetrainAlignment(true),
+                    new ParallelRaceGroup(ramseteCase5_P2, new RunIntakeCargo(true, 4)),
+                    new ParallelRaceGroup(new RunIntakeCargo(true, 2), new WaitCommand(0.95), new IntakeFloat()),
+                    new ParallelRaceGroup(ramseteCase5_P3, new SpinUpShooterWithTime(2500, 5), new WaitCommand(0.2).andThen(new RunIntakeCargo(true, 5))),
+                    // new ParallelRaceGroup(new WaitCommand(0.4), new DrivetrainAlignment(true)),
                     shootHighGoal5_2
                 );
     

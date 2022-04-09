@@ -23,9 +23,9 @@ import frc.robot.subsystems.DriveBaseHolder;
 public class VisionDriverAid extends CommandBase {
   /** Creates a new VisionDriverAid. */
   final double clampPID = 0.5;
-  public static final FluidConstant<Double> KP = new FluidConstant<>("VisionDriverAidKP", 0.014)
+  public static final FluidConstant<Double> KP = new FluidConstant<>("VisionDriverAidKP", 0.015)
             .registerToTable(Config.constantsTable);
-  public static final FluidConstant<Double> KD = new FluidConstant<>("VisionDriverAidKD", 0.0014)
+  public static final FluidConstant<Double> KD = new FluidConstant<>("VisionDriverAidKD", 0.003)
             .registerToTable(Config.constantsTable);
   double targetYaw;
   Supplier<Double> m_forwardVal;
@@ -85,7 +85,7 @@ public class VisionDriverAid extends CommandBase {
   @Override
   public boolean isFinished() {
     double[] velocities = DriveBaseHolder.getInstance().getMeasuredMetersPerSecond();
-    boolean notMoving = Math.abs(velocities[0])<0.2 && Math.abs(velocities[1])<0.2;
+    boolean notMoving = Math.abs(velocities[0])<0.03 && Math.abs(velocities[1])<0.03;
     if(Math.abs(m_rotateVal.get())<3 && notMoving == true){
       return true;
     }

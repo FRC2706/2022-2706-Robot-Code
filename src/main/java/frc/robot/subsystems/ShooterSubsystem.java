@@ -134,7 +134,7 @@ public class ShooterSubsystem extends SubsystemBase {
         targetRPM = inputRPM;
         //using network table, only for testing
         //targetRPM = (int) ((double) TARGET_RPM.getValue());
-
+        TARGET_RPM.setValue((double) targetRPM);
         if( m_bGoodSensors == true )
         {
             m_pidController.setReference(targetRPM, ControlType.kVelocity);

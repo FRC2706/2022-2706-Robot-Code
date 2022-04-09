@@ -227,14 +227,18 @@ public class AutomaticShooter extends CommandBase {
     //option2: map the distance to the target RPM
     //From test relationships between the distance and RPM, obtain a formula that represents said relationship
     //Use this formula to check when distance >7 and <11
-    if(targetDistance >= 7 && targetDistance <= 11)
-    {
-      targetRPM = (int) (140*targetDistance+1725); //f(targetDistance, m_bDeflector, m_bHighGoal)
-    }
-    else
-    {
-      targetRPM = 0;
-    }
+     if(targetDistance >= 7 && targetDistance <= 20)
+     {
+       //targetRPM = (int) (140*targetDistance+1725); //f(targetDistance, m_bDeflector, m_bHighGoal)
+        targetRPM = (int) (189.0 + 568.0*targetDistance 
+                          - 37.1*targetDistance*targetDistance 
+                          + Math.pow(targetDistance, 3));
+      }
+     else
+     {
+       targetRPM = 0;
+     }
+    //targetRPM = 4220;
   }
 
   /**
