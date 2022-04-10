@@ -157,7 +157,7 @@ public class RobotContainer {
             //intake two cargo
             Command intakeTwoCargo = new SequentialCommandGroup(
                                          new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.5)),
-                                         new ParallelRaceGroup(new IntakeFloat(), new WaitCommand(0.5)),
+                                         new ParallelRaceGroup(new IntakeFloat(), new WaitCommand(0.1)),
                                          new ParallelCommandGroup(new IndexerCargo(), new RunIntakeCargo(true, 0))); 
             new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenPressed(intakeTwoCargo);
  
