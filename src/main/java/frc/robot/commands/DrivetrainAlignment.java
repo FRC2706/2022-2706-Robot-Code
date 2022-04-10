@@ -258,8 +258,13 @@ public class DrivetrainAlignment extends CommandBase {
 
     //rapid react on the carpet 105
     //0.0968 + 0.0115x + -1.91E-04x^2 + 1.32E-06x^3
-    m_distance = 0.0968 + 0.0115*Math.signum(m_deltaTheta)*m_deltaTheta -1.91E-04*m_deltaTheta*m_deltaTheta
-                 + 1.32E-06*Math.signum(m_deltaTheta)*Math.pow(m_deltaTheta,3);
+    // m_distance = 0.0968 + 0.0115*Math.signum(m_deltaTheta)*m_deltaTheta -1.91E-04*m_deltaTheta*m_deltaTheta
+    //              + 1.32E-06*Math.signum(m_deltaTheta)*Math.pow(m_deltaTheta,3);
+
+    //rapid react on the practice field
+    m_distance = 0.0637 + 6.27E-03*Math.signum(m_deltaTheta)*m_deltaTheta
+                -1.54E-04*m_deltaTheta*m_deltaTheta 
+                + 2.11E-06*Math.signum(m_deltaTheta)*Math.pow(m_deltaTheta,3);
     m_targetDeltaPositionMeter = m_distance*Math.signum(m_deltaTheta)*(-1);
   }
 

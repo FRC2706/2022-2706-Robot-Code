@@ -10,6 +10,8 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import frc.robot.commands.AutomaticShooter;
 import frc.robot.config.Config;
 import frc.robot.config.FluidConstant;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -190,17 +192,25 @@ public class IndexerSubSystem extends SubsystemBase {
 
     //Run the shooter
     public void runForShooter() {
-      //to run with the calculated target RPM
-      if ( m_bForShooterGoodSensors == true )
+      double rpm = ShooterSubsystem.TARGET_RPM.getValue();
+      if(rpm > 0)
       {
-        m_pidController.setReference(targetRPM, ControlType.kVelocity, 1);
+        //to run with the calculated target RPM
+        if ( m_bForShooterGoodSensors == true )
+        {
+          m_pidController.setReference(targetRPM, ControlType.kVelocity, 1);
+        }
+        else
+        {
+          //@todo: don't use the PIDF. Need to tune for a good percentage for the shooter.
+          //700/4000.0
+          m_indexer.set(0.2);
+        }
       }
       else
       {
-        //@todo: don't use the PIDF. Need to tune for a good percentage for the shooter.
-        //700/4000.0
-        m_indexer.set(0.2);
-      }
+        stop();
+      } 
     }
     
     //To run with the input RPM, for taking only one cargo in
