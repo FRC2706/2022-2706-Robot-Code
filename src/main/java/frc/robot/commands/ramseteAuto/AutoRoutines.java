@@ -92,17 +92,16 @@ public class AutoRoutines {
                 // CASE 3 -> Drive to Middle Ball, Shoot 2 high goals. 
                 Command ramseteCase3_P1 = new RamseteCommandMerge(Robot.trajectorythreeballStationSideP1, "3BallStationSideHPStationP1");
 
-                Command shootHighGoal3_1 = new ParallelRaceGroup(new SpinUpShooterWithTime(3150, 3), new WaitCommand(1.0).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
+                Command shootHighGoal3_1 = new ParallelRaceGroup(new SpinUpShooterWithTime(3365, 5), new WaitCommand(1.5).andThen(new IndexerForShooter())).alongWith(new RunIntakeCargo(true, 3));
                 
                 return new SequentialCommandGroup (
                     new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(Robot.trajectorythreeballStationSideP1.getInitialPose())),
                     new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
                     new ParallelRaceGroup(new ControlKicker(false), new WaitCommand(0.06)),
                     new ParallelRaceGroup(new IntakeDown(), new WaitCommand(0.2)),
-                    new ParallelRaceGroup(ramseteCase3_P1, new RunIntakeCargo(true, 12), new IntakeFloat()),
-                    new WaitCommand(0.5), // Wait command to let robot stop moving before auto aligning
-                    new DrivetrainAlignment(true),
-                    new DrivetrainAlignment(true),
+                    new WaitCommand(0.6),
+                    new ParallelRaceGroup(ramseteCase3_P1, new RunIntakeCargo(true, 12), new WaitCommand(0.15).andThen(new IntakeFloat())),
+                    new ParallelRaceGroup(new WaitCommand(0.3), new RunCommand(DriveBaseHolder.getInstance()::stopMotors)),
                     shootHighGoal3_1,
                     new ParallelRaceGroup(new IntakeUp(), new WaitCommand(0.1)));
 
