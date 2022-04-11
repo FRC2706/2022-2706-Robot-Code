@@ -152,8 +152,17 @@ public class AutoRoutines {
                 );
     
             case 6:
-                return null;
-                
+                //taxi and a high goal
+                Trajectory traj6 = TrajectoryGenerator.generateTrajectory(List.of(new Pose2d(0.0,0.0,new Rotation2d()), new Pose2d(1.0,0.0, Rotation2d.fromDegrees(-4))), Config.trajectoryConfig);
+                RamseteCommandMerge ramsete6 = new RamseteCommandMerge(traj6, "Trajectory-Red-O2");
+                Command shootHighGoal6 = new ParallelRaceGroup(new WaitCommand(1.5), new AutomaticShooter(true), new WaitCommand(0.4).andThen(new IndexerForShooter()));
+
+                return new SequentialCommandGroup ( new InstantCommand(() -> DriveBaseHolder.getInstance().resetPose(traj6.getInitialPose())),
+                                                    new ParallelRaceGroup(ramsete6, new WaitCommand(4), new SpinUpShooterWithTime(2500, 5)),
+                                                    new InstantCommand(DriveBaseHolder.getInstance()::setBrakeMode),
+                                                    shootHighGoal6);
+  
+                 
             default:
                 return null;
         }
