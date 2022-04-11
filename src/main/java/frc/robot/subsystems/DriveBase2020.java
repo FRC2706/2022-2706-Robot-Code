@@ -295,8 +295,8 @@ public class DriveBase2020 extends DriveBase {
         }
 
         // Config the encoder and check if it worked
-        ErrorCode e1 = leftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-        ErrorCode e2 = rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+        ErrorCode e1 = leftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Config.TALON_PRIMARY_PID, Config.CAN_TIMEOUT_LONG);
+        ErrorCode e2 = rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Config.TALON_PRIMARY_PID, Config.CAN_TIMEOUT_LONG);
         
         if (e1.value != 0 || e2.value != 0) {
             state = DriveBaseState.Degraded;
