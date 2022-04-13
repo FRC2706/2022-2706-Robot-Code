@@ -230,7 +230,7 @@ public class RobotContainer {
               
             //auto alignment
             Command autoAlignment = new DrivetrainAlignment(true);
-            new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(autoAlignment);
+            new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(autoAlignment);
 
             break;
             }

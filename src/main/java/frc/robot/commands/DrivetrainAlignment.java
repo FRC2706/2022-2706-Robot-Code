@@ -104,7 +104,7 @@ public class DrivetrainAlignment extends CommandBase {
     {
       //read network table
       m_deltaTheta = visionAngle.getDouble(-99);
-      System.out.println("DrivetrainAlignment: vision angle "+ m_deltaTheta);
+  //++    System.out.println("DrivetrainAlignment: vision angle "+ m_deltaTheta);
 
       //@todo: Check invalid angle value
       if(m_deltaTheta > 30 || m_deltaTheta < -30)
@@ -173,18 +173,18 @@ public class DrivetrainAlignment extends CommandBase {
     double finalDegree =  m_drivebase.getPose().getRotation().getDegrees();
     double turnedDegree = finalDegree - m_initDegree;
     double errDegree = m_targetDegree - finalDegree;
-    // System.out.println("current odometry angle (degrees): "+ finalDegree);
-    // System.out.println("target odometry angle (degrees): " + m_targetDegree);
-    System.out.println("turned angle (degrees): "+ turnedDegree);
-    System.out.println("init: " + m_initDegree+" final: "+ finalDegree );
+    //-- System.out.println("current odometry angle (degrees): "+ finalDegree);
+    //-- System.out.println("target odometry angle (degrees): " + m_targetDegree);
+  //+++  System.out.println("turned angle (degrees): "+ turnedDegree);
+  //  System.out.println("init: " + m_initDegree+" final: "+ finalDegree );
     double errLeftPos = -m_targetLeftPositionMeter + m_currLeftPosMeter;
     double errRightPos = m_targetRightPositionMeter - m_currRightPosMeter;
     //note: error > 0 means underrun
-    System.out.println("pos errs: " + errLeftPos + " " + errRightPos);
-    System.out.println("time: " + m_timer.get());
-    System.out.println("desired theta: "+ m_theta);
-    System.out.println("m_DeltaTheta: "+m_deltaTheta + " distance: "+ m_distance);
-    System.out.println(" ");
+    // System.out.println("pos errs: " + errLeftPos + " " + errRightPos);
+    // System.out.println("time: " + m_timer.get());
+    // System.out.println("desired theta: "+ m_theta);
+    // System.out.println("m_DeltaTheta: "+m_deltaTheta + " distance: "+ m_distance);
+    // System.out.println(" ");
     //System.out.println("curr left pos: "+ m_currLeftPosMeter+" target pos: "+ m_targetLeftPositionMeter);
     // System.out.println("curr right pos: "+ m_currRightPosMeter+" target pos: "+ m_targetRightPositionMeter);
     // System.out.println("timeout: " + bTimeouted + " current time " + m_timer.get());
