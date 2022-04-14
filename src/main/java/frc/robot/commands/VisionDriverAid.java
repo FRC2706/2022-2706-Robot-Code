@@ -32,7 +32,7 @@ public class VisionDriverAid extends CommandBase {
   Supplier<Double> m_rotateVal;
   PIDController m_pid;
   Command shooter;
-  Command feed;
+  //Command feed;
   Command shooterAuto;
 
   public VisionDriverAid(Joystick driveJoystick, Supplier<Double> rotateVal) {
@@ -43,7 +43,7 @@ public class VisionDriverAid extends CommandBase {
     m_pid = new PIDController(0, 0, 0);
     shooter = new SpinUpShooterWithTime(2000, 0);
     shooterAuto = new AutomaticShooter(true);
-    feed = new WaitCommand(0.3).andThen(new ParallelRaceGroup(new IndexerForShooter(), new WaitCommand(1.5)).andThen(new InstantCommand(shooterAuto :: cancel)));
+    //feed = new WaitCommand(0.3).andThen(new ParallelRaceGroup(new IndexerForShooter(), new WaitCommand(1.5)).andThen(new InstantCommand(shooterAuto :: cancel)));
   }
    
 
@@ -75,10 +75,10 @@ public class VisionDriverAid extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     shooter.cancel();
-    if(interrupted == false){
-      shooterAuto.schedule();
-      feed.schedule();        
-    }
+    //if(interrupted == false){
+      //shooterAuto.schedule();
+      //feed.schedule();        
+    //}
   }
 
   // Returns true when the command should end.
