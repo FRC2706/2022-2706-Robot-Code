@@ -126,12 +126,11 @@ public class ColorSensorSubsystem extends SubsystemBase {
     return colorSensor.getRawColor();
   }
 
-  public boolean isDetected() {
-    return bDetectedCargo;
-  }
+  // public boolean isDetected() {
+  //   return bDetectedCargo;
+  // }
 
-  @Override
-  public void periodic() {
+  public boolean isDetected() {
 
     //proximity sensor range: 1cm to 10cm
 
@@ -168,5 +167,6 @@ public class ColorSensorSubsystem extends SubsystemBase {
     detectBlue.setBoolean(isBlue);
    
     bDetectedCargo = isRed || isBlue;
+    return bDetectedCargo;
   }
 }
