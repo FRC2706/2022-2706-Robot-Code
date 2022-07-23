@@ -77,6 +77,9 @@ public class Config {
     //ID 2 is Beetle
     //ID 3 is Cosmobot (Deep Space Chassis)
     //
+
+    public static final int RAPID_REACT_ID = 1;
+    public static final int BEETLE_ID = 2;
     
     // This is a static class which should not be instantiated
     private Config() {

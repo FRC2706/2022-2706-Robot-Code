@@ -145,7 +145,7 @@ public class RobotContainer {
                 break;
             }
  
-            case 1:
+            case Config.RAPID_REACT_ID: //2022 competition robot
             {            
             //============
             //intake
@@ -234,22 +234,19 @@ public class RobotContainer {
 
             break;
             }
-           case 2: //Beetle
+           case Config.BEETLE_ID: //Beetle
             {
                 //Front ring light
-                //Command controlFrontRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_FRONT);
-                //new JoystickButton(driverStick, XboxController.Button.kRightBumper.value).whenPressed(controlFrontRinglight);
+                Command controlFrontRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_FRONT);
+                new JoystickButton(driverStick, XboxController.Button.kY.value).whenPressed(controlFrontRinglight);
                 
                 //Rear small ring light
-               // Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
-               // new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(controlRearSmallRinglight);
+                Command controlRearSmallRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_SMALL);
+                new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(controlRearSmallRinglight);
                 
-                //Command printX = new PrintOdometry();
-                //new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(printX);
-
                 //Rear large ring light
                 Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
-                new JoystickButton(controlStick, XboxController.Button.kRightBumper.value).whenPressed(controlRearLargeRinglight);
+                new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(controlRearLargeRinglight);
                         
                 //Read a trajectory
                 // Command readTrajectory = new ReadPath( Robot.trajectoryRead, "Slalom path");
@@ -258,37 +255,25 @@ public class RobotContainer {
                 // Command readIrSensor = new ReadAnalogInput(7);
                 // new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(readIrSensor);
 
-               Command readSwitch = new TestSwitch();
-             new JoystickButton(driverStick, XboxController.Button.kStart.value).whenHeld(readSwitch);
-
-            //    Command readColorSensor = new ReadColorSensor();
-             //   new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
-
-                //for shooter command
-                //Auto mode backup out of tarmac: target RPM: 3400 RPM
-                //at the top of tarmac: 3350 RPM
-                Command wait1s = new WaitCommand(1);
-                Command delayIndexer = wait1s.andThen( new IndexerForShooter());
-                Command shooter = new ParallelCommandGroup(new SpinUpShooterWithTime(3350, 0), delayIndexer);
-                new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(shooter);
-                
+                // Command readColorSensor = new ReadColorSensor();
+                // new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readColorSensor);
+               
                 //Command testIndexer = new TestIndexer();
                 //new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(testIndexer);
 
-                //indexer cargo command
-                 Command indexercmd = new IndexerCargo();
-                 new JoystickButton(driverStick, XboxController.Button.kY.value).whenHeld(indexercmd);
-
                 // Command testAnalog = new TestAnalogSelector();
                 // new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(testAnalog);
-                Command indexerOne = new IndexerOneCargo();
-                new JoystickButton(driverStick, XboxController.Button.kX.value).whenHeld(indexerOne);
-                //Turn a specific angle
+
+                //Turn a specific angle, previous code, not always works
                 // moveToOuterPort = new TurnToOuterPortCommand(true, 3.0, 0.5);
                 // new JoystickButton(driverStick, XboxController.Button.kA.value).whenHeld(moveToOuterPort, true);
 
-               // Command alignment = new DrivetrainAlignment(false);
-               // new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
+                // Command alignment = new DrivetrainAlignment(false);
+                // new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(alignment);
+
+                //Command printX = new PrintOdometry();
+                //new JoystickButton(driverStick, XboxController.Button.kX.value).whenPressed(printX);
+
 
                 break;
             }
@@ -339,9 +324,9 @@ public class RobotContainer {
         logger.info("Selectors: " + selectorOne);
 
         // Testing forced numbers
-        int selectFolder = 1;
+        int selectFolder = 3;
         //@todo: hard coded here. Remove this line will use analog selector.
-        //selectorOne = 0;
+        selectorOne = 0;
         switch (selectFolder) {
             case 1:
                 return AutoRoutines.getAutoCommandRapidReact(selectorOne); 
