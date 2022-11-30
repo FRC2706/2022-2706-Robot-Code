@@ -102,7 +102,7 @@ public class Config {
     public static int INDEXER_MOTOR = robotSpecific(6, 7, 7, -1); //Beetle prototype on Beetle:7
     public static int RIGHT_MASTER = robotSpecific(RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR, RIGHT_FRONT_MOTOR);
     public static int LEFT_MASTER = robotSpecific(LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR, LEFT_REAR_MOTOR, LEFT_FRONT_MOTOR, LEFT_FRONT_MOTOR);
-    public static int CANDLE_ID = robotSpecific(-1, 15, -1, 15);
+    public static int CANDLE_ID = robotSpecific(-1, 15, 15, 15);
     public static int CTRE_PCM_CAN_ID = robotSpecific(-1, 1, -1, -1);
     public static int ANALOG_SELECTOR_PORT = robotSpecific(-1, 0, 0, -1);
     

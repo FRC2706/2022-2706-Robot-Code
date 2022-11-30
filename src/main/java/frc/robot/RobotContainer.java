@@ -248,6 +248,9 @@ public class RobotContainer {
                 Command controlRearLargeRinglight = new ControlRingLight(Config.RELAY_RINGLIGHT_REAR_LARGE);
                 new JoystickButton(driverStick, XboxController.Button.kA.value).whenPressed(controlRearLargeRinglight);
                         
+                Command setBling =  new SetBlingPattern(2);
+                new JoystickButton(driverStick, XboxController.Button.kB.value).whenHeld(setBling);
+
                 //Read a trajectory
                 // Command readTrajectory = new ReadPath( Robot.trajectoryRead, "Slalom path");
                 // new JoystickButton(driverStick, XboxController.Button.kB.value).whenPressed(readTrajectory);
